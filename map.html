@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bus 2 - Bedok Mall Bus Locations on Mapbox Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+</head>
+<body>
+<div id='map'></div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoid2VuY2k4IiwiYSI6ImNtN2s5ODd1NzA1M2Uya3ExemV3cXltbzAifQ.35leaopBUYwvjFSHo0kg4Q'; // Replace with your Mapbox access token
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [103.851959, 1.290270], // Singapore's center - initial, will be auto-centered
+        zoom: 12
+    });
+
+    function displayBusService(busNumber, busStopID) {
+        return fetch(`https://arrivelah2.busrouter.sg/?id=${busStopID}`) // Added return here
+            .then(response => response.json())
+            .then(busData => {
+                var service = busData.services.find(service => service.no === busNumber);
+                if (service) {
+                    var nextBus = service.next;
+                    var subsequentBus = service.subsequent;
+                    var next3Bus = service.next3;
+                    var currentTime = new Date();
+                    var bounds = new mapboxgl.LngLatBounds();
+                    var hasMarkers = false; // Flag to track if any markers were added for this service
+
+                    // 1st Bus Marker
+                    if (nextBus.lat !== 0 && nextBus.lng !== 0) {
+                        var marker1 = new mapboxgl.Marker({ color: 'blue' })
+                            .setLngLat([nextBus.lng, nextBus.lat])
+                            .setPopup(new mapboxgl.Popup({ offset: 25 })
+                                .setHTML(
+                                    `<div><b>Bus ${busNumber} (1st Arrival)</b></div>` +
+                                    `<p><b>Arrival Time:</b> ${formatTime(nextBus.time)}</p>` +
+                                    `<p><b>Remaining Time:</b> ${calculateRemainingTime(nextBus.time, currentTime)}</p>`
+                                ))
+                            .addTo(map);
+                        bounds.extend([nextBus.lng, nextBus.lat]);
+                        hasMarkers = true;
+                    }
+
+                    // 2nd Bus Marker
+                    if (subsequentBus.lat !== 0 && subsequentBus.lng !== 0) {
+                        var marker2 = new mapboxgl.Marker({ color: 'green' })
+                            .setLngLat([subsequentBus.lng, subsequentBus.lat])
+                            .setPopup(new mapboxgl.Popup({ offset: 25 })
+                                .setHTML(
+                                    `<div><b>Bus ${busNumber} (2nd Arrival)</b></div>` +
+                                    `<p><b>Arrival Time:</b> ${formatTime(subsequentBus.time)}</p>` +
+                                    `<p><b>Remaining Time:</b> ${calculateRemainingTime(subsequentBus.time, currentTime)}</p>`
+                                ))
+                            .addTo(map);
+                        bounds.extend([subsequentBus.lng, subsequentBus.lat]);
+                        hasMarkers = true;
+                    }
+
+                    // 3rd Bus Marker
+                    if (next3Bus.lat !== 0 && next3Bus.lng !== 0) {
+                        var marker3 = new mapboxgl.Marker({ color: 'red' })
+                            .setLngLat([next3Bus.lng, next3Bus.lat])
+                            .setPopup(new mapboxgl.Popup({ offset: 25 })
+                                .setHTML(
+                                    `<div><b>Bus ${busNumber} (3rd Arrival)</b></div>` +
+                                    `<p><b>Arrival Time:</b> ${formatTime(next3Bus.time)}</p>` +
+                                    `<p><b>Remaining Time:</b> ${calculateRemainingTime(next3Bus.time, currentTime)}</p>`
+                                ))
+                            .addTo(map);
+                        bounds.extend([next3Bus.lng, next3Bus.lat]);
+                        hasMarkers = true;
+                    }
+
+                    return hasMarkers ? bounds : null; // Return bounds if markers were added, otherwise null
+
+                } else {
+                    alert(`Bus service ${busNumber} not found in the data for bus stop ${busStopID}.`);
+                    return null; // Indicate no markers were added
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching bus data:', error);
+                alert('Failed to load bus data.');
+                return null; // Indicate no markers were added due to error
+            });
+    }
+
+
+    function formatTime(timeString) {
+        var date = new Date(timeString);
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var seconds = date.getSeconds();
+        return hours + ':' + (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+    }
+
+    function calculateRemainingTime(arrivalTimeString, currentTime) {
+        var arrivalTime = new Date(arrivalTimeString);
+        var timeDiffMs = arrivalTime.getTime() - currentTime.getTime();
+        var timeDiffMinutes = Math.floor(timeDiffMs / (1000 * 60));
+        var timeDiffSeconds = Math.floor((timeDiffMs % (1000 * 60)) / 1000);
+
+        if (timeDiffMinutes < 0 || timeDiffSeconds < 0) {
+            return "Arrived";
+        } else {
+            return timeDiffMinutes + 'm ' + timeDiffSeconds + 's';
+        }
+    }
+
+    // Call the function for bus 5 and bus 24 (same bus stop '84031')
+    let allBounds = new mapboxgl.LngLatBounds(); // Initialize bounds for all buses
+    let busStopID = '84031'; // Bus stop ID
+
+    Promise.all([
+        displayBusService('2', busStopID), // Display bus 5
+        //displayBusService('24', busStopID) // Display bus 24
+    ]).then(boundsArray => {
+        boundsArray.forEach(bounds => {
+            if (bounds && !bounds.isEmpty()) { // Check if bounds is not null and not empty
+                allBounds.extend(bounds); // Extend overall bounds with service bounds
+            }
+        });
+
+        if (!allBounds.isEmpty()) {
+            map.fitBounds(allBounds, {
+                padding: 50
+            });
+        }
+    });
+
+
+</script>
+
+</body>
+</html>
