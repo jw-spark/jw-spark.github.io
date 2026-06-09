@@ -2,7 +2,7 @@
 const CONFIG = {
     SUPABASE_URL: "https://klqphxtpwmlkfvueukpx.supabase.co",
     SUPABASE_KEY: "sb_publishable_dhPq5ssXWqeB084gDSOe-A_igNiQVpg",
- 
+
     BUS_STOPS: ["97039"],
 
     DEBUG: {
@@ -21,7 +21,7 @@ const CONFIG = {
 
     TIME_WINDOW: {
         ENABLE: false,
-        START_HOUR: 14,
+        START_HOUR: 16,
         END_HOUR: 18
     },
 

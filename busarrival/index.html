@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head> 
+<head>
 <meta charset="utf-8">
 <title>Bus Intelligence Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -9,7 +9,6 @@
 
 <h2>🚌 Bus Intelligence Dashboard</h2>
 <pre id="status">Starting...</pre>
-
 <canvas id="chart" width="400" height="200"></canvas>
 
 <script src="config.js"></script>
@@ -17,7 +16,6 @@
 
 const statusEl = document.getElementById("status");
 
-// Debug logger
 function log(msg, obj=null) {
     console.log(msg, obj || "");
     if (CONFIG.DEBUG?.ENABLE) {
@@ -41,19 +39,8 @@ async function safeFetch(url, options={}){
     }
 }
 
-function isWithinTimeWindow(){
-    if(!CONFIG.TIME_WINDOW.ENABLE) return true;
-    const h = new Date().getHours();
-    return h >= CONFIG.TIME_WINDOW.START_HOUR && h < CONFIG.TIME_WINDOW.END_HOUR;
-}
-
 async function fetchAndStore(){
     try {
-        if(!isWithinTimeWindow()){
-            log("⏸ Outside time window");
-            return;
-        }
-
         const stop = CONFIG.BUS_STOPS[0];
 
         log("📡 Fetching API...");
@@ -107,7 +94,43 @@ async function fetchAndStore(){
     }
 }
 
+// ✅ FIXED chart API call (no syntax error)
+async function loadChart(){
+    try {
+        const resp = await fetch(
+            CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals?select=service_no,collected_at",
+            {
+                headers: {
+                    "apikey": CONFIG.SUPABASE_KEY
+                }
+            }
+        );
+
+        const data = await resp.json();
+
+        const counts = {};
+        data.forEach(d=>{
+            counts[d.service_no] = (counts[d.service_no]||0)+1;
+        });
+
+        new Chart(document.getElementById("chart"), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(counts),
+                datasets: [{
+                    label: 'Records per Service',
+                    data: Object.values(counts)
+                }]
+            }
+        });
+
+    } catch(err){
+        log("❌ Chart load error: " + err.message);
+    }
+}
+
 fetchAndStore();
+loadChart();
 setInterval(fetchAndStore, CONFIG.REFRESH_INTERVAL_MS);
 
 </script>

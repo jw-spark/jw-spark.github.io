@@ -1,32 +1,17 @@
-# Bus Intelligence System (Debug Enabled)
+# Bus Debug Fixed Version
 
-## Overview
-Includes debug mode for troubleshooting API and database issues.
+## Fix Included
+- ✅ Fixed syntax error in fetch() function
+- ✅ Added debug logging
+- ✅ Fixed chart API call
 
-## How to Enable Debug
-Edit config.js:
+## Usage
+1. Edit config.js
+2. Deploy to GitHub Pages
+3. Open browser
+4. Press F12 → Console
 
-DEBUG: {
-  ENABLE: true
-}
-
-## Debug Output
-- Shows live logs on webpage
-- Also visible in browser console (F12)
-
-## Troubleshooting
-
-### API Issue
-"Failed to fetch"
-
-### Supabase Issue
-"HTTP 401 Unauthorized"
-
-### No Data
-"No records to insert"
-
-## Files
-- index.html (debug enabled)
-- config.js (settings)
-
-Open page + press F12 to view full logs
+## Expected Output
+- API logs
+- DB insert logs
+- Chart loads
