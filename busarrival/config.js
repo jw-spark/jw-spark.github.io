@@ -1,0 +1,25 @@
+// CONFIGURATION FILE
+const CONFIG = {
+    SUPABASE_URL: "https://YOUR_PROJECT.supabase.co",
+    SUPABASE_KEY: "YOUR_ANON_KEY",
+
+    BUS_STOPS: ["97039"],
+
+    FILTER: {
+        ENABLE_SERVICE_FILTER: false,
+        SERVICES: ["2", "5", "24"]
+    },
+
+    DEDUP: {
+        ENABLE: true,
+        FUTURE_ONLY: true
+    },
+
+    TIME_WINDOW: {
+        ENABLE: false,
+        START_HOUR: 16,
+        END_HOUR: 18
+    },
+
+    REFRESH_INTERVAL_MS: 5 * 60 * 1000
+};
