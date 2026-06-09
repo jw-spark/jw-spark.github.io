@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Bus Intelligence Dashboard V4</title>
+<title>Bus Intelligence Dashboard V4.1</title>
 
 <style>
 body {
@@ -36,10 +36,17 @@ h2, h3 {
     font-size: 12px;
     margin-right: 6px;
     margin-top: 6px;
+    border: 1px solid rgba(255,255,255,0.15);
 }
-.sea { color: #7CFC98; }
-.sda { color: #FFD966; }
-.lsd { color: #FF7B7B; }
+.sea {
+    color: #7CFC98;
+}
+.sda {
+    color: #FFD966;
+}
+.lsd {
+    color: #FF7B7B;
+}
 .good {
     color: #7CFC98;
 }
@@ -49,9 +56,24 @@ h2, h3 {
 .bad {
     color: #FF7B7B;
 }
+.anomaly {
+    background: rgba(255, 123, 123, 0.12);
+    color: #FF9A9A;
+    border-color: rgba(255, 123, 123, 0.35);
+}
+.normal-badge {
+    background: rgba(124, 252, 152, 0.10);
+    color: #B9FFD1;
+    border-color: rgba(124, 252, 152, 0.25);
+}
+.estimated-badge {
+    background: rgba(255, 217, 102, 0.10);
+    color: #FFE9A8;
+    border-color: rgba(255, 217, 102, 0.25);
+}
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: 12px;
 }
 .small {
@@ -67,13 +89,27 @@ pre {
     overflow: auto;
     white-space: pre-wrap;
 }
+.kv {
+    margin-top: 8px;
+    line-height: 1.6;
+}
+.kv b {
+    display: inline-block;
+    min-width: 160px;
+}
+.divider {
+    margin: 8px 0;
+    border-top: 1px solid #2e2e2e;
+}
 </style>
 </head>
 
 <body>
 
-<h2>🚌 Bus Intelligence Dashboard V4</h2>
-<div class="small">Prediction engine = live ETA + same time-period historical trend from Supabase</div>
+<h2>🚌 Bus Intelligence Dashboard V4.1</h2>
+<div class="small">
+    Prediction = live ETA + same weekday + same time bucket historical trend from Supabase
+</div>
 
 <h3>Debug Log</h3>
 <pre id="status">Starting...</pre>
@@ -84,7 +120,7 @@ pre {
 </div>
 
 <div class="section">
-    <h3>🤖 V4 Prediction (Per Bus Number)</h3>
+    <h3>🤖 V4.1 Prediction (Per Bus Number)</h3>
     <div id="predictionList" class="grid"></div>
 </div>
 
@@ -93,7 +129,7 @@ pre {
     <div id="analyticsList" class="grid"></div>
 </div>
 
-<!-- IMPORTANT: this must exist and be in the same folder -->
+<!-- IMPORTANT: config.js must exist in the same folder -->
 <script src="config.js"></script>
 
 <script>
@@ -120,7 +156,7 @@ function getLoadClass(load) {
 
 function median(arr) {
     if (!arr.length) return null;
-    const sorted = [...arr].sort((a,b) => a-b);
+    const sorted = [...arr].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
     return sorted.length % 2 === 0
         ? (sorted[mid - 1] + sorted[mid]) / 2
@@ -129,28 +165,64 @@ function median(arr) {
 
 function percentile(arr, p) {
     if (!arr.length) return null;
-    const sorted = [...arr].sort((a,b) => a-b);
+    const sorted = [...arr].sort((a, b) => a - b);
     const idx = Math.floor((p / 100) * (sorted.length - 1));
     return sorted[idx];
 }
 
-// 30-minute bucket: 13:00, 13:30, 14:00, etc.
-function timeBucket(dateObj) {
+function average(arr) {
+    if (!arr.length) return null;
+    return Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
+}
+
+function getWeekdayName(dateObj) {
     const d = new Date(dateObj);
+    return d.toLocaleDateString("en-SG", { weekday: "short" }); // Mon, Tue...
+}
+
+// ✅ Configurable bucket size (15 / 30 / 60)
+function getBucketMinutes() {
+    if (!CONFIG.PREDICTION || !CONFIG.PREDICTION.BUCKET_MINUTES) return 30;
+    return CONFIG.PREDICTION.BUCKET_MINUTES;
+}
+
+// Example bucket with 30:
+// 14:00 / 14:30 / 15:00 / 15:30 ...
+function getTimeBucket(dateObj) {
+    const d = new Date(dateObj);
+    const bucketMinutes = getBucketMinutes();
     const h = d.getHours();
     const m = d.getMinutes();
-    const bucketMinute = m < 30 ? "00" : "30";
-    return String(h).padStart(2, "0") + ":" + bucketMinute;
+
+    const bucketStart = Math.floor(m / bucketMinutes) * bucketMinutes;
+    return String(h).padStart(2, "0") + ":" + String(bucketStart).padStart(2, "0");
 }
 
-function isWeekend(dateObj) {
-    const d = new Date(dateObj);
-    const day = d.getDay(); // 0=Sun, 6=Sat
-    return day === 0 || day === 6;
-}
+function matchHistoricalRow(row, targetServiceNo, targetStop, now) {
+    if (row.service_no !== targetServiceNo) return false;
+    if (row.bus_stop_code !== targetStop) return false;
+    if (row.sequence !== "next") return false;
 
-function dayType(dateObj) {
-    return isWeekend(dateObj) ? "weekend" : "weekday";
+    const sameWeekdayRequired = CONFIG.PREDICTION && CONFIG.PREDICTION.SAME_WEEKDAY_ONLY;
+    const targetWeekday = getWeekdayName(now);
+    const rowWeekday = getWeekdayName(row.collected_at);
+
+    if (sameWeekdayRequired && rowWeekday !== targetWeekday) {
+        return false;
+    }
+
+    const currentBucket = getTimeBucket(now);
+    const rowBucket = getTimeBucket(row.collected_at);
+
+    if (rowBucket !== currentBucket) {
+        return false;
+    }
+
+    const wait = Math.round(
+        (new Date(row.estimated_arrival) - new Date(row.collected_at)) / 60000
+    );
+
+    return Number.isFinite(wait) && wait >= 0 && wait <= 120;
 }
 
 async function fetchLiveData() {
@@ -162,8 +234,8 @@ async function fetchLiveData() {
     if (!resp.ok) {
         throw new Error("Live API HTTP " + resp.status);
     }
-    const data = await resp.json();
 
+    const data = await resp.json();
     log("Live API OK, services returned: " + (data.services ? data.services.length : 0));
     return data;
 }
@@ -230,7 +302,6 @@ async function storeLiveSnapshot(data) {
         return;
     }
 
-    // sample mapping check
     console.log("Sample record to insert:", records[0]);
     log("Sample record printed in console (F12)");
 
@@ -262,8 +333,9 @@ function renderLiveUI(liveData) {
         const nextMin = getMinutes(svc.next.time);
         const next2Min = svc.next2 && svc.next2.time ? getMinutes(svc.next2.time) : null;
         const next3Min = svc.next3 && svc.next3.time ? getMinutes(svc.next3.time) : null;
-        const delayGap = next2Min !== null ? (next2Min - nextMin) : null;
-        const delayFlag = delayGap !== null && delayGap > (CONFIG.DELAY_THRESHOLD_MINUTES || 15);
+
+        const gap = next2Min !== null ? (next2Min - nextMin) : null;
+        const delayFlag = gap !== null && gap > (CONFIG.DELAY_THRESHOLD_MINUTES || 15);
 
         const div = document.createElement("div");
         div.className = "card";
@@ -279,7 +351,7 @@ function renderLiveUI(liveData) {
                 ${svc.next.feature ? "Feature: " + svc.next.feature + " | " : ""}
                 ${svc.next.monitored === 1 ? "Live GPS" : "Estimated"}
             </div>
-            ${delayFlag ? `<div class="warn">⚠ Possible delay: gap is ${delayGap} mins</div>` : ""}
+            ${delayFlag ? `<div class="warn">⚠ Large gap detected (${gap} mins between next and next2)</div>` : ""}
         `;
 
         busListEl.appendChild(div);
@@ -290,55 +362,65 @@ function renderPredictions(liveData, historyRows) {
     predictionListEl.innerHTML = "";
 
     const now = new Date();
-    const currentBucket = timeBucket(now);
-    const currentDayType = dayType(now);
+    const currentBucket = getTimeBucket(now);
+    const currentWeekday = getWeekdayName(now);
 
     liveData.services.forEach(function(svc) {
         if (!svc.next || !svc.next.time) return;
 
         const serviceNo = svc.no;
+        const stop = CONFIG.BUS_STOPS[0];
         const liveWait = getMinutes(svc.next.time);
 
-        // Match history for same service + same stop + same day type + same 30-min bucket
         const matchedRows = historyRows.filter(function(r) {
-            if (r.service_no !== serviceNo) return false;
-            if (dayType(r.collected_at) !== currentDayType) return false;
-            if (timeBucket(r.collected_at) !== currentBucket) return false;
-
-            const wait = Math.round((new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000);
-            return Number.isFinite(wait) && wait >= 0 && wait <= 120;
+            return matchHistoricalRow(r, serviceNo, stop, now);
         });
 
-        const historicalWaits = matchedRows.map(function(r) {
-            return Math.round((new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000);
+        const waits = matchedRows.map(function(r) {
+            return Math.round(
+                (new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000
+            );
         });
 
-        const histMedian = median(historicalWaits);
-        const p25 = percentile(historicalWaits, 25);
-        const p75 = percentile(historicalWaits, 75);
+        const histMedian = median(waits);
+        const histAvg = average(waits);
+        const p25 = percentile(waits, 25);
+        const p75 = percentile(waits, 75);
 
-        // Hybrid prediction: 70% current live ETA + 30% historical median
+        // ✅ Hybrid prediction
         let predictedWait;
         if (histMedian !== null) {
-            predictedWait = Math.round((0.7 * liveWait) + (0.3 * histMedian));
+            predictedWait = Math.round(
+                (CONFIG.PREDICTION.LIVE_WEIGHT * liveWait) +
+                (CONFIG.PREDICTION.HISTORY_WEIGHT * histMedian)
+            );
         } else {
             predictedWait = liveWait;
         }
 
         const predictedArrival = new Date(Date.now() + predictedWait * 60000);
 
-        let speedLabel = "Normal";
-        let speedClass = "good";
+        // ✅ anomaly logic: live ETA > historical p75
+        let anomalyBadge = "";
+        if (p75 !== null && liveWait > p75) {
+            anomalyBadge = `<span class="badge anomaly">Delay anomaly: live ETA > historical P75</span>`;
+        } else {
+            anomalyBadge = `<span class="badge normal-badge">Within normal range</span>`;
+        }
+
+        let trendLabel = "No historical baseline";
+        let trendClass = "warn";
+
         if (histMedian !== null) {
             if (liveWait > histMedian + 3) {
-                speedLabel = "Slower than normal";
-                speedClass = "bad";
+                trendLabel = "Slower than normal";
+                trendClass = "bad";
             } else if (liveWait < histMedian - 2) {
-                speedLabel = "Faster than normal";
-                speedClass = "good";
+                trendLabel = "Faster than normal";
+                trendClass = "good";
             } else {
-                speedLabel = "Near normal";
-                speedClass = "warn";
+                trendLabel = "Near normal";
+                trendClass = "warn";
             }
         }
 
@@ -347,13 +429,18 @@ function renderPredictions(liveData, historyRows) {
 
         div.innerHTML = `
             <div class="bus-no">Bus ${serviceNo}</div>
-            <div>Live ETA now: <b>${liveWait} mins</b></div>
-            <div>Historical median (${currentDayType}, ${currentBucket}): <b>${histMedian !== null ? histMedian + " mins" : "Not enough data"}</b></div>
-            <div>Predicted arrival: <b>${predictedArrival.toLocaleTimeString()}</b></div>
-            <div>Predicted wait: <b>${predictedWait} mins</b></div>
-            <div>Confidence band: <b>${p25 !== null && p75 !== null ? p25 + "–" + p75 + " mins" : "N/A"}</b></div>
-            <div class="${speedClass}">${speedLabel}</div>
-            <div class="small">Matched historical samples: ${historicalWaits.length}</div>
+            <div class="small">Matching rule: ${currentWeekday}, bucket ${currentBucket}, ${getBucketMinutes()}-minute window</div>
+            <div class="divider"></div>
+            <div class="kv"><b>Live ETA now:</b> ${liveWait} mins</div>
+            <div class="kv"><b>Historical average:</b> ${histAvg !== null ? histAvg + " mins" : "Not enough data"}</div>
+            <div class="kv"><b>Historical median:</b> ${histMedian !== null ? histMedian + " mins" : "Not enough data"}</div>
+            <div class="kv"><b>Confidence band:</b> ${p25 !== null && p75 !== null ? p25 + "–" + p75 + " mins" : "N/A"}</div>
+            <div class="kv"><b>Predicted wait:</b> ${predictedWait} mins</div>
+            <div class="kv"><b>Predicted arrival:</b> ${predictedArrival.toLocaleTimeString()}</div>
+            <div class="divider"></div>
+            <div class="${trendClass}">${trendLabel}</div>
+            <div>${anomalyBadge}</div>
+            <div class="small">Historical matched samples: ${waits.length}</div>
         `;
 
         predictionListEl.appendChild(div);
@@ -366,32 +453,40 @@ function renderAnalytics(historyRows) {
     const grouped = {};
 
     historyRows.forEach(function(r) {
-        const serviceNo = r.service_no;
-        const wait = Math.round((new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000);
+        if (r.sequence !== "next") return;
+
+        const wait = Math.round(
+            (new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000
+        );
+
         if (!Number.isFinite(wait) || wait < 0 || wait > 120) return;
 
+        const serviceNo = r.service_no;
         if (!grouped[serviceNo]) grouped[serviceNo] = [];
         grouped[serviceNo].push(wait);
     });
 
-    Object.keys(grouped).sort(function(a,b){
+    Object.keys(grouped).sort(function(a, b) {
         return Number(a) - Number(b);
     }).forEach(function(serviceNo) {
         const waits = grouped[serviceNo];
-        const avg = Math.round(waits.reduce((a,b)=>a+b,0) / waits.length);
+        const avg = average(waits);
         const med = median(waits);
         const min = Math.min(...waits);
         const max = Math.max(...waits);
+        const p25 = percentile(waits, 25);
+        const p75 = percentile(waits, 75);
 
         const div = document.createElement("div");
         div.className = "card";
         div.innerHTML = `
             <div class="bus-no">Bus ${serviceNo}</div>
-            <div>Samples: ${waits.length}</div>
-            <div>Average wait: ${avg} mins</div>
-            <div>Median wait: ${med} mins</div>
-            <div>Fastest observed: ${min} mins</div>
-            <div>Slowest observed: ${max} mins</div>
+            <div class="kv"><b>Samples:</b> ${waits.length}</div>
+            <div class="kv"><b>Average wait:</b> ${avg} mins</div>
+            <div class="kv"><b>Median wait:</b> ${med} mins</div>
+            <div class="kv"><b>P25 / P75:</b> ${p25} / ${p75} mins</div>
+            <div class="kv"><b>Fastest observed:</b> ${min} mins</div>
+            <div class="kv"><b>Slowest observed:</b> ${max} mins</div>
         `;
         analyticsListEl.appendChild(div);
     });
@@ -400,6 +495,7 @@ function renderAnalytics(historyRows) {
 async function main() {
     try {
         log("Starting refresh cycle...");
+        log("Prediction mode: same weekday matching + configurable bucket size");
 
         const liveData = await fetchLiveData();
         renderLiveUI(liveData);
