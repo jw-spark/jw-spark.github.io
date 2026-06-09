@@ -1,7 +1,7 @@
 // CONFIGURATION FILE
 const CONFIG = {
-    SUPABASE_URL: "https://YOUR_PROJECT.supabase.co",
-    SUPABASE_KEY: "YOUR_ANON_KEY",
+    SUPABASE_URL: "https://klqphxtpwmlkfvueukpx.supabase.co",
+    SUPABASE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtscXBoeHRwd21sa2Z2dWV1a3B4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MDAxMjcsImV4cCI6MjA5NjQ3NjEyN30.A8u8fDqygw_3n-kAZMJGOsUoz-Jp_eBarLH9PBvgoow",
 
     BUS_STOPS: ["97039"],
 
