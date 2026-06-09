@@ -2,163 +2,153 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Bus Intelligence Dashboard</title>
+<title>Bus Intelligence Dashboard V2</title>
 
 <style>
-body { font-family: Arial; background: #111; color: #fff; padding: 20px; }
+body { font-family: Arial; background:#111; color:#fff; padding:20px; }
+
+.section { margin-bottom:20px; }
 
 .card {
-    background: #222;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 8px;
+    background:#222;
+    padding:10px;
+    margin:6px 0;
+    border-radius:8px;
 }
 
-.bus-no { font-size: 20px; font-weight: bold; }
+.bus-no { font-size:20px; font-weight:bold; }
 
-.sea { color: lightgreen; }
-.sda { color: yellow; }
-.lsd { color: red; }
+.sea { color:lightgreen; }
+.sda { color:yellow; }
+.lsd { color:red; }
 
-.header { font-size: 22px; margin-bottom: 10px; }
+.warn { color:orange; }
 
 </style>
-
 </head>
 
 <body>
 
-<div class="header">🚌 Bus Intelligence Dashboard</div>
-
+<h2>🚌 Bus Intelligence Dashboard V2</h2>
 <pre id="status">Starting...</pre>
 
+<div class="section">
 <h3>📱 Real-time Bus</h3>
-<div id="busContainer"></div>
+<div id="busList"></div>
+</div>
 
+<div class="section">
 <h3>🤖 Prediction</h3>
 <div id="prediction"></div>
+</div>
+
+<div class="section">
+<h3>📊 Quick Insights</h3>
+<div id="insight"></div>
+</div>
 
 <script src="config.js"></script>
 
 <script>
-
 const statusEl = document.getElementById("status");
-const busContainer = document.getElementById("busContainer");
+const busList = document.getElementById("busList");
 const predictionEl = document.getElementById("prediction");
+const insightEl = document.getElementById("insight");
 
-// ✅ logging
+// ✅ logger
 function log(msg){
     console.log(msg);
     statusEl.innerText += msg + "\\n";
 }
 
-// ✅ classify load color
+// ✅ load color
 function getLoadClass(load){
-    if(load === "SEA") return "sea";
-    if(load === "SDA") return "sda";
-    if(load === "LSD") return "lsd";
-    return "";
+    return load === "SEA" ? "sea" :
+           load === "SDA" ? "sda" :
+           load === "LSD" ? "lsd" : "";
 }
 
-// ✅ calculate minutes to arrival
-function getMinutes(eta){
-    const diff = new Date(eta) - new Date();
-    return Math.round(diff / 60000);
+// ✅ ETA minutes
+function getMins(t){
+    return Math.max(0, Math.round((new Date(t) - new Date()) / 60000));
 }
 
-// ✅ main fetch
-async function fetchBus(){
+// ✅ render buses
+function render(data){
 
-    try{
-        const stop = CONFIG.BUS_STOPS[0];
-        log("Fetching API...");
+    busList.innerHTML = "";
 
-        const resp = await fetch("https://arrivelah2.busrouter.sg/?id=" + stop);
-        const data = await resp.json();
-
-        log("API OK");
-
-        renderBus(data);
-        detectDelay(data);
-        prediction(data);
-
-    }catch(e){
-        log("ERROR: " + e.message);
-    }
-}
-
-// ✅ render UI
-function renderBus(data){
-
-    busContainer.innerHTML = "";
+    let waits = [];
 
     data.services.forEach(svc => {
+
+        const next = svc.next;
+        const next2 = svc.next2;
+
+        if (!next || !next.time) return;
+
+        const m1 = getMins(next.time);
+        const m2 = next2 ? getMins(next2.time) : "-";
+
+        waits.push(m1);
+
+        let delayWarn = "";
+        if (next2 && (m2 - m1) > 15){
+            delayWarn = "<div class='warn'>⚠ Possible delay</div>";
+            log("Delay for Bus " + svc.no);
+        }
 
         const div = document.createElement("div");
         div.className = "card";
 
-        const next = svc.next;
-        const next2 = svc.next2;
-
         div.innerHTML = `
             <div class="bus-no">Bus ${svc.no} (${svc.operator})</div>
             <div class="${getLoadClass(next.load)}">
-                Next: ${getMinutes(next.time)} mins | Load: ${next.load} | ${next.type}
+                Next: ${m1} mins | ${next.load} | ${next.type}
             </div>
-            <div>
-                Next2: ${getMinutes(next2.time)} mins
-            </div>
+            <div>Next2: ${m2} mins</div>
+            ${delayWarn}
         `;
 
-        busContainer.appendChild(div);
+        busList.appendChild(div);
     });
 
+    updatePrediction(waits);
+    updateInsights(data);
 }
 
-// ✅ delay detection
-function detectDelay(data){
+// ✅ prediction logic
+function updatePrediction(waits){
 
-    data.services.forEach(svc => {
+    if(waits.length === 0) return;
 
-        const next = svc.next;
-        const next2 = svc.next2;
-
-        const gap = getMinutes(next2.time) - getMinutes(next.time);
-
-        if(gap > 15){
-            log("⚠️ Possible delay detected for Bus " + svc.no);
-        }
-
-    });
-}
-
-// ✅ simple prediction
-function prediction(data){
-
-    let total = 0;
-    let count = 0;
-
-    data.services.forEach(svc => {
-        const eta = svc.next.time;
-        const mins = getMinutes(eta);
-
-        total += mins;
-        count++;
-    });
-
-    if(count === 0) return;
-
-    const avg = Math.round(total / count);
+    const avg = Math.round(waits.reduce((a,b)=>a+b,0) / waits.length);
+    const min = Math.min(...waits);
+    const max = Math.max(...waits);
 
     predictionEl.innerHTML = `
-        ✅ Avg waiting time: ${avg} mins
+        Avg wait: ${avg} mins <br>
+        Shortest wait: ${min} mins <br>
+        Longest wait: ${max} mins
     `;
 }
 
-// ✅ store into supabase
+// ✅ simple analytics insight
+function updateInsights(data){
+
+    const count = data.services.length;
+
+    insightEl.innerHTML = `
+        Active services: ${count} <br>
+        Data sourced live from API
+    `;
+}
+
+// ✅ store DB
 async function store(data){
 
     const stop = CONFIG.BUS_STOPS[0];
+
     let records = [];
 
     data.services.forEach(svc => {
@@ -187,7 +177,7 @@ async function store(data){
 
     });
 
-    await fetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals",{
+    await fetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals", {
         method:"POST",
         headers:{
             "apikey": CONFIG.SUPABASE_KEY,
@@ -197,19 +187,25 @@ async function store(data){
         body: JSON.stringify(records)
     });
 
-    log("Stored into DB");
+    log("Data stored");
 }
 
-// ✅ main cycle
+// ✅ main loop
 async function main(){
 
-    const resp = await fetch("https://arrivelah2.busrouter.sg/?id=" + CONFIG.BUS_STOPS[0]);
-    const data = await resp.json();
+    try{
+        const stop = CONFIG.BUS_STOPS[0];
 
-    renderBus(data);
-    detectDelay(data);
-    prediction(data);
-    store(data);
+        log("Fetching API...");
+        const resp = await fetch("https://arrivelah2.busrouter.sg/?id=" + stop);
+        const data = await resp.json();
+
+        render(data);
+        store(data);
+
+    }catch(e){
+        log("ERROR: " + e.message);
+    }
 }
 
 // ✅ run
