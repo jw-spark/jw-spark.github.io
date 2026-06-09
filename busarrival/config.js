@@ -29,4 +29,13 @@ const CONFIG = {
     DELAY_THRESHOLD_MINUTES: 15,
     HISTORY_LIMIT: 500
 
+    
+PREDICTION: {
+        SAME_WEEKDAY_ONLY: true,
+        BUCKET_MINUTES: 30,   // change to 15 / 30 / 60
+        LIVE_WEIGHT: 0.7,
+        HISTORY_WEIGHT: 0.3
+    }
+
+
 };
