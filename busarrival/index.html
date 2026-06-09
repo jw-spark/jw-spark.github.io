@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bus Data Collector</title>
+    <meta charset="utf-8">
+</head>
+<body>
+
+<h2>🚌 Bus Data Collector (Auto every 5 mins)</h2>
+<p id="status">Starting...</p>
+
+<script>
+const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+const SUPABASE_KEY = "YOUR_ANON_KEY";
+const BUS_STOP = "97039";
+
+async function insertData(records) {
+    const res = await fetch(SUPABASE_URL + "/rest/v1/bus_arrivals", {
+        method: "POST",
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(records)
+    });
+
+    if (!res.ok) {
+        const err = await res.text();
+        console.error(err);
+        document.getElementById("status").innerText = "❌ Insert failed";
+        return;
+    }
+
+    document.getElementById("status").innerText = "✅ Data inserted at " + new Date().toLocaleTimeString();
+}
+
+async function fetchAndStore() {
+    try {
+        const resp = await fetch("https://arrivelah2.busrouter.sg/?id=" + BUS_STOP);
+        const data = await resp.json();
+
+        let records = [];
+
+        data.services.forEach(svc => {
+            ["next","next2","next3"].forEach(seq => {
+                const bus = svc[seq];
+                if (bus && bus.time) {
+                    records.push({
+                        bus_stop_code: BUS_STOP,
+                        service_no: svc.no,
+                        operator: svc.operator,
+                        sequence: seq,
+                        estimated_arrival: bus.time,
+                        latitude: bus.lat,
+                        longitude: bus.lng,
+                        load: bus.load,
+                        bus_type: bus.type,
+                        feature: bus.feature,
+                        is_monitored: bus.monitored === 1,
+                        collected_at: new Date().toISOString()
+                    });
+                }
+            });
+        });
+
+        console.log("Records:", records.length);
+        insertData(records);
+
+    } catch (e) {
+        console.error(e);
+        document.getElementById("status").innerText = "❌ Error fetching API";
+    }
+}
+
+// Run immediately
+fetchAndStore();
+
+// Auto run every 5 mins
+setInterval(fetchAndStore, 5 * 60 * 1000);
+
+</script>
+
+</body>
+</html>
