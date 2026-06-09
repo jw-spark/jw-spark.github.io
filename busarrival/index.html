@@ -12,50 +12,51 @@
 <canvas id="chart" width="400" height="200"></canvas>
 
 <script src="config.js"></script>
+
 <script>
 
 const statusEl = document.getElementById("status");
 
-function log(msg, obj=null) {
-    console.log(msg, obj || "");
-    if (CONFIG.DEBUG?.ENABLE) {
-        statusEl.innerText += msg + "
-";
-    }
+// ✅ Debug logger
+function log(msg) {
+    console.log(msg);
+    statusEl.innerText += msg + "\n";
 }
 
-async function safeFetch(url, options={}){
-    try {
-        log("➡️ Calling: " + url);
-        const res = await fetch(url, options);
-        if (!res.ok) {
-            const t = await res.text();
-            throw new Error("HTTP " + res.status + " → " + t);
-        }
-        return res;
-    } catch(err){
-        log("❌ ERROR: " + err.message);
-        throw err;
+// ✅ Safe fetch
+async function safeFetch(url, options={}) {
+    log("Calling: " + url);
+
+    const res = await fetch(url, options);
+
+    if (!res.ok) {
+        const t = await res.text();
+        throw new Error("HTTP " + res.status + " -> " + t);
     }
+
+    return res;
 }
 
-async function fetchAndStore(){
+// ✅ Main logic
+async function fetchAndStore() {
+
     try {
         const stop = CONFIG.BUS_STOPS[0];
 
-        log("📡 Fetching API...");
+        log("Fetching API...");
         const resp = await safeFetch("https://arrivelah2.busrouter.sg/?id=" + stop);
+
         const data = await resp.json();
-        log("✅ API OK");
+        log("API OK");
 
         let records = [];
 
-        data.services.forEach(svc=>{
-            if(CONFIG.FILTER.ENABLE_SERVICE_FILTER && !CONFIG.FILTER.SERVICES.includes(svc.no)) return;
+        data.services.forEach(function(svc){
 
-            ["next","next2","next3"].forEach(seq=>{
+            ["next","next2","next3"].forEach(function(seq){
+
                 const b = svc[seq];
-                if(!b || !b.time) return;
+                if (!b || !b.time) return;
 
                 records.push({
                     bus_stop_code: stop,
@@ -64,76 +65,42 @@ async function fetchAndStore(){
                     estimated_arrival: b.time,
                     collected_at: new Date().toISOString()
                 });
+
             });
+
         });
 
-        log("📊 Records prepared: " + records.length);
+        log("Records prepared: " + records.length);
 
-        if(records.length === 0){
-            log("⚠️ No records to insert");
+        if (records.length === 0) {
+            log("No data to insert");
             return;
         }
 
-        log("📤 Sending to Supabase...");
+        log("Sending to Supabase...");
 
-        await safeFetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals",{
-            method:"POST",
-            headers:{
+        await safeFetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals", {
+            method: "POST",
+            headers: {
                 "apikey": CONFIG.SUPABASE_KEY,
                 "Authorization": "Bearer " + CONFIG.SUPABASE_KEY,
-                "Content-Type": "application/json",
-                "Prefer": "return=minimal"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(records)
         });
 
-        log("✅ Insert success at " + new Date().toLocaleTimeString());
+        log("Insert success");
 
-    } catch(e){
-        console.error(e);
-    }
-}
-
-// ✅ FIXED chart API call (no syntax error)
-async function loadChart(){
-    try {
-        const resp = await fetch(
-            CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals?select=service_no,collected_at",
-            {
-                headers: {
-                    "apikey": CONFIG.SUPABASE_KEY
-                }
-            }
-        );
-
-        const data = await resp.json();
-
-        const counts = {};
-        data.forEach(d=>{
-            counts[d.service_no] = (counts[d.service_no]||0)+1;
-        });
-
-        new Chart(document.getElementById("chart"), {
-            type: 'bar',
-            data: {
-                labels: Object.keys(counts),
-                datasets: [{
-                    label: 'Records per Service',
-                    data: Object.values(counts)
-                }]
-            }
-        });
-
-    } catch(err){
-        log("❌ Chart load error: " + err.message);
+    } catch (e) {
+        log("ERROR: " + e.message);
     }
 }
 
 fetchAndStore();
-loadChart();
 setInterval(fetchAndStore, CONFIG.REFRESH_INTERVAL_MS);
 
 </script>
+
 
 </body>
 </html>
