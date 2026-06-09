@@ -17,8 +17,8 @@ const CONFIG = {
 
     TIME_WINDOW: {
         ENABLE: false,
-        START_HOUR: 16,
-        END_HOUR: 18
+        START_HOUR: 14,
+        END_HOUR: 16
     },
 
     REFRESH_INTERVAL_MS: 5 * 60 * 1000
