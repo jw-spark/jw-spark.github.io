@@ -25,5 +25,8 @@ const CONFIG = {
         END_HOUR: 18
     },
 
-    REFRESH_INTERVAL_MS: 5 * 60 * 1000
+    REFRESH_INTERVAL_MS: 5 * 60 * 1000,    
+    DELAY_THRESHOLD_MINUTES: 15,
+    HISTORY_LIMIT: 500
+
 };
