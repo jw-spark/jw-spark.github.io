@@ -9,19 +9,19 @@
 <h2>Bus Intelligence Dashboard</h2>
 <pre id="status">Starting...</pre>
 
+<!-- ✅ IMPORTANT: load config -->
 <script src="config.js"></script>
 
 <script>
-
 const statusEl = document.getElementById("status");
 
-// ✅ Simple logger
+// ✅ logger
 function log(msg){
     console.log(msg);
     statusEl.innerText += msg + "\n";
 }
 
-// ✅ Safe fetch
+// ✅ safe fetch
 async function safeFetch(url, options = {}) {
     log("Calling: " + url);
 
@@ -35,7 +35,7 @@ async function safeFetch(url, options = {}) {
     return res;
 }
 
-// ✅ Main function
+// ✅ MAIN FUNCTION
 async function fetchAndStore(){
 
     try {
@@ -43,7 +43,10 @@ async function fetchAndStore(){
 
         log("Fetching API...");
 
-        const resp = await safeFetch("https://arrivelah2.busrouter.sg/?id=" + stop);
+        const resp = await safeFetch(
+            "https://arrivelah2.busrouter.sg/?id=" + stop
+        );
+
         const data = await resp.json();
 
         log("API OK");
@@ -52,3 +55,67 @@ async function fetchAndStore(){
 
         data.services.forEach(function(svc){
 
+            ["next","next2","next3"].forEach(function(seq){
+
+                const b = svc[seq];
+                if (!b || !b.time) return;
+
+                records.push({
+                    bus_stop_code: stop,
+                    service_no: svc.no,
+                    operator: svc.operator || null,
+                    sequence: seq,
+                    estimated_arrival: b.time,
+                    latitude: b.lat || null,
+                    longitude: b.lng || null,
+                    load: b.load || null,
+                    bus_type: b.type || null,
+                    feature: b.feature || null,
+                    is_monitored: b.monitored === 1,
+                    collected_at: new Date().toISOString()
+                });
+
+            });
+
+        });
+
+        log("Records prepared: " + records.length);
+
+        // ✅ DEBUG mapping check
+        console.log("Sample record:", records[0]);
+
+        if(records.length === 0){
+            log("No data to insert");
+            return;
+        }
+
+        log("Sending to Supabase...");
+
+        await safeFetch(
+            CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals",
+            {
+                method: "POST",
+                headers: {
+                    "apikey": CONFIG.SUPABASE_KEY,
+                    "Authorization": "Bearer " + CONFIG.SUPABASE_KEY,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(records)
+            }
+        );
+
+        log("Insert success");
+
+    } catch(e) {
+        log("ERROR: " + e.message);
+    }
+}
+
+// ✅ start
+fetchAndStore();
+setInterval(fetchAndStore, CONFIG.REFRESH_INTERVAL_MS);
+
+</script>
+
+</body>
+</html>
