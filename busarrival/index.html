@@ -2,232 +2,422 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Bus Intelligence Dashboard V3</title>
+<title>Bus Intelligence Dashboard V4</title>
 
 <style>
-body { font-family: Arial; background:#111; color:#fff; padding:20px; }
-
-.section { margin-bottom:20px; }
-
-.card {
-    background:#222;
-    padding:10px;
-    margin:6px 0;
-    border-radius:8px;
+body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: #fff;
+    padding: 20px;
+    margin: 0;
 }
-
-.bus-no { font-size:20px; font-weight:bold; }
-
-.sea { color:lightgreen; }
-.sda { color:yellow; }
-.lsd { color:red; }
-
-.warn { color:orange; }
+h2, h3 {
+    margin-top: 0;
+}
+.section {
+    margin-bottom: 24px;
+}
+.card {
+    background: #1c1c1c;
+    border: 1px solid #2e2e2e;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 0;
+}
+.bus-no {
+    font-size: 20px;
+    font-weight: bold;
+}
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-right: 6px;
+    margin-top: 6px;
+}
+.sea { color: #7CFC98; }
+.sda { color: #FFD966; }
+.lsd { color: #FF7B7B; }
+.good {
+    color: #7CFC98;
+}
+.warn {
+    color: #FFD966;
+}
+.bad {
+    color: #FF7B7B;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+}
+.small {
+    color: #bbb;
+    font-size: 13px;
+}
+pre {
+    background: #0d0d0d;
+    border: 1px solid #2e2e2e;
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 220px;
+    overflow: auto;
+    white-space: pre-wrap;
+}
 </style>
-
 </head>
 
 <body>
 
-<h2>🚌 Bus Intelligence Dashboard V3</h2>
+<h2>🚌 Bus Intelligence Dashboard V4</h2>
+<div class="small">Prediction engine = live ETA + same time-period historical trend from Supabase</div>
+
+<h3>Debug Log</h3>
 <pre id="status">Starting...</pre>
 
 <div class="section">
-<h3>📱 Real-time Bus</h3>
-<div id="busList"></div>
+    <h3>📱 Real-Time Bus UI</h3>
+    <div id="busList" class="grid"></div>
 </div>
 
 <div class="section">
-<h3>🤖 Prediction</h3>
-<div id="prediction"></div>
+    <h3>🤖 V4 Prediction (Per Bus Number)</h3>
+    <div id="predictionList" class="grid"></div>
 </div>
 
 <div class="section">
-<h3>📊 Analytics (Supabase)</h3>
-<div id="analytics"></div>
+    <h3>📊 Analytics (Per Bus Number, Supabase)</h3>
+    <div id="analyticsList" class="grid"></div>
 </div>
 
-<!-- ✅ CORRECT SCRIPT (important fix) -->
-<script src="config.js"></script>
+<!-- IMPORTANT: this must exist and be in the same folder -->
+config.jsscript>
 
 <script>
-
 const statusEl = document.getElementById("status");
-const busList = document.getElementById("busList");
-const predictionEl = document.getElementById("prediction");
-const analyticsEl = document.getElementById("analytics");
+const busListEl = document.getElementById("busList");
+const predictionListEl = document.getElementById("predictionList");
+const analyticsListEl = document.getElementById("analyticsList");
 
-// ✅ log helper
-function log(msg){
+function log(msg) {
     console.log(msg);
-    statusEl.innerText += msg + "\n";
+    statusEl.innerText += msg + "\\n";
 }
 
-// ✅ ETA in minutes
-function getMins(t){
-    return Math.max(0, Math.round((new Date(t) - new Date()) / 60000));
+function getMinutes(eta) {
+    return Math.max(0, Math.round((new Date(eta) - new Date()) / 60000));
 }
 
-// ✅ load color
-function loadClass(load){
-    if(load==="SEA") return "sea";
-    if(load==="SDA") return "sda";
-    if(load==="LSD") return "lsd";
+function getLoadClass(load) {
+    if (load === "SEA") return "sea";
+    if (load === "SDA") return "sda";
+    if (load === "LSD") return "lsd";
     return "";
 }
 
-// ✅ render UI
-function render(data){
-
-    busList.innerHTML = "";
-    let waits = [];
-
-    data.services.forEach(svc => {
-
-        if(!svc.next || !svc.next.time) return;
-
-        let m1 = getMins(svc.next.time);
-        let m2 = svc.next2 ? getMins(svc.next2.time) : "-";
-
-        waits.push(m1);
-
-        let warn = "";
-        if(svc.next2 && (m2 - m1) > 15){
-            warn = "<div class='warn'>⚠ Delay detected</div>";
-        }
-
-        let div = document.createElement("div");
-        div.className="card";
-
-        div.innerHTML = `
-            <div class="bus-no">Bus ${svc.no} (${svc.operator})</div>
-            <div class="${loadClass(svc.next.load)}">
-                Next: ${m1} mins | ${svc.next.load} | ${svc.next.type}
-            </div>
-            <div>Next2: ${m2} mins</div>
-            ${warn}
-        `;
-
-        busList.appendChild(div);
-    });
-
-    updatePrediction(waits);
+function median(arr) {
+    if (!arr.length) return null;
+    const sorted = [...arr].sort((a,b) => a-b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0
+        ? (sorted[mid - 1] + sorted[mid]) / 2
+        : sorted[mid];
 }
 
-// ✅ prediction
-function updatePrediction(waits){
-    if(waits.length === 0) return;
-
-    let avg = Math.round(waits.reduce((a,b)=>a+b,0)/waits.length);
-    let min = Math.min(...waits);
-    let max = Math.max(...waits);
-
-    predictionEl.innerHTML = `
-        Avg wait: ${avg} mins <br>
-        Shortest: ${min} mins <br>
-        Longest: ${max} mins
-    `;
+function percentile(arr, p) {
+    if (!arr.length) return null;
+    const sorted = [...arr].sort((a,b) => a-b);
+    const idx = Math.floor((p / 100) * (sorted.length - 1));
+    return sorted[idx];
 }
 
-// ✅ supabase analytics
-async function loadAnalytics(){
+// 30-minute bucket: 13:00, 13:30, 14:00, etc.
+function timeBucket(dateObj) {
+    const d = new Date(dateObj);
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const bucketMinute = m < 30 ? "00" : "30";
+    return String(h).padStart(2, "0") + ":" + bucketMinute;
+}
 
-    try{
+function isWeekend(dateObj) {
+    const d = new Date(dateObj);
+    const day = d.getDay(); // 0=Sun, 6=Sat
+    return day === 0 || day === 6;
+}
 
-        const url = CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals?select=service_no,estimated_arrival,collected_at&limit=200";
+function dayType(dateObj) {
+    return isWeekend(dateObj) ? "weekend" : "weekday";
+}
 
-        let resp = await fetch(url,{
-            headers:{
-                "apikey": CONFIG.SUPABASE_KEY
-            }
-        });
+async function fetchLiveData() {
+    const stop = CONFIG.BUS_STOPS[0];
+    const url = "https://arrivelah2.busrouter.sg/?id=" + stop;
+    log("Fetching live API: " + url);
 
-        let data = await resp.json();
-
-        log("Loaded analytics rows: " + data.length);
-
-        let map = {};
-
-        data.forEach(r=>{
-            let mins = Math.round((new Date(r.estimated_arrival) - new Date(r.collected_at))/60000);
-            if(!map[r.service_no]) map[r.service_no]=[];
-            map[r.service_no].push(mins);
-        });
-
-        let out = "";
-
-        for(let svc in map){
-            let avg = Math.round(map[svc].reduce((a,b)=>a+b,0)/map[svc].length);
-            out += `Bus ${svc} avg wait: ${avg} mins<br>`;
-        }
-
-        analyticsEl.innerHTML = out;
-
-    }catch(e){
-        log("Analytics error: " + e.message);
+    const resp = await fetch(url);
+    if (!resp.ok) {
+        throw new Error("Live API HTTP " + resp.status);
     }
+    const data = await resp.json();
 
+    log("Live API OK, services returned: " + (data.services ? data.services.length : 0));
+    return data;
 }
 
-// ✅ store to DB
-async function store(data){
-
+async function fetchHistoryRows() {
     const stop = CONFIG.BUS_STOPS[0];
 
-    let records=[];
+    const url =
+        CONFIG.SUPABASE_URL +
+        "/rest/v1/bus_arrivals" +
+        "?select=bus_stop_code,service_no,operator,sequence,estimated_arrival,collected_at,load,bus_type,feature,is_monitored" +
+        "&bus_stop_code=eq." + encodeURIComponent(stop) +
+        "&sequence=eq.next" +
+        "&order=collected_at.desc" +
+        "&limit=" + (CONFIG.HISTORY_LIMIT || 500);
 
-    data.services.forEach(svc=>{
-        ["next","next2","next3"].forEach(seq=>{
-            let b = svc[seq];
-            if(!b || !b.time) return;
+    log("Fetching Supabase analytics: " + url);
+
+    const resp = await fetch(url, {
+        headers: {
+            "apikey": CONFIG.SUPABASE_KEY,
+            "Authorization": "Bearer " + CONFIG.SUPABASE_KEY
+        }
+    });
+
+    if (!resp.ok) {
+        const t = await resp.text();
+        throw new Error("Supabase history HTTP " + resp.status + " -> " + t);
+    }
+
+    const rows = await resp.json();
+    log("Supabase rows loaded: " + rows.length);
+    return rows;
+}
+
+async function storeLiveSnapshot(data) {
+    const stop = CONFIG.BUS_STOPS[0];
+    let records = [];
+
+    data.services.forEach(function(svc) {
+        ["next", "next2", "next3"].forEach(function(seq) {
+            const b = svc[seq];
+            if (!b || !b.time) return;
 
             records.push({
                 bus_stop_code: stop,
                 service_no: svc.no,
-                operator: svc.operator,
+                operator: svc.operator || null,
                 sequence: seq,
                 estimated_arrival: b.time,
-                load: b.load,
-                bus_type: b.type,
+                latitude: typeof b.lat === "number" ? b.lat : null,
+                longitude: typeof b.lng === "number" ? b.lng : null,
+                load: b.load || null,
+                bus_type: b.type || null,
+                feature: b.feature || null,
+                is_monitored: b.monitored === 1,
                 collected_at: new Date().toISOString()
             });
         });
     });
 
-    await fetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals",{
-        method:"POST",
-        headers:{
-            "apikey":CONFIG.SUPABASE_KEY,
-            "Authorization":"Bearer " + CONFIG.SUPABASE_KEY,
-            "Content-Type":"application/json"
+    if (records.length === 0) {
+        log("No records to insert");
+        return;
+    }
+
+    // sample mapping check
+    console.log("Sample record to insert:", records[0]);
+    log("Sample record printed in console (F12)");
+
+    const resp = await fetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals", {
+        method: "POST",
+        headers: {
+            "apikey": CONFIG.SUPABASE_KEY,
+            "Authorization": "Bearer " + CONFIG.SUPABASE_KEY,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
         },
         body: JSON.stringify(records)
     });
 
-    log("Stored to DB");
+    if (!resp.ok) {
+        const t = await resp.text();
+        throw new Error("Supabase insert HTTP " + resp.status + " -> " + t);
+    }
+
+    log("Stored " + records.length + " rows to Supabase");
 }
 
-// ✅ main
-async function main(){
+function renderLiveUI(liveData) {
+    busListEl.innerHTML = "";
 
-    try{
-        log("Fetching API...");
+    liveData.services.forEach(function(svc) {
+        if (!svc.next || !svc.next.time) return;
 
-        let resp = await fetch("https://arrivelah2.busrouter.sg/?id=" + CONFIG.BUS_STOPS[0]);
-        let data = await resp.json();
+        const nextMin = getMinutes(svc.next.time);
+        const next2Min = svc.next2 && svc.next2.time ? getMinutes(svc.next2.time) : null;
+        const next3Min = svc.next3 && svc.next3.time ? getMinutes(svc.next3.time) : null;
+        const delayGap = next2Min !== null ? (next2Min - nextMin) : null;
+        const delayFlag = delayGap !== null && delayGap > (CONFIG.DELAY_THRESHOLD_MINUTES || 15);
 
-        render(data);
-        store(data);
-        loadAnalytics();
+        const div = document.createElement("div");
+        div.className = "card";
 
-    }catch(e){
+        div.innerHTML = `
+            <div class="bus-no">Bus ${svc.no} (${svc.operator || "Unknown"})</div>
+            <div class="${getLoadClass(svc.next.load)}">
+                Next: ${nextMin} mins | Load: ${svc.next.load || "N/A"} | Type: ${svc.next.type || "N/A"}
+            </div>
+            <div>Next2: ${next2Min !== null ? next2Min + " mins" : "-"}</div>
+            <div>Next3: ${next3Min !== null ? next3Min + " mins" : "-"}</div>
+            <div class="small">
+                ${svc.next.feature ? "Feature: " + svc.next.feature + " | " : ""}
+                ${svc.next.monitored === 1 ? "Live GPS" : "Estimated"}
+            </div>
+            ${delayFlag ? `<div class="warn">⚠ Possible delay: gap is ${delayGap} mins</div>` : ""}
+        `;
+
+        busListEl.appendChild(div);
+    });
+}
+
+function renderPredictions(liveData, historyRows) {
+    predictionListEl.innerHTML = "";
+
+    const now = new Date();
+    const currentBucket = timeBucket(now);
+    const currentDayType = dayType(now);
+
+    liveData.services.forEach(function(svc) {
+        if (!svc.next || !svc.next.time) return;
+
+        const serviceNo = svc.no;
+        const liveWait = getMinutes(svc.next.time);
+
+        // Match history for same service + same stop + same day type + same 30-min bucket
+        const matchedRows = historyRows.filter(function(r) {
+            if (r.service_no !== serviceNo) return false;
+            if (dayType(r.collected_at) !== currentDayType) return false;
+            if (timeBucket(r.collected_at) !== currentBucket) return false;
+
+            const wait = Math.round((new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000);
+            return Number.isFinite(wait) && wait >= 0 && wait <= 120;
+        });
+
+        const historicalWaits = matchedRows.map(function(r) {
+            return Math.round((new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000);
+        });
+
+        const histMedian = median(historicalWaits);
+        const p25 = percentile(historicalWaits, 25);
+        const p75 = percentile(historicalWaits, 75);
+
+        // Hybrid prediction: 70% current live ETA + 30% historical median
+        let predictedWait;
+        if (histMedian !== null) {
+            predictedWait = Math.round((0.7 * liveWait) + (0.3 * histMedian));
+        } else {
+            predictedWait = liveWait;
+        }
+
+        const predictedArrival = new Date(Date.now() + predictedWait * 60000);
+
+        let speedLabel = "Normal";
+        let speedClass = "good";
+        if (histMedian !== null) {
+            if (liveWait > histMedian + 3) {
+                speedLabel = "Slower than normal";
+                speedClass = "bad";
+            } else if (liveWait < histMedian - 2) {
+                speedLabel = "Faster than normal";
+                speedClass = "good";
+            } else {
+                speedLabel = "Near normal";
+                speedClass = "warn";
+            }
+        }
+
+        const div = document.createElement("div");
+        div.className = "card";
+
+        div.innerHTML = `
+            <div class="bus-no">Bus ${serviceNo}</div>
+            <div>Live ETA now: <b>${liveWait} mins</b></div>
+            <div>Historical median (${currentDayType}, ${currentBucket}): <b>${histMedian !== null ? histMedian + " mins" : "Not enough data"}</b></div>
+            <div>Predicted arrival: <b>${predictedArrival.toLocaleTimeString()}</b></div>
+            <div>Predicted wait: <b>${predictedWait} mins</b></div>
+            <div>Confidence band: <b>${p25 !== null && p75 !== null ? p25 + "–" + p75 + " mins" : "N/A"}</b></div>
+            <div class="${speedClass}">${speedLabel}</div>
+            <div class="small">Matched historical samples: ${historicalWaits.length}</div>
+        `;
+
+        predictionListEl.appendChild(div);
+    });
+}
+
+function renderAnalytics(historyRows) {
+    analyticsListEl.innerHTML = "";
+
+    const grouped = {};
+
+    historyRows.forEach(function(r) {
+        const serviceNo = r.service_no;
+        const wait = Math.round((new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000);
+        if (!Number.isFinite(wait) || wait < 0 || wait > 120) return;
+
+        if (!grouped[serviceNo]) grouped[serviceNo] = [];
+        grouped[serviceNo].push(wait);
+    });
+
+    Object.keys(grouped).sort(function(a,b){
+        return Number(a) - Number(b);
+    }).forEach(function(serviceNo) {
+        const waits = grouped[serviceNo];
+        const avg = Math.round(waits.reduce((a,b)=>a+b,0) / waits.length);
+        const med = median(waits);
+        const min = Math.min(...waits);
+        const max = Math.max(...waits);
+
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+            <div class="bus-no">Bus ${serviceNo}</div>
+            <div>Samples: ${waits.length}</div>
+            <div>Average wait: ${avg} mins</div>
+            <div>Median wait: ${med} mins</div>
+            <div>Fastest observed: ${min} mins</div>
+            <div>Slowest observed: ${max} mins</div>
+        `;
+        analyticsListEl.appendChild(div);
+    });
+}
+
+async function main() {
+    try {
+        log("Starting refresh cycle...");
+
+        const liveData = await fetchLiveData();
+        renderLiveUI(liveData);
+
+        const historyRows = await fetchHistoryRows();
+        renderPredictions(liveData, historyRows);
+        renderAnalytics(historyRows);
+
+        await storeLiveSnapshot(liveData);
+
+        log("Refresh cycle completed");
+    } catch (e) {
         log("ERROR: " + e.message);
     }
 }
 
 main();
 setInterval(main, CONFIG.REFRESH_INTERVAL_MS);
-
 </script>
 
 </body>
