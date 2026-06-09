@@ -1,30 +1,32 @@
-# Bus Intelligence System
+# Bus Intelligence System (Debug Enabled)
 
 ## Overview
-Complete system for:
-- Data collection
-- Dashboard visualization
-- Basic prediction
+Includes debug mode for troubleshooting API and database issues.
 
-## Components
-- Collector (index.html)
-- Config (config.js)
-- Database (Supabase)
-- Prediction (prediction.js)
+## How to Enable Debug
+Edit config.js:
 
-## Setup
-1. Create Supabase table using schema.sql
-2. Update config.js (URL + key)
-3. Upload to GitHub Pages
-4. Open webpage
+DEBUG: {
+  ENABLE: true
+}
 
-## Features
-- Auto API polling every 5 minutes
-- Dashboard with charts
-- Data storage in Supabase
-- Prediction logic (average wait)
+## Debug Output
+- Shows live logs on webpage
+- Also visible in browser console (F12)
 
-## Future Enhancements
-- ML prediction
-- Multi-stop dashboard
-- Alerts
+## Troubleshooting
+
+### API Issue
+"Failed to fetch"
+
+### Supabase Issue
+"HTTP 401 Unauthorized"
+
+### No Data
+"No records to insert"
+
+## Files
+- index.html (debug enabled)
+- config.js (settings)
+
+Open page + press F12 to view full logs

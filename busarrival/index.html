@@ -2,13 +2,14 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Bus Intelligence System</title>
+<title>Bus Intelligence Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <h2>🚌 Bus Intelligence Dashboard</h2>
-<p id="status">Starting...</p>
+<pre id="status">Starting...</pre>
+
 <canvas id="chart" width="400" height="200"></canvas>
 
 <script src="config.js"></script>
@@ -16,66 +17,97 @@
 
 const statusEl = document.getElementById("status");
 
-async function fetchAndStore(){
-    const stop = CONFIG.BUS_STOPS[0];
-    const resp = await fetch("https://arrivelah2.busrouter.sg/?id=" + stop);
-    const data = await resp.json();
-
-    let records = [];
-
-    data.services.forEach(svc => {
-        if(CONFIG.FILTER.ENABLE_SERVICE_FILTER && !CONFIG.FILTER.SERVICES.includes(svc.no)) return;
-
-        ["next","next2","next3"].forEach(seq => {
-            const b = svc[seq];
-            if(!b || !b.time) return;
-
-            records.push({
-                bus_stop_code: stop,
-                service_no: svc.no,
-                sequence: seq,
-                estimated_arrival: b.time,
-                collected_at: new Date().toISOString()
-            });
-        });
-    });
-
-    await fetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals", {
-        method: "POST",
-        headers: {
-            "apikey": CONFIG.SUPABASE_KEY,
-            "Authorization": "Bearer " + CONFIG.SUPABASE_KEY,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(records)
-    });
-
-    statusEl.innerText = "Updated " + new Date().toLocaleTimeString();
+// Debug logger
+function log(msg, obj=null) {
+    console.log(msg, obj || "");
+    if (CONFIG.DEBUG?.ENABLE) {
+        statusEl.innerText += msg + "
+";
+    }
 }
 
-async function loadChart(){
-    const resp = await fetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals?select=service_no,collected_at"," ,{ headers:{"apikey":CONFIG.SUPABASE_KEY}});
-    const data = await resp.json();
-
-    const counts = {};
-    data.forEach(d=>{
-        counts[d.service_no] = (counts[d.service_no]||0)+1;
-    });
-
-    new Chart(document.getElementById("chart"), {
-        type: 'bar',
-        data: {
-            labels: Object.keys(counts),
-            datasets: [{
-                label: 'Records per Service',
-                data: Object.values(counts)
-            }]
+async function safeFetch(url, options={}){
+    try {
+        log("➡️ Calling: " + url);
+        const res = await fetch(url, options);
+        if (!res.ok) {
+            const t = await res.text();
+            throw new Error("HTTP " + res.status + " → " + t);
         }
-    });
+        return res;
+    } catch(err){
+        log("❌ ERROR: " + err.message);
+        throw err;
+    }
+}
+
+function isWithinTimeWindow(){
+    if(!CONFIG.TIME_WINDOW.ENABLE) return true;
+    const h = new Date().getHours();
+    return h >= CONFIG.TIME_WINDOW.START_HOUR && h < CONFIG.TIME_WINDOW.END_HOUR;
+}
+
+async function fetchAndStore(){
+    try {
+        if(!isWithinTimeWindow()){
+            log("⏸ Outside time window");
+            return;
+        }
+
+        const stop = CONFIG.BUS_STOPS[0];
+
+        log("📡 Fetching API...");
+        const resp = await safeFetch("https://arrivelah2.busrouter.sg/?id=" + stop);
+        const data = await resp.json();
+        log("✅ API OK");
+
+        let records = [];
+
+        data.services.forEach(svc=>{
+            if(CONFIG.FILTER.ENABLE_SERVICE_FILTER && !CONFIG.FILTER.SERVICES.includes(svc.no)) return;
+
+            ["next","next2","next3"].forEach(seq=>{
+                const b = svc[seq];
+                if(!b || !b.time) return;
+
+                records.push({
+                    bus_stop_code: stop,
+                    service_no: svc.no,
+                    sequence: seq,
+                    estimated_arrival: b.time,
+                    collected_at: new Date().toISOString()
+                });
+            });
+        });
+
+        log("📊 Records prepared: " + records.length);
+
+        if(records.length === 0){
+            log("⚠️ No records to insert");
+            return;
+        }
+
+        log("📤 Sending to Supabase...");
+
+        await safeFetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals",{
+            method:"POST",
+            headers:{
+                "apikey": CONFIG.SUPABASE_KEY,
+                "Authorization": "Bearer " + CONFIG.SUPABASE_KEY,
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal"
+            },
+            body: JSON.stringify(records)
+        });
+
+        log("✅ Insert success at " + new Date().toLocaleTimeString());
+
+    } catch(e){
+        console.error(e);
+    }
 }
 
 fetchAndStore();
-loadChart();
 setInterval(fetchAndStore, CONFIG.REFRESH_INTERVAL_MS);
 
 </script>
