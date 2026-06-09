@@ -3,51 +3,30 @@
 <head>
 <meta charset="utf-8">
 <title>Bus Intelligence Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <h2>🚌 Bus Intelligence Dashboard</h2>
 <pre id="status">Starting...</pre>
-<canvas id="chart" width="400" height="200"></canvas>
 
 <script src="config.js"></script>
-
 <script>
 
 const statusEl = document.getElementById("status");
 
-// ✅ Debug logger
-function log(msg) {
+function log(msg){
     console.log(msg);
-    statusEl.innerText += msg + "\n";
+    statusEl.innerText += msg + "
+";
 }
 
-// ✅ Safe fetch
-async function safeFetch(url, options={}) {
-    log("Calling: " + url);
-
-    const res = await fetch(url, options);
-
-    if (!res.ok) {
-        const t = await res.text();
-        throw new Error("HTTP " + res.status + " -> " + t);
-    }
-
-    return res;
-}
-
-// ✅ Main logic
-async function fetchAndStore() {
-
+async function fetchAndStore(){
     try {
         const stop = CONFIG.BUS_STOPS[0];
 
         log("Fetching API...");
-        const resp = await safeFetch("https://arrivelah2.busrouter.sg/?id=" + stop);
-
+        const resp = await fetch("https://arrivelah2.busrouter.sg/?id=" + stop);
         const data = await resp.json();
-        log("API OK");
 
         let records = [];
 
@@ -61,8 +40,15 @@ async function fetchAndStore() {
                 records.push({
                     bus_stop_code: stop,
                     service_no: svc.no,
+                    operator: svc.operator || null,
                     sequence: seq,
                     estimated_arrival: b.time,
+                    latitude: b.lat || null,
+                    longitude: b.lng || null,
+                    load: b.load || null,
+                    bus_type: b.type || null,
+                    feature: b.feature || null,
+                    is_monitored: b.monitored === 1,
                     collected_at: new Date().toISOString()
                 });
 
@@ -70,16 +56,16 @@ async function fetchAndStore() {
 
         });
 
-        log("Records prepared: " + records.length);
+        // ✅ DEBUG LOG - mapping check
+        console.log("Sample record:", records[0]);
+        log("Sample record printed in console (F12)");
 
         if (records.length === 0) {
             log("No data to insert");
             return;
         }
 
-        log("Sending to Supabase...");
-
-        await safeFetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals", {
+        await fetch(CONFIG.SUPABASE_URL + "/rest/v1/bus_arrivals", {
             method: "POST",
             headers: {
                 "apikey": CONFIG.SUPABASE_KEY,
@@ -100,7 +86,6 @@ fetchAndStore();
 setInterval(fetchAndStore, CONFIG.REFRESH_INTERVAL_MS);
 
 </script>
-
 
 </body>
 </html>
