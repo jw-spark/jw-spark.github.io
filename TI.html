@@ -3,22 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Threat Intelligence Lookup Dashboard</title>
+<title>Threat Intelligence Lookup Dashboard v2</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0d1117;--card:#161b22;--card-hover:#1c2333;--border:#30363d;--accent:#58a6ff;--danger:#f85149;--warning:#d29922;--success:#3fb950;--info:#79c0ff;--text:#e6edf3;--text-dim:#8b949e;--mono:'Consolas','Monaco','Courier New',monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,sans-serif}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;padding:0}
-/* Scrollbar */
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 ::-webkit-scrollbar-thumb:hover{background:#484f58}
-/* Header */
 .header{background:linear-gradient(135deg,#0d1117 0%,#161b22 50%,#0d1117 100%);border-bottom:1px solid var(--border);padding:20px 0;text-align:center}
 .header h1{font-size:1.6rem;letter-spacing:1px;color:var(--accent);margin-bottom:4px}
 .header .subtitle{font-size:.85rem;color:var(--text-dim)}
 .container{max-width:1400px;margin:0 auto;padding:20px}
-/* Input Section */
 .input-section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:20px}
 .input-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .input-row input[type="text"]{flex:1;min-width:250px;background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:12px 16px;font-size:1rem;font-family:var(--mono);color:var(--text);outline:none;transition:border-color .2s}
@@ -33,7 +30,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .input-type-badge{padding:6px 12px;border-radius:20px;font-size:.75rem;font-family:var(--mono);background:#0d1117;border:1px solid var(--border);color:var(--text-dim)}
 .input-type-badge.ip{border-color:var(--accent);color:var(--accent)}
 .input-type-badge.domain{border-color:var(--success);color:var(--success)}
-/* Config Panel */
 .config-toggle{display:flex;align-items:center;gap:8px;margin-top:16px;cursor:pointer;color:var(--text-dim);font-size:.85rem;user-select:none}
 .config-toggle:hover{color:var(--text)}
 .config-toggle svg{transition:transform .2s}
@@ -42,36 +38,34 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .config-panel.show{display:block}
 .config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .config-item label{display:block;font-size:.75rem;color:var(--text-dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-.config-item input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:.8rem;color:var(--text);outline:none}
+.config-item input[type="text"],.config-item input[type="password"]{width:100%;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:.8rem;color:var(--text);outline:none}
 .config-item input:focus{border-color:var(--accent)}
-.config-actions{margin-top:12px;display:flex;gap:8px}
+.config-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.config-section-title{font-size:.8rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-top:18px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.config-section-title:first-child{margin-top:0}
+.cors-note{font-size:.75rem;color:var(--warning);margin-top:8px;line-height:1.5;padding:8px 12px;background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.2);border-radius:6px}
+.cors-note code{background:rgba(255,255,255,.08);padding:2px 5px;border-radius:3px;font-family:var(--mono);font-size:.72rem}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.checkbox-row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+.checkbox-row label{font-size:.82rem;color:var(--text);cursor:pointer}
 /* Summary */
 .summary-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
 .summary-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
 .summary-card .label{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px}
 .summary-card .value{font-size:1.5rem;font-weight:700;font-family:var(--mono)}
-.summary-card .value.low{color:var(--success)}
-.summary-card .value.medium{color:var(--warning)}
-.summary-card .value.high{color:var(--danger)}
-.summary-card .value.critical{color:#ff6b6b;text-shadow:0 0 10px rgba(255,107,107,.4)}
-.summary-card .value.info{color:var(--accent)}
-/* Quick Links */
+.summary-card .value.low{color:var(--success)}.summary-card .value.medium{color:var(--warning)}.summary-card .value.high{color:var(--danger)}.summary-card .value.critical{color:#ff6b6b;text-shadow:0 0 10px rgba(255,107,107,.4)}.summary-card .value.info{color:var(--accent)}
 .quick-links{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
 .quick-links h3{font-size:.85rem;color:var(--text-dim);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
 .links-wrap{display:flex;flex-wrap:wrap;gap:8px}
 .links-wrap a{padding:6px 14px;border:1px solid var(--border);border-radius:20px;color:var(--text);text-decoration:none;font-size:.8rem;transition:all .2s;background:rgba(255,255,255,.02)}
 .links-wrap a:hover{border-color:var(--accent);color:var(--accent);background:rgba(88,166,255,.08)}
-/* Results Grid */
 .results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;margin-bottom:30px}
 .result-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s}
 .result-card:hover{border-color:#484f58}
 .result-card-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.01)}
 .result-card-header .source-name{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:8px}
 .result-card-header .source-name .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.dot.green{background:var(--success)}
-.dot.yellow{background:var(--warning)}
-.dot.red{background:var(--danger)}
-.dot.gray{background:var(--text-dim)}
+.dot.green{background:var(--success)}.dot.yellow{background:var(--warning)}.dot.red{background:var(--danger)}.dot.gray{background:var(--text-dim)}
 .dot.loading{background:var(--accent);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .result-card-header .badge{padding:3px 10px;border-radius:12px;font-size:.7rem;font-weight:600;font-family:var(--mono)}
@@ -88,17 +82,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .result-row:last-child{border-bottom:none}
 .result-row .rk{color:var(--text-dim);font-size:.8rem;min-width:120px}
 .result-row .rv{font-family:var(--mono);font-size:.8rem;text-align:right;word-break:break-all}
-.rv.danger{color:var(--danger)}
-.rv.warning{color:var(--warning)}
-.rv.success{color:var(--success)}
+.rv.danger{color:var(--danger)}.rv.warning{color:var(--warning)}.rv.success{color:var(--success)}
 .error-msg{color:var(--danger);font-size:.8rem;font-style:italic}
 .no-key-msg{color:var(--text-dim);font-size:.8rem;font-style:italic}
-/* Timestamp & Actions Row */
 .actions-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .timestamp{font-size:.8rem;color:var(--text-dim);font-family:var(--mono)}
-/* Footer */
 .footer{text-align:center;padding:30px;color:var(--text-dim);font-size:.75rem;border-top:1px solid var(--border);margin-top:40px}
-/* Responsive */
+.proxy-status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:.72rem;font-family:var(--mono);margin-left:8px}
+.proxy-status.on{background:rgba(63,185,80,.12);color:var(--success);border:1px solid rgba(63,185,80,.25)}
+.proxy-status.off{background:rgba(139,148,158,.1);color:var(--text-dim);border:1px solid rgba(139,148,158,.2)}
 @media(max-width:600px){
   .results-grid{grid-template-columns:1fr}
   .input-row{flex-direction:column}
@@ -111,7 +103,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
 <div class="header">
   <h1>&#128737; Threat Intelligence Lookup Dashboard</h1>
-  <div class="subtitle">Query multiple TI sources for IP addresses &amp; domains</div>
+  <div class="subtitle">Query multiple TI sources for IP addresses &amp; domains
+    <span class="proxy-status" id="proxyStatusBadge">—</span>
+  </div>
 </div>
 
 <div class="container">
@@ -129,9 +123,36 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
   <!-- Config Toggle -->
   <div class="config-toggle" id="configToggle" onclick="toggleConfig()">
     <svg width="12" height="12" viewBox="0 0 12 12"><path d="M4 1l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-    <span>&#9881; API Key Configuration (stored locally in your browser)</span>
+    <span>&#9881; API Keys &amp; CORS Proxy Configuration</span>
   </div>
   <div class="config-panel" id="configPanel">
+
+    <!-- CORS Proxy Section -->
+    <div class="config-section-title">&#127760; CORS Proxy (Required for GitHub Pages / Web Hosting)</div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="cors_enabled" checked>
+      <label for="cors_enabled">Enable CORS Proxy for API requests</label>
+    </div>
+    <div class="config-grid">
+      <div class="config-item" style="grid-column:1/-1;max-width:600px">
+        <label>CORS Proxy URL</label>
+        <input type="text" id="cors_proxy" value="https://corsproxy.io/?" placeholder="https://corsproxy.io/? or https://api.allorigins.win/raw?url=">
+      </div>
+    </div>
+    <div class="cors-note">
+      &#9888;&#65039; <b>Why is this needed?</b> Browsers block cross-origin API calls (CORS policy). When hosting on GitHub Pages or any web server,
+      a proxy is required to relay requests. Not needed when opening the HTML locally via <code>file://</code>.<br><br>
+      <b>Free CORS proxies:</b><br>
+      &bull; <code>https://corsproxy.io/?</code> — most reliable, recommended<br>
+      &bull; <code>https://api.allorigins.win/raw?url=</code><br>
+      &bull; <code>https://cors-anywhere.herokuapp.com/</code> (requires activation first)<br><br>
+      <b>&#128272; More secure alternative:</b> Deploy your own Cloudflare Worker as a private proxy for free (100K requests/day). 
+      This avoids sending API keys through third-party proxies.
+      See <a href="https://developers.cloudflare.com/workers/examples/cors-header-proxy/" target="_blank" style="color:var(--accent)">Cloudflare CORS Proxy guide</a>.
+    </div>
+
+    <!-- API Keys Section -->
+    <div class="config-section-title" style="margin-top:24px">&#128273; API Keys (stored in your browser's localStorage)</div>
     <div class="config-grid">
       <div class="config-item">
         <label>AbuseIPDB API Key</label>
@@ -158,8 +179,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <input type="password" id="key_ipinfo" placeholder="Enter token (free tier)...">
       </div>
     </div>
+
     <div class="config-actions">
-      <button class="btn btn-small btn-primary" onclick="saveKeys()">&#128190; Save Keys</button>
+      <button class="btn btn-small btn-primary" onclick="saveKeys()">&#128190; Save All Settings</button>
       <button class="btn btn-small" onclick="toggleKeyVisibility()">&#128065; Toggle Visibility</button>
       <button class="btn btn-small btn-danger" onclick="clearKeys()">&#128465; Clear All Keys</button>
     </div>
@@ -168,26 +190,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
 <!-- Summary Bar -->
 <div class="summary-bar" id="summaryBar" style="display:none">
-  <div class="summary-card">
-    <div class="label">Target</div>
-    <div class="value info" id="sumTarget" style="font-size:1rem;word-break:break-all">—</div>
-  </div>
-  <div class="summary-card">
-    <div class="label">Type</div>
-    <div class="value info" id="sumType">—</div>
-  </div>
-  <div class="summary-card">
-    <div class="label">Sources Checked</div>
-    <div class="value info" id="sumChecked">0</div>
-  </div>
-  <div class="summary-card">
-    <div class="label">Flagged Malicious</div>
-    <div class="value" id="sumMalicious">0</div>
-  </div>
-  <div class="summary-card">
-    <div class="label">Overall Risk</div>
-    <div class="value" id="sumRisk">—</div>
-  </div>
+  <div class="summary-card"><div class="label">Target</div><div class="value info" id="sumTarget" style="font-size:1rem;word-break:break-all">—</div></div>
+  <div class="summary-card"><div class="label">Type</div><div class="value info" id="sumType">—</div></div>
+  <div class="summary-card"><div class="label">Sources Checked</div><div class="value info" id="sumChecked">0</div></div>
+  <div class="summary-card"><div class="label">Flagged Malicious</div><div class="value" id="sumMalicious">0</div></div>
+  <div class="summary-card"><div class="label">Overall Risk</div><div class="value" id="sumRisk">—</div></div>
 </div>
 
 <!-- Actions Row -->
@@ -208,10 +215,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 <div class="results-grid" id="resultsGrid"></div>
 
 <div class="footer">
-  Threat Intelligence Lookup Dashboard &bull; All API calls are made directly from your browser &bull; API keys are stored in localStorage only &bull; No data is sent to any third-party server beyond the TI providers
+  Threat Intelligence Lookup Dashboard v2 &bull; CORS-Proxy enabled for web hosting &bull; API keys stored in localStorage only &bull; No backend server required
 </div>
 
-</div><!-- /container -->
+</div>
 
 <script>
 // ===== GLOBALS =====
@@ -232,28 +239,28 @@ const SERVICES = [
 ];
 
 const QUICK_LINKS = {
-  ip: [
-    {name:'AbuseIPDB',    url:'https://www.abuseipdb.com/check/{q}'},
-    {name:'VirusTotal',   url:'https://www.virustotal.com/gui/ip-address/{q}'},
-    {name:'Shodan',       url:'https://www.shodan.io/host/{q}'},
-    {name:'GreyNoise',    url:'https://viz.greynoise.io/ip/{q}'},
-    {name:'Censys',       url:'https://search.censys.io/hosts/{q}'},
-    {name:'IBM X-Force',  url:'https://exchange.xforce.ibmcloud.com/ip/{q}'},
-    {name:'ThreatBook',   url:'https://x.threatbook.com/v5/ip/{q}'},
-    {name:'IPinfo',       url:'https://ipinfo.io/{q}'},
-    {name:'URLhaus',      url:'https://urlhaus.abuse.ch/browse.php?search={q}'},
-    {name:'OTX',          url:'https://otx.alienvault.com/indicator/ip/{q}'},
-    {name:'Criminal IP',  url:'https://www.criminalip.io/asset/report/{q}'},
-    {name:'Talos',        url:'https://talosintelligence.com/reputation_center/lookup?search={q}'},
+  ip:[
+    {name:'AbuseIPDB',url:'https://www.abuseipdb.com/check/{q}'},
+    {name:'VirusTotal',url:'https://www.virustotal.com/gui/ip-address/{q}'},
+    {name:'Shodan',url:'https://www.shodan.io/host/{q}'},
+    {name:'GreyNoise',url:'https://viz.greynoise.io/ip/{q}'},
+    {name:'Censys',url:'https://search.censys.io/hosts/{q}'},
+    {name:'IBM X-Force',url:'https://exchange.xforce.ibmcloud.com/ip/{q}'},
+    {name:'ThreatBook',url:'https://x.threatbook.com/v5/ip/{q}'},
+    {name:'IPinfo',url:'https://ipinfo.io/{q}'},
+    {name:'URLhaus',url:'https://urlhaus.abuse.ch/browse.php?search={q}'},
+    {name:'OTX',url:'https://otx.alienvault.com/indicator/ip/{q}'},
+    {name:'Criminal IP',url:'https://www.criminalip.io/asset/report/{q}'},
+    {name:'Talos',url:'https://talosintelligence.com/reputation_center/lookup?search={q}'},
   ],
-  domain: [
-    {name:'VirusTotal',   url:'https://www.virustotal.com/gui/domain/{q}'},
-    {name:'Censys',       url:'https://search.censys.io/search?resource=hosts&q={q}'},
-    {name:'IBM X-Force',  url:'https://exchange.xforce.ibmcloud.com/url/{q}'},
-    {name:'ThreatBook',   url:'https://x.threatbook.com/v5/domain/{q}'},
-    {name:'URLhaus',      url:'https://urlhaus.abuse.ch/browse.php?search={q}'},
-    {name:'OTX',          url:'https://otx.alienvault.com/indicator/domain/{q}'},
-    {name:'Talos',        url:'https://talosintelligence.com/reputation_center/lookup?search={q}'},
+  domain:[
+    {name:'VirusTotal',url:'https://www.virustotal.com/gui/domain/{q}'},
+    {name:'Censys',url:'https://search.censys.io/search?resource=hosts&q={q}'},
+    {name:'IBM X-Force',url:'https://exchange.xforce.ibmcloud.com/url/{q}'},
+    {name:'ThreatBook',url:'https://x.threatbook.com/v5/domain/{q}'},
+    {name:'URLhaus',url:'https://urlhaus.abuse.ch/browse.php?search={q}'},
+    {name:'OTX',url:'https://otx.alienvault.com/indicator/domain/{q}'},
+    {name:'Talos',url:'https://talosintelligence.com/reputation_center/lookup?search={q}'},
     {name:'SecurityTrails',url:'https://securitytrails.com/domain/{q}/dns'},
   ]
 };
@@ -262,6 +269,25 @@ const QUICK_LINKS = {
 function isIP(val){ return /^(\d{1,3}\.){3}\d{1,3}$/.test(val) || /^[0-9a-fA-F:]+$/.test(val); }
 function getKey(field){ return field ? (document.getElementById(field)?.value || '').trim() : ''; }
 function esc(s){ if(!s) return ''; let d=document.createElement('div'); d.textContent=String(s); return d.innerHTML; }
+
+// ===== CORS PROXY =====
+function proxyUrl(url){
+  const enabled = document.getElementById('cors_enabled').checked;
+  const proxy = document.getElementById('cors_proxy').value.trim();
+  if(enabled && proxy) return proxy + encodeURIComponent(url);
+  return url;
+}
+
+function updateProxyBadge(){
+  const badge = document.getElementById('proxyStatusBadge');
+  const enabled = document.getElementById('cors_enabled').checked;
+  if(enabled){
+    badge.className='proxy-status on'; badge.textContent='CORS Proxy: ON';
+  } else {
+    badge.className='proxy-status off'; badge.textContent='CORS Proxy: OFF';
+  }
+}
+document.addEventListener('DOMContentLoaded', updateProxyBadge);
 
 function detectType(){
   const v = document.getElementById('iocInput').value.trim();
@@ -272,6 +298,7 @@ function detectType(){
 }
 document.getElementById('iocInput').addEventListener('input', detectType);
 document.getElementById('iocInput').addEventListener('keydown', e=>{ if(e.key==='Enter') checkAll(); });
+document.getElementById('cors_enabled').addEventListener('change', updateProxyBadge);
 
 function copyInput(){
   const v=document.getElementById('iocInput').value.trim();
@@ -282,26 +309,47 @@ function copyInput(){
 function toggleConfig(){
   const p=document.getElementById('configPanel');
   const t=document.getElementById('configToggle');
-  p.classList.toggle('show');
-  t.classList.toggle('open');
+  p.classList.toggle('show'); t.classList.toggle('open');
 }
 function saveKeys(){
-  const keys=['key_abuseipdb','key_virustotal','key_shodan','key_greynoise','key_otx','key_ipinfo'];
-  keys.forEach(k=>{localStorage.setItem(k,document.getElementById(k).value);});
-  alert('API keys saved to localStorage.');
+  const fields=['key_abuseipdb','key_virustotal','key_shodan','key_greynoise','key_otx','key_ipinfo','cors_proxy'];
+  fields.forEach(k=>{localStorage.setItem(k,document.getElementById(k).value);});
+  localStorage.setItem('cors_enabled', document.getElementById('cors_enabled').checked ? '1':'0');
+  alert('All settings saved to localStorage.');
 }
 function loadKeys(){
-  const keys=['key_abuseipdb','key_virustotal','key_shodan','key_greynoise','key_otx','key_ipinfo'];
-  keys.forEach(k=>{const v=localStorage.getItem(k); if(v) document.getElementById(k).value=v;});
+  const defaults = {
+    'key_abuseipdb':  '5b7be1505a26439a3d7xxxxxx',
+    'key_virustotal': '',
+    'key_shodan':     '',
+    'key_greynoise':  '',
+    'key_otx':        '',
+    'key_ipinfo':     '',
+    'cors_proxy':     'https://corsproxy.io/?'
+  };
+  Object.entries(defaults).forEach(([k,def])=>{
+    const v = localStorage.getItem(k);
+    if(v !== null){ document.getElementById(k).value = v; }
+    else if(def){ document.getElementById(k).value = def; }
+  });
+  const ce = localStorage.getItem('cors_enabled');
+  if(ce !== null) document.getElementById('cors_enabled').checked = ce === '1';
+  updateProxyBadge();
 }
 function clearKeys(){
-  if(!confirm('Clear all saved API keys?')) return;
-  const keys=['key_abuseipdb','key_virustotal','key_shodan','key_greynoise','key_otx','key_ipinfo'];
-  keys.forEach(k=>{localStorage.removeItem(k); document.getElementById(k).value='';});
+  if(!confirm('Clear all saved API keys and settings?')) return;
+  const fields=['key_abuseipdb','key_virustotal','key_shodan','key_greynoise','key_otx','key_ipinfo','cors_proxy','cors_enabled'];
+  fields.forEach(k=>{localStorage.removeItem(k);});
+  document.querySelectorAll('.config-item input').forEach(i=>{i.value='';});
+  document.getElementById('cors_proxy').value='https://corsproxy.io/?';
+  document.getElementById('cors_enabled').checked=true;
+  updateProxyBadge();
 }
 function toggleKeyVisibility(){
-  const inputs=document.querySelectorAll('.config-item input');
-  inputs.forEach(i=>{i.type=i.type==='password'?'text':'password';});
+  document.querySelectorAll('.config-item input[type="password"],.config-item input[type="text"]').forEach(i=>{
+    if(i.id==='cors_proxy') return;
+    i.type=i.type==='password'?'text':'password';
+  });
 }
 loadKeys();
 
@@ -321,6 +369,7 @@ function setCardResult(serviceId, status, badge, html, resultData){
   const dot=document.getElementById('dot_'+serviceId);
   const bg=document.getElementById('badge_'+serviceId);
   const body=document.getElementById('body_'+serviceId);
+  if(!dot||!bg||!body) return;
   dot.className='dot '+ (status==='clean'?'green':status==='malicious'?'red':status==='suspicious'?'yellow':'gray');
   bg.className='badge '+(status==='clean'?'badge-clean':status==='malicious'?'badge-malicious':status==='suspicious'?'badge-suspicious':status==='error'?'badge-error':'badge-unknown');
   bg.textContent=badge;
@@ -339,28 +388,30 @@ function updateSummary(){
   mEl.textContent=maliciousCount;
   mEl.className='value '+(maliciousCount===0?'success':maliciousCount<=2?'warning':'high');
   const rEl=document.getElementById('sumRisk');
-  let risk='Low', cls='low';
+  let risk='Low',cls='low';
   if(maliciousCount>=4){risk='Critical';cls='critical';}
   else if(maliciousCount>=3){risk='High';cls='high';}
   else if(maliciousCount>=1){risk='Medium';cls='medium';}
-  rEl.textContent=risk; rEl.className='value '+cls;
+  rEl.textContent=risk;rEl.className='value '+cls;
 }
 
 // ===== QUICK LINKS =====
-function buildQuickLinks(query, type){
+function buildQuickLinks(query,type){
   const wrap=document.getElementById('linksWrap');
-  const links = QUICK_LINKS[type] || QUICK_LINKS.ip;
-  wrap.innerHTML = links.map(l=>`<a href="${l.url.replace('{q}',encodeURIComponent(query))}" target="_blank" rel="noopener">${esc(l.name)} &#8599;</a>`).join('');
+  const links=QUICK_LINKS[type]||QUICK_LINKS.ip;
+  wrap.innerHTML=links.map(l=>`<a href="${l.url.replace('{q}',encodeURIComponent(query))}" target="_blank" rel="noopener">${esc(l.name)} &#8599;</a>`).join('');
   document.getElementById('quickLinks').style.display='block';
 }
 
-// ===== API QUERIES =====
+// ===== API QUERIES (ALL USE proxyUrl) =====
+
 async function queryAbuseIPDB(ip){
   const key=getKey('key_abuseipdb');
   if(!key) return setCardResult('abuseipdb','gray','NO KEY','<div class="no-key-msg">API key not configured. Get one free at abuseipdb.com</div>');
   try{
-    const r=await fetch(`https://api.abuseipdb.com/api/v2/check?ipAddress=${encodeURIComponent(ip)}&maxAgeInDays=90&verbose`,{headers:{'Key':key,'Accept':'application/json'}});
-    if(!r.ok) throw new Error('HTTP '+r.status);
+    const url=`https://api.abuseipdb.com/api/v2/check?ipAddress=${encodeURIComponent(ip)}&maxAgeInDays=90&verbose`;
+    const r=await fetch(proxyUrl(url),{headers:{'Key':key,'Accept':'application/json'}});
+    if(!r.ok) throw new Error('HTTP '+r.status+' '+r.statusText);
     const j=await r.json(); const d=j.data;
     const score=d.abuseConfidenceScore||0;
     const status=score>75?'malicious':score>25?'suspicious':'clean';
@@ -374,33 +425,26 @@ async function queryAbuseIPDB(ip){
       row('Usage Type',d.usageType)+
       row('Domain',d.domain)+
       row('Whitelisted',d.isWhitelisted?'Yes':'No')+
-      row('Last Reported',d.lastReportedAt||'Never'),
-      d
-    );
+      row('Last Reported',d.lastReportedAt||'Never'),d);
   }catch(e){ setCardResult('abuseipdb','error','ERROR','<div class="error-msg">'+esc(e.message)+'</div>'); }
 }
 
-async function queryVirusTotal(query, type){
+async function queryVirusTotal(query,type){
   const key=getKey('key_virustotal');
   if(!key) return setCardResult('virustotal','gray','NO KEY','<div class="no-key-msg">API key not configured. Get one free at virustotal.com</div>');
   try{
-    const endpoint=type==='ip'?`https://www.virustotal.com/api/v3/ip_addresses/${encodeURIComponent(query)}`:`https://www.virustotal.com/api/v3/domains/${encodeURIComponent(query)}`;
-    const r=await fetch(endpoint,{headers:{'x-apikey':key}});
+    const ep=type==='ip'?`https://www.virustotal.com/api/v3/ip_addresses/${encodeURIComponent(query)}`:`https://www.virustotal.com/api/v3/domains/${encodeURIComponent(query)}`;
+    const r=await fetch(proxyUrl(ep),{headers:{'x-apikey':key}});
     if(!r.ok) throw new Error('HTTP '+r.status);
-    const j=await r.json(); const a=j.data.attributes;
+    const j=await r.json();const a=j.data.attributes;
     const stats=a.last_analysis_stats||{};
-    const mal=stats.malicious||0, sus=stats.suspicious||0, harm=stats.harmless||0, und=stats.undetected||0;
+    const mal=stats.malicious||0,sus=stats.suspicious||0,harm=stats.harmless||0,und=stats.undetected||0;
     const total=mal+sus+harm+und;
     const status=mal>=5?'malicious':mal>=1||sus>=3?'suspicious':'clean';
     const badge=mal>=5?'MALICIOUS':mal>=1?'SUSPICIOUS':'CLEAN';
-    let html=row('Malicious',mal+'/'+total, mal>0?'danger':'success')+
-      row('Suspicious',sus, sus>0?'warning':'success')+
-      row('Harmless',harm)+row('Undetected',und);
-    if(type==='ip'){
-      html+=row('Country',a.country)+row('AS Owner',a.as_owner)+row('ASN',a.asn)+row('Network',a.network);
-    }else{
-      html+=row('Registrar',a.registrar)+row('Creation Date',a.creation_date?new Date(a.creation_date*1000).toISOString().slice(0,10):'N/A');
-    }
+    let html=row('Malicious',mal+'/'+total,mal>0?'danger':'success')+row('Suspicious',sus,sus>0?'warning':'success')+row('Harmless',harm)+row('Undetected',und);
+    if(type==='ip'){html+=row('Country',a.country)+row('AS Owner',a.as_owner)+row('ASN',a.asn)+row('Network',a.network);}
+    else{html+=row('Registrar',a.registrar)+row('Creation',a.creation_date?new Date(a.creation_date*1000).toISOString().slice(0,10):'N/A');}
     html+=row('Reputation',a.reputation);
     setCardResult('virustotal',status,badge,html,{stats,attributes:a});
   }catch(e){ setCardResult('virustotal','error','ERROR','<div class="error-msg">'+esc(e.message)+'</div>'); }
@@ -410,8 +454,9 @@ async function queryShodan(ip){
   const key=getKey('key_shodan');
   if(!key) return setCardResult('shodan','gray','NO KEY','<div class="no-key-msg">API key not configured. Get one at shodan.io</div>');
   try{
-    const r=await fetch(`https://api.shodan.io/shodan/host/${encodeURIComponent(ip)}?key=${encodeURIComponent(key)}`);
-    if(r.status===404) return setCardResult('shodan','clean','NOT FOUND',row('Result','Host not found in Shodan database'),'success');
+    const url=`https://api.shodan.io/shodan/host/${encodeURIComponent(ip)}?key=${encodeURIComponent(key)}`;
+    const r=await fetch(proxyUrl(url));
+    if(r.status===404) return setCardResult('shodan','clean','NOT FOUND',row('Result','Host not found in Shodan','success'));
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
     const ports=(d.ports||[]).join(', ');
@@ -419,13 +464,10 @@ async function queryShodan(ip){
     const status=vulns?'suspicious':'clean';
     setCardResult('shodan',status,vulns?'HAS VULNS':'CLEAN',
       row('Organization',d.org)+row('ISP',d.isp)+row('OS',d.os)+
-      row('Open Ports',ports||'None')+
-      row('Hostnames',(d.hostnames||[]).join(', ')||'None')+
+      row('Open Ports',ports||'None')+row('Hostnames',(d.hostnames||[]).join(', ')||'None')+
       row('Country',d.country_name)+row('City',d.city)+
       row('Vulns (top 10)',vulns||'None',vulns?'warning':'success')+
-      row('Last Update',d.last_update),
-      d
-    );
+      row('Last Update',d.last_update),d);
   }catch(e){ setCardResult('shodan','error','ERROR','<div class="error-msg">'+esc(e.message)+'</div>'); }
 }
 
@@ -433,29 +475,27 @@ async function queryGreyNoise(ip){
   const key=getKey('key_greynoise');
   if(!key) return setCardResult('greynoise','gray','NO KEY','<div class="no-key-msg">API key not configured. Get one free at greynoise.io</div>');
   try{
-    const r=await fetch(`https://api.greynoise.io/v3/community/${encodeURIComponent(ip)}`,{headers:{'key':key}});
+    const url=`https://api.greynoise.io/v3/community/${encodeURIComponent(ip)}`;
+    const r=await fetch(proxyUrl(url),{headers:{'key':key}});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
     const cls=d.classification||'unknown';
     const status=cls==='malicious'?'malicious':cls==='benign'?'clean':'suspicious';
-    const badge=cls.toUpperCase();
-    setCardResult('greynoise',status,badge,
+    setCardResult('greynoise',status,cls.toUpperCase(),
       row('Classification',cls,cls==='malicious'?'danger':cls==='benign'?'success':'warning')+
       row('Noise',d.noise?'Yes':'No')+
       row('RIOT',d.riot?'Yes (known benign)':'No',d.riot?'success':'')+
-      row('Name',d.name||'N/A')+
-      row('Message',d.message||''),
-      d
-    );
+      row('Name',d.name||'N/A')+row('Message',d.message||''),d);
   }catch(e){ setCardResult('greynoise','error','ERROR','<div class="error-msg">'+esc(e.message)+'</div>'); }
 }
 
-async function queryOTX(query, type){
+async function queryOTX(query,type){
   const key=getKey('key_otx');
   if(!key) return setCardResult('otx','gray','NO KEY','<div class="no-key-msg">API key not configured. Get one free at otx.alienvault.com</div>');
   try{
     const section=type==='ip'?'IPv4':'domain';
-    const r=await fetch(`https://otx.alienvault.com/api/v1/indicators/${section}/${encodeURIComponent(query)}/general`,{headers:{'X-OTX-API-KEY':key}});
+    const url=`https://otx.alienvault.com/api/v1/indicators/${section}/${encodeURIComponent(query)}/general`;
+    const r=await fetch(proxyUrl(url),{headers:{'X-OTX-API-KEY':key}});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
     const pulses=d.pulse_info?.count||0;
@@ -465,11 +505,8 @@ async function queryOTX(query, type){
       row('Pulse Count',pulses,pulses>=5?'danger':pulses>=1?'warning':'success')+
       row('Reputation',d.reputation||0)+
       row('Country',d.country_name||d.country_code||'N/A')+
-      row('ASN',d.asn||'N/A')+
-      row('Indicator',d.indicator)+
-      row('Sections',(d.sections||[]).join(', ')),
-      d
-    );
+      row('ASN',d.asn||'N/A')+row('Indicator',d.indicator)+
+      row('Sections',(d.sections||[]).join(', ')),d);
   }catch(e){ setCardResult('otx','error','ERROR','<div class="error-msg">'+esc(e.message)+'</div>'); }
 }
 
@@ -477,63 +514,54 @@ async function queryIPinfo(ip){
   const key=getKey('key_ipinfo');
   if(!key) return setCardResult('ipinfo','gray','NO KEY','<div class="no-key-msg">Token not configured. Get one free at ipinfo.io</div>');
   try{
-    const r=await fetch(`https://ipinfo.io/${encodeURIComponent(ip)}?token=${encodeURIComponent(key)}`);
+    const url=`https://ipinfo.io/${encodeURIComponent(ip)}?token=${encodeURIComponent(key)}`;
+    const r=await fetch(proxyUrl(url));
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
     setCardResult('ipinfo','clean','INFO',
       row('Hostname',d.hostname)+row('Organization',d.org)+
       row('City',d.city)+row('Region',d.region)+row('Country',d.country)+
-      row('Location',d.loc)+row('Postal',d.postal)+row('Timezone',d.timezone),
-      d
-    );
+      row('Location',d.loc)+row('Postal',d.postal)+row('Timezone',d.timezone),d);
   }catch(e){ setCardResult('ipinfo','error','ERROR','<div class="error-msg">'+esc(e.message)+'</div>'); }
 }
 
 async function queryURLhaus(query){
   try{
+    const url='https://urlhaus-api.abuse.ch/v1/host/';
     const fd=new URLSearchParams(); fd.append('host',query);
-    const r=await fetch('https://urlhaus-api.abuse.ch/v1/host/',{method:'POST',body:fd});
+    const r=await fetch(proxyUrl(url),{method:'POST',body:fd});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
-    const status_q=d.query_status;
-    if(status_q==='no_results'||!d.urls||d.urls.length===0){
-      return setCardResult('urlhaus','clean','CLEAN',row('Result','Not found in URLhaus database','success'),d);
+    if(d.query_status==='no_results'||!d.urls||d.urls.length===0){
+      return setCardResult('urlhaus','clean','CLEAN',row('Result','Not found in URLhaus','success'),d);
     }
     const urlCount=d.urls_online||d.urls.length||0;
     const tags=[...new Set((d.urls||[]).flatMap(u=>u.tags||[]))].filter(Boolean).join(', ');
     const threats=[...new Set((d.urls||[]).map(u=>u.threat).filter(Boolean))].join(', ');
-    const status=urlCount>0?'malicious':'suspicious';
-    setCardResult('urlhaus',status,urlCount>0?'LISTED':'SUSPICIOUS',
+    setCardResult('urlhaus',urlCount>0?'malicious':'suspicious',urlCount>0?'LISTED':'SUSPICIOUS',
       row('URLs Found',d.urls.length,urlCount>0?'danger':'')+
       row('URLs Online',urlCount,urlCount>0?'danger':'success')+
-      row('Tags',tags||'None')+
-      row('Threats',threats||'None')+
-      row('Blacklists',d.blacklists?JSON.stringify(d.blacklists):'N/A'),
-      d
-    );
+      row('Tags',tags||'None')+row('Threats',threats||'None')+
+      row('Blacklists',d.blacklists?JSON.stringify(d.blacklists):'N/A'),d);
   }catch(e){ setCardResult('urlhaus','error','ERROR','<div class="error-msg">'+esc(e.message)+'</div>'); }
 }
 
 async function queryThreatFox(query){
   try{
-    const r=await fetch('https://threatfox-api.abuse.ch/api/v1/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:'search_ioc',search_term:query})});
+    const url='https://threatfox-api.abuse.ch/api/v1/';
+    const r=await fetch(proxyUrl(url),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:'search_ioc',search_term:query})});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const d=await r.json();
     if(d.query_status==='no_result'||!d.data||d.data.length===0){
-      return setCardResult('threatfox','clean','CLEAN',row('Result','Not found in ThreatFox database','success'),d);
+      return setCardResult('threatfox','clean','CLEAN',row('Result','Not found in ThreatFox','success'),d);
     }
     const first=d.data[0];
     setCardResult('threatfox','malicious','FOUND',
       row('IOC Count',d.data.length,'danger')+
-      row('Threat Type',first.threat_type)+
-      row('Malware',first.malware_printable)+
+      row('Threat Type',first.threat_type)+row('Malware',first.malware_printable)+
       row('Confidence',first.confidence_level+'%')+
-      row('First Seen',first.first_seen_utc)+
-      row('Last Seen',first.last_seen_utc)+
-      row('Reporter',first.reporter)+
-      row('Tags',(first.tags||[]).join(', ')),
-      d
-    );
+      row('First Seen',first.first_seen_utc)+row('Last Seen',first.last_seen_utc)+
+      row('Reporter',first.reporter)+row('Tags',(first.tags||[]).join(', ')),d);
   }catch(e){ setCardResult('threatfox','error','ERROR','<div class="error-msg">'+esc(e.message)+'</div>'); }
 }
 
@@ -551,27 +579,17 @@ async function checkAll(){
   if(!query){alert('Please enter an IP address or domain.');return;}
   clearResults();
   const type=isIP(query)?'ip':'domain';
-
-  // Summary
   document.getElementById('summaryBar').style.display='grid';
   document.getElementById('sumTarget').textContent=query;
   document.getElementById('sumType').textContent=type.toUpperCase();
   document.getElementById('timestamp').textContent='Checked: '+new Date().toISOString().replace('T',' ').slice(0,19)+' UTC';
   document.getElementById('actionsRow').style.display='flex';
-
-  // Quick Links
   buildQuickLinks(query,type);
-
-  // Build applicable services
   const applicable=SERVICES.filter(s=> type==='ip'?s.supportsIP:s.supportsDomain);
   totalSources=applicable.length;
   updateSummary();
-
-  // Create cards
   const grid=document.getElementById('resultsGrid');
   grid.innerHTML=applicable.map(s=>createCard(s.id,s.name)).join('');
-
-  // Fire all queries in parallel
   const promises=applicable.map(s=>{
     switch(s.id){
       case 'abuseipdb':  return queryAbuseIPDB(query);
@@ -590,7 +608,9 @@ async function checkAll(){
 // ===== EXPORT =====
 function exportJSON(){
   const query=document.getElementById('iocInput').value.trim();
-  const blob=new Blob([JSON.stringify({target:query,type:isIP(query)?'ip':'domain',timestamp:new Date().toISOString(),results:allResults},null,2)],{type:'application/json'});
+  const data={target:query,type:isIP(query)?'ip':'domain',timestamp:new Date().toISOString(),
+    cors_proxy_enabled:document.getElementById('cors_enabled').checked,results:allResults};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='ti_report_'+query.replace(/[^a-zA-Z0-9.-]/g,'_')+'_'+Date.now()+'.json';
   a.click();
