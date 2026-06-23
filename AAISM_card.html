@@ -17,17 +17,23 @@
   --accent:#7c3aed; --accent-bg:#ede9fe;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;height:100%;overflow:hidden;
+html,body{margin:0;padding:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background:var(--bg);color:var(--text);line-height:1.65;
-  padding-top:env(safe-area-inset-top);
-  padding-bottom:env(safe-area-inset-bottom);
 }
+html{height:100%}
+body{min-height:100vh;min-height:100dvh}
 button{font-family:inherit;cursor:pointer;border:none;font-weight:600;
   border-radius:10px;transition:all .15s;touch-action:manipulation}
 button:active{transform:scale(0.97)}
-#startScreen{display:flex;flex-direction:column;height:100vh;
-  padding:20px 18px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* START SCREEN: scrollable, with extra bottom padding to clear nav bar */
+#startScreen{display:flex;flex-direction:column;
+  min-height:100vh;min-height:100dvh;
+  padding:20px 18px;
+  padding-top:calc(env(safe-area-inset-top) + 20px);
+  padding-bottom:calc(env(safe-area-inset-bottom) + 80px);
+  overflow-y:visible}
 h1{margin:0 0 4px;color:var(--primary-dark);font-size:1.7rem}
 .subtitle{color:var(--muted);margin:0 0 16px;font-size:1rem}
 .section{font-weight:700;margin:16px 0 8px;color:var(--primary-dark);font-size:1.1rem;
@@ -70,7 +76,8 @@ h1{margin:0 0 4px;color:var(--primary-dark);font-size:1.7rem}
 .resume-card button.resume-btn{background:var(--warn);color:#fff;
   padding:14px 16px;font-size:1.05rem;width:100%;border-radius:10px;font-weight:700}
 .resume-card .clear-link{display:block;text-align:center;background:none;
-  color:#92400e;font-size:.82rem;margin-top:8px;padding:6px;text-decoration:underline}
+  color:#92400e;font-size:.82rem;margin-top:8px;padding:6px;text-decoration:underline;
+  border:none;width:100%;cursor:pointer}
 
 .big{background:var(--primary);color:#fff;padding:18px;font-size:1.15rem;
   width:100%;margin-top:10px;border-radius:12px}
@@ -78,15 +85,22 @@ h1{margin:0 0 4px;color:var(--primary-dark);font-size:1.7rem}
 .danger-btn{background:var(--danger-bg);color:var(--danger);padding:13px 14px;
   font-size:1rem;font-weight:600;border-radius:10px;width:100%}
 
-#cardScreen{display:none;flex-direction:column;height:100vh;
-  padding:8px 10px 10px;position:relative}
-.topbar{display:flex;align-items:center;gap:8px;padding:6px 4px 8px}
+.bottom-spacer{height:80px;flex-shrink:0}
+
+/* CARD SCREEN: also responsive viewport */
+#cardScreen{display:none;flex-direction:column;
+  height:100vh;height:100dvh;
+  padding:8px 10px;
+  padding-top:calc(env(safe-area-inset-top) + 8px);
+  padding-bottom:calc(env(safe-area-inset-bottom) + 10px);
+  position:relative;overflow:hidden}
+.topbar{display:flex;align-items:center;gap:8px;padding:6px 4px 8px;flex-shrink:0}
 .topbar button.icon{background:#fff;border:1px solid var(--border);
   width:42px;height:42px;border-radius:10px;font-size:1.2rem;color:#374151;
   display:flex;align-items:center;justify-content:center}
 .progress-info{flex:1;text-align:center;font-size:1rem;color:var(--muted);font-weight:600}
 .progress-bar-wrap{height:6px;background:var(--border);border-radius:99px;
-  overflow:hidden;margin:0 4px 8px}
+  overflow:hidden;margin:0 4px 8px;flex-shrink:0}
 .progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),#60a5fa);
   width:0%;transition:width .25s}
 
@@ -119,8 +133,8 @@ h1{margin:0 0 4px;color:var(--primary-dark);font-size:1.7rem}
 .status-badge.known{background:var(--success-bg);color:var(--success)}
 .status-badge.weak{background:var(--danger-bg);color:var(--danger)}
 .toggle-hint{text-align:center;color:var(--muted);font-size:.75rem;
-  margin-top:6px;font-style:italic;padding:0 6px}
-.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}
+  margin-top:6px;font-style:italic;padding:0 6px;flex-shrink:0}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;flex-shrink:0}
 .actions button{padding:15px 6px;font-size:.92rem;border-radius:12px;
   display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2}
 .actions button .sub{font-size:.65rem;font-weight:500;opacity:.85}
@@ -129,7 +143,7 @@ h1{margin:0 0 4px;color:var(--primary-dark);font-size:1.7rem}
 .btn-known.active{background:var(--success);color:#fff;border-color:#15803d}
 .btn-weak{background:var(--danger-bg);color:var(--danger);border:2px solid transparent}
 .btn-weak.active{background:var(--danger);color:#fff;border-color:#b91c1c}
-.nav{display:flex;gap:6px;margin-top:6px}
+.nav{display:flex;gap:6px;margin-top:6px;flex-shrink:0}
 .nav button{flex:1;padding:14px;font-size:1rem;background:#fff;
   border:1px solid var(--border);color:#374151}
 .nav button:disabled{opacity:.4}
@@ -196,7 +210,7 @@ h1{margin:0 0 4px;color:var(--primary-dark);font-size:1.7rem}
   <button id="resetProgress" class="danger-btn">🗑️ Reset All Progress (Known + Weak)</button>
 
   <button class="big" id="startBtn">▶ Start New Session</button>
-  <div style="height:30px"></div>
+  <div class="bottom-spacer"></div>
 </div>
 
 <div id="cardScreen">
