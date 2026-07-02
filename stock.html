@@ -1,4 +1,40 @@
 <!DOCTYPE html>
+<!--
+  ============================================================================
+  🚀 OPTIONAL: Deploy your own free CORS proxy on Cloudflare Workers
+  ============================================================================
+  If public CORS proxies keep failing, spin up your own (5 min, 100% free,
+  100k requests/day). Steps:
+
+  1. Sign up at https://dash.cloudflare.com/sign-up (free, no credit card)
+  2. Workers & Pages → Create → Create Worker → paste this code:
+
+     export default {
+       async fetch(request) {
+         const url = new URL(request.url);
+         const target = url.searchParams.get("url");
+         if (!target) return new Response("Missing ?url=", { status: 400 });
+         const upstream = await fetch(target, {
+           headers: { "User-Agent": "Mozilla/5.0" }
+         });
+         const body = await upstream.text();
+         return new Response(body, {
+           status: upstream.status,
+           headers: {
+             "Access-Control-Allow-Origin": "*",
+             "Content-Type": upstream.headers.get("Content-Type") || "application/json"
+           }
+         });
+       }
+     };
+
+  3. Deploy → copy your worker URL (e.g. https://myproxy.yourname.workers.dev)
+  4. Find the PROXIES array in the <script> below and add as the FIRST entry:
+     (url) => `https://myproxy.yourname.workers.dev/?url=${encodeURIComponent(url)}`,
+
+  Done — Yahoo Finance now works from anywhere with rock-solid reliability.
+  ============================================================================
+-->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -82,7 +118,11 @@
 <details id="apiKeyPanel">
   <summary>🔑 API Keys (recommended for reliability on hosted sites)</summary>
   <p style="color: var(--muted); margin: 10px 0;">
-    Public CORS proxies are unreliable when this page is served over HTTPS (e.g. GitHub Pages). Add a free API key for direct CORS-enabled access:
+    <b>Coverage on free tiers:</b><br>
+    • <b>US stocks</b> (AAPL, TSLA…) → Finnhub or Twelve Data work directly (no proxy)<br>
+    • <b>SGX stocks</b> (.SI) → Only <code>D05.SI</code> is free on Twelve Data. Others (S08, O39, U11…) fall back to Yahoo via public CORS proxy<br>
+    • <b>HK stocks</b> (.HK) → Falls back to Yahoo via public CORS proxy<br>
+    For 100% reliable SGX/HK coverage, deploy your own Cloudflare Worker proxy — see the comment block at the top of this HTML file.
   </p>
   <div class="apikey-row">
     <label>
@@ -223,8 +263,8 @@
   // Reference: https://twelvedata.com/docs#reference-data
   function toTwelveSymbol(sym) {
     const s = sym.toUpperCase();
-    if (s.endsWith(".SI")) return { symbol: s.replace(".SI", ""), exchange: "SGX" };
-    if (s.endsWith(".HK")) return { symbol: s.replace(".HK", ""), exchange: "HKEX" };
+    if (s.endsWith(".SI")) return { symbol: s.replace(".SI", ""), exchange: "XSES" };
+    if (s.endsWith(".HK")) return { symbol: s.replace(".HK", ""), exchange: "XHKG" };
     if (s.endsWith(".L"))  return { symbol: s.replace(".L", ""),  exchange: "LSE" };
     if (s.endsWith(".TO")) return { symbol: s.replace(".TO", ""), exchange: "TSX" };
     if (s.endsWith(".AX")) return { symbol: s.replace(".AX", ""), exchange: "ASX" };
@@ -324,9 +364,13 @@
   }
 
   // ---- Yahoo via proxies (last resort) ----
+  // Multiple CORS proxies rotated in order. Public services can go down —
+  // if all fail, deploy your own via Cloudflare Workers (see notes at bottom).
   const PROXIES = [
     (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    (url) => `https://proxy.cors.sh/${url}`,
+    (url) => `https://cors-proxy.htmldriven.com/?url=${encodeURIComponent(url)}`,
   ];
   let lastProxyIdx = 0;
   async function fetchWithProxy(url) {
@@ -363,17 +407,39 @@
     return (result.indicators?.quote?.[0]?.close || []).filter(v => v != null && !isNaN(v));
   }
 
-  // ---- Master fetchers: try in order ----
+  // ---- Master fetchers: adaptive priority per symbol ----
+  // Twelve Data FREE tier: only US stocks + trial symbol D05.SI for SGX.
+  // Finnhub FREE tier: only US stocks.
+  // For everything else (SGX, HK, etc.), Yahoo (via proxy) is the only free option.
+  function isUSSymbol(sym)  { return !sym.includes("."); }
+  function isTrialSymbol(sym) { return sym.toUpperCase() === "D05.SI"; }
+
   async function fetchQuote(symbol) {
-    // Priority: Twelve (works everywhere) > Finnhub (US only) > Yahoo (proxy)
-    if (twelveKey)  { try { return await fetchQuoteTwelve(symbol); } catch (e) {} }
-    if (finnhubKey) { try { return await fetchQuoteFinnhub(symbol); } catch (e) {} }
+    const isUS = isUSSymbol(symbol);
+    // For US: try direct-CORS APIs first (fastest & most reliable)
+    if (isUS) {
+      if (finnhubKey) { try { return await fetchQuoteFinnhub(symbol); } catch (e) {} }
+      if (twelveKey)  { try { return await fetchQuoteTwelve(symbol); } catch (e) {} }
+    } else {
+      // For non-US: try Twelve Data only for known-supported trial symbols
+      if (twelveKey && isTrialSymbol(symbol)) {
+        try { return await fetchQuoteTwelve(symbol); } catch (e) {}
+      }
+    }
+    // Universal fallback: Yahoo via proxy
     try { return await fetchQuoteYahoo(symbol); } catch (e) {}
     return null;
   }
   async function fetchHistory(symbol, range) {
-    if (twelveKey)  { try { return await fetchHistoryTwelve(symbol, range); } catch (e) {} }
-    if (finnhubKey) { try { return await fetchHistoryFinnhub(symbol, range); } catch (e) {} }
+    const isUS = isUSSymbol(symbol);
+    if (isUS) {
+      if (finnhubKey) { try { return await fetchHistoryFinnhub(symbol, range); } catch (e) {} }
+      if (twelveKey)  { try { return await fetchHistoryTwelve(symbol, range); } catch (e) {} }
+    } else {
+      if (twelveKey && isTrialSymbol(symbol)) {
+        try { return await fetchHistoryTwelve(symbol, range); } catch (e) {}
+      }
+    }
     try { return await fetchHistoryYahoo(symbol, range); } catch (e) {}
     return [];
   }
