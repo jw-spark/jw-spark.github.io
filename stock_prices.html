@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stock Price & Portfolio Watcher</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --up: #22c55e;
+    --down: #ef4444;
+    --accent: #3b82f6;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+  }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  p.sub { margin: 0 0 20px; color: var(--muted); font-size: 13px; }
+  .controls {
+    background: var(--card);
+    padding: 16px;
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  input[type="text"] {
+    flex: 1;
+    min-width: 220px;
+    background: #0b1220;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  input.portfolio-edit {
+    background: #0b1220;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    width: 90px;
+    text-align: right;
+  }
+  input.portfolio-edit:focus { border-color: var(--accent); outline: none; }
+  select {
+    background: #0b1220;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  button {
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  button.secondary { background: #475569; }
+  button:hover { opacity: 0.9; }
+  label { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  th, td { padding: 10px 12px; text-align: right; font-size: 13px; vertical-align: middle; white-space: nowrap; }
+  th { background: #0b1220; color: var(--muted); font-weight: 600; text-align: right; font-size: 12px; }
+  th:first-child, td:first-child { text-align: left; }
+  th.spark-col, td.spark-col { text-align: center; }
+  tr { border-top: 1px solid var(--border); }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  .symbol { font-weight: 600; }
+  .name { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .remove {
+    background: none;
+    border: 0;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+  }
+  .remove:hover { color: var(--down); }
+  .status { color: var(--muted); font-size: 12px; margin-top: 12px; }
+  .error { color: var(--down); font-size: 13px; margin-top: 8px; }
+  .sparkline { display: block; margin: 0 auto; }
+
+  /* Portfolio summary */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .summary-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .summary-value { font-size: 20px; font-weight: 600; margin-top: 4px; }
+  .summary-sub { font-size: 12px; margin-top: 2px; }
+
+  tfoot td {
+    background: #0b1220;
+    font-weight: 600;
+    border-top: 2px solid var(--border);
+  }
+
+  /* Responsive: allow horizontal scroll on small screens */
+  .table-wrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<h1>📈 Stock &amp; Portfolio Watcher</h1>
+<p class="sub">
+  Enter Yahoo Finance tickers (comma-separated). Edit <b>Shares</b> and <b>Cost/Share</b> inline to track your portfolio. Everything is auto-saved locally.
+</p>
+
+<div class="controls">
+  <input id="tickerInput" type="text" placeholder="D05.SI, S08.SI, O39.SI" />
+  <select id="sparkRange" title="Sparkline range">
+    <option value="5d">5D</option>
+    <option value="1mo" selected>1M</option>
+    <option value="3mo">3M</option>
+    <option value="6mo">6M</option>
+    <option value="1y">1Y</option>
+  </select>
+  <button onclick="loadTickers()">Load</button>
+  <button class="secondary" onclick="refreshAll()">🔄 Refresh</button>
+  <button class="secondary" onclick="exportCSV()">⬇ Export CSV</button>
+  <label><input type="checkbox" id="autoRefresh" /> Auto-refresh (30s)</label>
+</div>
+
+<!-- Portfolio summary cards -->
+<div class="summary" id="summaryCards">
+  <div class="summary-card">
+    <div class="summary-label">Total Cost</div>
+    <div class="summary-value" id="sumCost">—</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Market Value</div>
+    <div class="summary-value" id="sumValue">—</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Unrealized P/L</div>
+    <div class="summary-value" id="sumPL">—</div>
+    <div class="summary-sub" id="sumPLPct">—</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Day's Change</div>
+    <div class="summary-value" id="sumDay">—</div>
+    <div class="summary-sub" id="sumDayPct">—</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Symbol</th>
+      <th>Price</th>
+      <th>Chg</th>
+      <th>%</th>
+      <th class="spark-col">Trend</th>
+      <th>Shares</th>
+      <th>Cost/Share</th>
+      <th>Market Value</th>
+      <th>P/L ($)</th>
+      <th>P/L (%)</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="quotesBody">
+    <tr><td colspan="11" style="text-align:center; color:var(--muted);">Loading...</td></tr>
+  </tbody>
+  <tfoot id="quotesFoot"></tfoot>
+</table>
+</div>
+
+<div class="status" id="status"></div>
+<div class="error" id="error"></div>
+
+<script>
+  // ---------- Persisted state ----------
+  const LS_TICKERS   = "sw_tickers_v2";
+  const LS_RANGE     = "sw_range_v2";
+  const LS_AUTO      = "sw_auto_v2";
+  const LS_PORTFOLIO = "sw_portfolio_v2"; // { "D05.SI": {shares: 100, cost: 32.50}, ... }
+
+  let tickers = JSON.parse(localStorage.getItem(LS_TICKERS) || '["D05.SI","S08.SI","O39.SI"]');
+  let sparkRange = localStorage.getItem(LS_RANGE) || "1mo";
+  let autoOn = localStorage.getItem(LS_AUTO) === "1";
+  let portfolio = JSON.parse(localStorage.getItem(LS_PORTFOLIO) || "{}");
+  let autoTimer = null;
+  let lastQuotes = {}; // cached quote data for CSV export & portfolio recalc
+
+  document.getElementById("tickerInput").value = tickers.join(", ");
+  document.getElementById("sparkRange").value = sparkRange;
+  document.getElementById("autoRefresh").checked = autoOn;
+  if (autoOn) autoTimer = setInterval(refreshAll, 30000);
+
+  document.getElementById("sparkRange").addEventListener("change", (e) => {
+    sparkRange = e.target.value;
+    localStorage.setItem(LS_RANGE, sparkRange);
+    refreshAll();
+  });
+  document.getElementById("autoRefresh").addEventListener("change", (e) => {
+    autoOn = e.target.checked;
+    localStorage.setItem(LS_AUTO, autoOn ? "1" : "0");
+    if (autoOn) autoTimer = setInterval(refreshAll, 30000);
+    else clearInterval(autoTimer);
+  });
+
+  // ---------- Helpers ----------
+  function loadTickers() {
+    const raw = document.getElementById("tickerInput").value;
+    tickers = raw.split(",").map(t => t.trim().toUpperCase()).filter(Boolean);
+    localStorage.setItem(LS_TICKERS, JSON.stringify(tickers));
+    refreshAll();
+  }
+
+  function removeTicker(sym) {
+    tickers = tickers.filter(t => t !== sym);
+    localStorage.setItem(LS_TICKERS, JSON.stringify(tickers));
+    delete portfolio[sym];
+    localStorage.setItem(LS_PORTFOLIO, JSON.stringify(portfolio));
+    document.getElementById("tickerInput").value = tickers.join(", ");
+    refreshAll();
+  }
+
+  function updatePortfolio(sym, field, valueStr) {
+    const val = parseFloat(valueStr);
+    if (!portfolio[sym]) portfolio[sym] = { shares: 0, cost: 0 };
+    portfolio[sym][field] = isNaN(val) ? 0 : val;
+    localStorage.setItem(LS_PORTFOLIO, JSON.stringify(portfolio));
+    recalcPortfolio(); // instant recalc without re-fetching quotes
+  }
+
+  function fmt(n, digits = 2) {
+    if (n === null || n === undefined || isNaN(n)) return "—";
+    return Number(n).toLocaleString(undefined, {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    });
+  }
+  function fmtVol(n) {
+    if (!n) return "—";
+    if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+    if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+    if (n >= 1e3) return (n / 1e3).toFixed(2) + "K";
+    return n.toString();
+  }
+  function proxy(url) {
+    return `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  }
+
+  async function fetchQuote(symbol) {
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
+    const res = await fetch(proxy(url));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data?.quoteResponse?.result?.[0] || null;
+  }
+
+  async function fetchHistory(symbol, range = "1mo") {
+    const interval = (range === "5d") ? "15m"
+                   : (range === "1mo") ? "1d"
+                   : (range === "3mo") ? "1d"
+                   : (range === "6mo") ? "1d"
+                   : "1wk";
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}`;
+    const res = await fetch(proxy(url));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const result = data?.chart?.result?.[0];
+    if (!result) return [];
+    const closes = result.indicators?.quote?.[0]?.close || [];
+    return closes.filter(v => v !== null && v !== undefined && !isNaN(v));
+  }
+
+  function sparklineSVG(values, width = 110, height = 30) {
+    if (!values || values.length < 2) {
+      return `<span style="color:var(--muted); font-size:11px;">—</span>`;
+    }
+    const min = Math.min(...values), max = Math.max(...values);
+    const range = max - min || 1;
+    const stepX = width / (values.length - 1);
+    const points = values.map((v, i) => {
+      const x = (i * stepX).toFixed(2);
+      const y = (height - ((v - min) / range) * (height - 4) - 2).toFixed(2);
+      return `${x},${y}`;
+    }).join(" ");
+    const rising = values[values.length - 1] >= values[0];
+    const stroke = rising ? "#22c55e" : "#ef4444";
+    const fill   = rising ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)";
+    const areaPath = `M 0,${height} L ${points.replace(/ /g, ' L ')} L ${width},${height} Z`;
+    return `
+      <svg class="sparkline" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+        <path d="${areaPath}" fill="${fill}" stroke="none"/>
+        <polyline fill="none" stroke="${stroke}" stroke-width="1.5" points="${points}"/>
+      </svg>
+    `;
+  }
+
+  // ---------- Portfolio math (uses cached lastQuotes; no re-fetch) ----------
+  function recalcPortfolio() {
+    let totalCost = 0, totalValue = 0, totalDayChg = 0;
+    let hasAny = false;
+    let currency = "";
+
+    tickers.forEach(sym => {
+      const q = lastQuotes[sym];
+      const p = portfolio[sym] || { shares: 0, cost: 0 };
+      if (!q || !p.shares) return;
+      hasAny = true;
+      currency = q.currency || currency;
+      const price = q.regularMarketPrice || 0;
+      const prev  = q.regularMarketPreviousClose || price;
+      const value = price * p.shares;
+      const cost  = (p.cost || 0) * p.shares;
+      const dayChg = (price - prev) * p.shares;
+      totalCost  += cost;
+      totalValue += value;
+      totalDayChg += dayChg;
+
+      // Update row cells (market value + P/L) live
+      const row = document.querySelector(`tr[data-sym="${sym}"]`);
+      if (row) {
+        const mv = row.querySelector(".mv");
+        const pl = row.querySelector(".pl");
+        const plp = row.querySelector(".plp");
+        if (p.shares > 0) {
+          mv.textContent = fmt(value);
+          if (p.cost > 0) {
+            const plVal = value - cost;
+            const plPct = (plVal / cost) * 100;
+            const cls = plVal >= 0 ? "up" : "down";
+            pl.className = "pl " + cls;
+            plp.className = "plp " + cls;
+            pl.textContent = (plVal >= 0 ? "+" : "") + fmt(plVal);
+            plp.textContent = (plVal >= 0 ? "+" : "") + fmt(plPct) + "%";
+          } else {
+            pl.textContent = "—"; plp.textContent = "—";
+            pl.className = "pl"; plp.className = "plp";
+          }
+        } else {
+          mv.textContent = "—"; pl.textContent = "—"; plp.textContent = "—";
+        }
+      }
+    });
+
+    // Summary cards
+    const plTotal = totalValue - totalCost;
+    const plPct   = totalCost > 0 ? (plTotal / totalCost) * 100 : 0;
+    const dayPct  = (totalValue - totalDayChg) > 0 ? (totalDayChg / (totalValue - totalDayChg)) * 100 : 0;
+    const cur = currency ? " " + currency : "";
+
+    document.getElementById("sumCost").textContent  = hasAny ? fmt(totalCost) + cur  : "—";
+    document.getElementById("sumValue").textContent = hasAny ? fmt(totalValue) + cur : "—";
+
+    const plEl   = document.getElementById("sumPL");
+    const plPctEl= document.getElementById("sumPLPct");
+    const dayEl  = document.getElementById("sumDay");
+    const dayPctEl = document.getElementById("sumDayPct");
+
+    if (hasAny) {
+      const plCls = plTotal >= 0 ? "up" : "down";
+      plEl.className = "summary-value " + plCls;
+      plPctEl.className = "summary-sub " + plCls;
+      plEl.textContent = (plTotal >= 0 ? "+" : "") + fmt(plTotal) + cur;
+      plPctEl.textContent = (plTotal >= 0 ? "+" : "") + fmt(plPct) + "%";
+
+      const dayCls = totalDayChg >= 0 ? "up" : "down";
+      dayEl.className = "summary-value " + dayCls;
+      dayPctEl.className = "summary-sub " + dayCls;
+      dayEl.textContent = (totalDayChg >= 0 ? "+" : "") + fmt(totalDayChg) + cur;
+      dayPctEl.textContent = (totalDayChg >= 0 ? "+" : "") + fmt(dayPct) + "%";
+    } else {
+      plEl.textContent = "—"; plPctEl.textContent = "—";
+      dayEl.textContent = "—"; dayPctEl.textContent = "—";
+      plEl.className = "summary-value"; plPctEl.className = "summary-sub";
+      dayEl.className = "summary-value"; dayPctEl.className = "summary-sub";
+    }
+
+    // Footer totals row
+    const foot = document.getElementById("quotesFoot");
+    if (hasAny) {
+      const cls = plTotal >= 0 ? "up" : "down";
+      foot.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:right;">Portfolio Total</td>
+          <td>${fmt(totalValue)}</td>
+          <td class="${cls}">${plTotal >= 0 ? "+" : ""}${fmt(plTotal)}</td>
+          <td class="${cls}">${plTotal >= 0 ? "+" : ""}${fmt(plPct)}%</td>
+          <td></td>
+        </tr>`;
+    } else {
+      foot.innerHTML = "";
+    }
+  }
+
+  // ---------- Main refresh ----------
+  async function refreshAll() {
+    const tbody = document.getElementById("quotesBody");
+    const statusDiv = document.getElementById("status");
+    const errorDiv = document.getElementById("error");
+    errorDiv.textContent = "";
+
+    if (tickers.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--muted);">No tickers loaded. Enter some above and click Load.</td></tr>`;
+      document.getElementById("quotesFoot").innerHTML = "";
+      statusDiv.textContent = "";
+      recalcPortfolio();
+      return;
+    }
+
+    statusDiv.textContent = "Loading...";
+    tbody.innerHTML = tickers.map(t =>
+      `<tr><td class="symbol">${t}</td><td colspan="10" style="color:var(--muted);">Loading...</td></tr>`
+    ).join("");
+
+    const quotePromises   = tickers.map(t => fetchQuote(t).catch(() => null));
+    const historyPromises = tickers.map(t => fetchHistory(t, sparkRange).catch(() => []));
+    const [quotes, histories] = await Promise.all([
+      Promise.all(quotePromises),
+      Promise.all(historyPromises)
+    ]);
+
+    lastQuotes = {};
+    const rows = quotes.map((q, i) => {
+      const symbol = tickers[i];
+      if (!q) {
+        return `
+          <tr data-sym="${symbol}">
+            <td class="symbol">${symbol}</td>
+            <td colspan="9" style="color:var(--down);">Failed to load (check symbol)</td>
+            <td><button class="remove" onclick="removeTicker('${symbol}')">✕</button></td>
+          </tr>`;
+      }
+      lastQuotes[symbol] = q;
+      const price = q.regularMarketPrice;
+      const change = q.regularMarketChange;
+      const pct = q.regularMarketChangePercent;
+      const dir = change >= 0 ? "up" : "down";
+      const arrow = change >= 0 ? "▲" : "▼";
+      const spark = sparklineSVG(histories[i]);
+      const p = portfolio[symbol] || { shares: 0, cost: 0 };
+
+      return `
+        <tr data-sym="${symbol}">
+          <td>
+            <div class="symbol">${q.symbol}</div>
+            <div class="name">${(q.shortName || q.longName || "").slice(0, 28)}</div>
+          </td>
+          <td>${fmt(price)}</td>
+          <td class="${dir}">${arrow} ${fmt(change)}</td>
+          <td class="${dir}">${fmt(pct)}%</td>
+          <td class="spark-col">${spark}</td>
+          <td><input class="portfolio-edit" type="number" step="any" min="0"
+                     value="${p.shares || ''}" placeholder="0"
+                     onchange="updatePortfolio('${symbol}','shares',this.value)" /></td>
+          <td><input class="portfolio-edit" type="number" step="any" min="0"
+                     value="${p.cost || ''}" placeholder="0.00"
+                     onchange="updatePortfolio('${symbol}','cost',this.value)" /></td>
+          <td class="mv">—</td>
+          <td class="pl">—</td>
+          <td class="plp">—</td>
+          <td><button class="remove" title="Remove" onclick="removeTicker('${symbol}')">✕</button></td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = rows.join("");
+    recalcPortfolio();
+    statusDiv.textContent = `Last updated: ${new Date().toLocaleString()} • Sparkline range: ${sparkRange.toUpperCase()}`;
+  }
+
+  // ---------- CSV Export ----------
+  function exportCSV() {
+    const headers = ["Symbol","Name","Price","Change","Change%","Shares","Cost/Share","Market Value","P/L","P/L%","Currency"];
+    const lines = [headers.join(",")];
+    tickers.forEach(sym => {
+      const q = lastQuotes[sym]; if (!q) return;
+      const p = portfolio[sym] || { shares: 0, cost: 0 };
+      const price = q.regularMarketPrice || 0;
+      const value = price * (p.shares || 0);
+      const cost  = (p.cost || 0) * (p.shares || 0);
+      const pl    = value - cost;
+      const plPct = cost > 0 ? (pl / cost) * 100 : 0;
+      const name = (q.shortName || q.longName || "").replace(/,/g, " ");
+      lines.push([
+        q.symbol, name, price.toFixed(4),
+        (q.regularMarketChange || 0).toFixed(4),
+        (q.regularMarketChangePercent || 0).toFixed(4),
+        p.shares || 0, p.cost || 0,
+        value.toFixed(2), pl.toFixed(2), plPct.toFixed(2),
+        q.currency || ""
+      ].join(","));
+    });
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `portfolio_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Initial load
+  refreshAll();
+</script>
+
+</body>
+</html>
