@@ -219,14 +219,17 @@
   // ================================================================
   // Symbol mapping helpers
   // ================================================================
-  // Twelve Data uses symbol:exchange or just symbol; SGX = XSES, HK = XHKG
+  // Twelve Data uses symbol + separate exchange param
+  // Reference: https://twelvedata.com/docs#reference-data
   function toTwelveSymbol(sym) {
     const s = sym.toUpperCase();
-    if (s.endsWith(".SI")) return s.replace(".SI", "") + ":XSES";
-    if (s.endsWith(".HK")) return s.replace(".HK", "") + ":XHKG";
-    if (s.endsWith(".L"))  return s.replace(".L", "")  + ":XLON";
-    if (s.endsWith(".TO")) return s.replace(".TO", "") + ":XTSE";
-    return s;
+    if (s.endsWith(".SI")) return { symbol: s.replace(".SI", ""), exchange: "SGX" };
+    if (s.endsWith(".HK")) return { symbol: s.replace(".HK", ""), exchange: "HKEX" };
+    if (s.endsWith(".L"))  return { symbol: s.replace(".L", ""),  exchange: "LSE" };
+    if (s.endsWith(".TO")) return { symbol: s.replace(".TO", ""), exchange: "TSX" };
+    if (s.endsWith(".AX")) return { symbol: s.replace(".AX", ""), exchange: "ASX" };
+    if (s.endsWith(".T"))  return { symbol: s.replace(".T", ""),  exchange: "TSE" };
+    return { symbol: s, exchange: "" }; // US default
   }
   // Finnhub uses e.g. AAPL for US; for SGX/HK you need premium — we skip
   function toFinnhubSymbol(sym) {
@@ -243,8 +246,9 @@
   // ---- Twelve Data (CORS-enabled, needs key) ----
   async function fetchQuoteTwelve(symbol) {
     if (!twelveKey) throw new Error("no key");
-    const tsym = toTwelveSymbol(symbol);
-    const url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(tsym)}&apikey=${twelveKey}`;
+    const { symbol: tsym, exchange } = toTwelveSymbol(symbol);
+    let url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(tsym)}&apikey=${twelveKey}`;
+    if (exchange) url += `&exchange=${encodeURIComponent(exchange)}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error("twelve http " + res.status);
     const d = await res.json();
@@ -266,11 +270,12 @@
   }
   async function fetchHistoryTwelve(symbol, range) {
     if (!twelveKey) throw new Error("no key");
-    const tsym = toTwelveSymbol(symbol);
+    const { symbol: tsym, exchange } = toTwelveSymbol(symbol);
     const size = range === "5d" ? 30 : range === "1mo" ? 22 : range === "3mo" ? 66
                : range === "6mo" ? 130 : 52;
     const interval = range === "5d" ? "1h" : range === "1y" ? "1week" : "1day";
-    const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(tsym)}&interval=${interval}&outputsize=${size}&apikey=${twelveKey}`;
+    let url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(tsym)}&interval=${interval}&outputsize=${size}&apikey=${twelveKey}`;
+    if (exchange) url += `&exchange=${encodeURIComponent(exchange)}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error("twelve hist http");
     const d = await res.json();
@@ -322,7 +327,6 @@
   const PROXIES = [
     (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-    (url) => `https://thingproxy.freeboard.io/fetch/${url}`,
   ];
   let lastProxyIdx = 0;
   async function fetchWithProxy(url) {
