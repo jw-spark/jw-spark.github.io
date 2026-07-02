@@ -13,6 +13,7 @@
     --up: #22c55e;
     --down: #ef4444;
     --accent: #3b82f6;
+    --warn: #f59e0b;
     --border: #334155;
   }
   * { box-sizing: border-box; }
@@ -93,6 +94,7 @@
   tr { border-top: 1px solid var(--border); }
   .up { color: var(--up); }
   .down { color: var(--down); }
+  .warn { color: var(--warn); }
   .symbol { font-weight: 600; }
   .name { color: var(--muted); font-size: 11px; margin-top: 2px; }
   .remove {
@@ -107,6 +109,27 @@
   .status { color: var(--muted); font-size: 12px; margin-top: 12px; }
   .error { color: var(--down); font-size: 13px; margin-top: 8px; }
   .sparkline { display: block; margin: 0 auto; }
+  .banner {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid var(--warn);
+    color: var(--warn);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .banner.show { display: block; }
+  .source-badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #334155;
+    color: var(--muted);
+    margin-left: 6px;
+    vertical-align: middle;
+  }
 
   /* Portfolio summary */
   .summary {
@@ -130,8 +153,6 @@
     font-weight: 600;
     border-top: 2px solid var(--border);
   }
-
-  /* Responsive: allow horizontal scroll on small screens */
   .table-wrap { overflow-x: auto; }
 </style>
 </head>
@@ -139,8 +160,10 @@
 
 <h1>📈 Stock &amp; Portfolio Watcher</h1>
 <p class="sub">
-  Enter Yahoo Finance tickers (comma-separated). Edit <b>Shares</b> and <b>Cost/Share</b> inline to track your portfolio. Everything is auto-saved locally.
+  Enter Yahoo Finance tickers (comma-separated). Edit <b>Shares</b> and <b>Cost/Share</b> inline. Everything auto-saves locally.
 </p>
+
+<div id="banner" class="banner"></div>
 
 <div class="controls">
   <input id="tickerInput" type="text" placeholder="D05.SI, S08.SI, O39.SI" />
@@ -157,26 +180,11 @@
   <label><input type="checkbox" id="autoRefresh" /> Auto-refresh (30s)</label>
 </div>
 
-<!-- Portfolio summary cards -->
 <div class="summary" id="summaryCards">
-  <div class="summary-card">
-    <div class="summary-label">Total Cost</div>
-    <div class="summary-value" id="sumCost">—</div>
-  </div>
-  <div class="summary-card">
-    <div class="summary-label">Market Value</div>
-    <div class="summary-value" id="sumValue">—</div>
-  </div>
-  <div class="summary-card">
-    <div class="summary-label">Unrealized P/L</div>
-    <div class="summary-value" id="sumPL">—</div>
-    <div class="summary-sub" id="sumPLPct">—</div>
-  </div>
-  <div class="summary-card">
-    <div class="summary-label">Day's Change</div>
-    <div class="summary-value" id="sumDay">—</div>
-    <div class="summary-sub" id="sumDayPct">—</div>
-  </div>
+  <div class="summary-card"><div class="summary-label">Total Cost</div><div class="summary-value" id="sumCost">—</div></div>
+  <div class="summary-card"><div class="summary-label">Market Value</div><div class="summary-value" id="sumValue">—</div></div>
+  <div class="summary-card"><div class="summary-label">Unrealized P/L</div><div class="summary-value" id="sumPL">—</div><div class="summary-sub" id="sumPLPct">—</div></div>
+  <div class="summary-card"><div class="summary-label">Day's Change</div><div class="summary-value" id="sumDay">—</div><div class="summary-sub" id="sumDayPct">—</div></div>
 </div>
 
 <div class="table-wrap">
@@ -211,14 +219,14 @@
   const LS_TICKERS   = "sw_tickers_v2";
   const LS_RANGE     = "sw_range_v2";
   const LS_AUTO      = "sw_auto_v2";
-  const LS_PORTFOLIO = "sw_portfolio_v2"; // { "D05.SI": {shares: 100, cost: 32.50}, ... }
+  const LS_PORTFOLIO = "sw_portfolio_v2";
 
   let tickers = JSON.parse(localStorage.getItem(LS_TICKERS) || '["D05.SI","S08.SI","O39.SI"]');
   let sparkRange = localStorage.getItem(LS_RANGE) || "1mo";
   let autoOn = localStorage.getItem(LS_AUTO) === "1";
   let portfolio = JSON.parse(localStorage.getItem(LS_PORTFOLIO) || "{}");
   let autoTimer = null;
-  let lastQuotes = {}; // cached quote data for CSV export & portfolio recalc
+  let lastQuotes = {};
 
   document.getElementById("tickerInput").value = tickers.join(", ");
   document.getElementById("sparkRange").value = sparkRange;
@@ -237,14 +245,12 @@
     else clearInterval(autoTimer);
   });
 
-  // ---------- Helpers ----------
   function loadTickers() {
     const raw = document.getElementById("tickerInput").value;
     tickers = raw.split(",").map(t => t.trim().toUpperCase()).filter(Boolean);
     localStorage.setItem(LS_TICKERS, JSON.stringify(tickers));
     refreshAll();
   }
-
   function removeTicker(sym) {
     tickers = tickers.filter(t => t !== sym);
     localStorage.setItem(LS_TICKERS, JSON.stringify(tickers));
@@ -253,61 +259,173 @@
     document.getElementById("tickerInput").value = tickers.join(", ");
     refreshAll();
   }
-
   function updatePortfolio(sym, field, valueStr) {
     const val = parseFloat(valueStr);
     if (!portfolio[sym]) portfolio[sym] = { shares: 0, cost: 0 };
     portfolio[sym][field] = isNaN(val) ? 0 : val;
     localStorage.setItem(LS_PORTFOLIO, JSON.stringify(portfolio));
-    recalcPortfolio(); // instant recalc without re-fetching quotes
+    recalcPortfolio();
   }
-
   function fmt(n, digits = 2) {
     if (n === null || n === undefined || isNaN(n)) return "—";
     return Number(n).toLocaleString(undefined, {
-      minimumFractionDigits: digits,
-      maximumFractionDigits: digits
+      minimumFractionDigits: digits, maximumFractionDigits: digits
     });
   }
-  function fmtVol(n) {
-    if (!n) return "—";
-    if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
-    if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
-    if (n >= 1e3) return (n / 1e3).toFixed(2) + "K";
-    return n.toString();
-  }
-  function proxy(url) {
-    return `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+
+  // ================================================================
+  // ROBUST DATA FETCHING — Multiple sources with automatic fallback
+  // ================================================================
+  //
+  // Strategy (in order):
+  //   1. Stooq.com — direct CORS-enabled endpoint, no proxy needed (most reliable)
+  //   2. Yahoo Finance via corsproxy.io
+  //   3. Yahoo Finance via allorigins.win
+  //   4. Yahoo Finance via cors.sh
+  //
+  // Whichever succeeds first wins.
+  //
+  const PROXIES = [
+    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  ];
+  let lastGoodProxyIdx = 0;
+
+  async function fetchWithFallback(url) {
+    // Try last known working proxy first, then rotate through others
+    const order = [lastGoodProxyIdx, ...PROXIES.map((_, i) => i).filter(i => i !== lastGoodProxyIdx)];
+    for (const idx of order) {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(PROXIES[idx](url), { signal: controller.signal });
+        clearTimeout(timeout);
+        if (res.ok) {
+          const text = await res.text();
+          lastGoodProxyIdx = idx;
+          return text;
+        }
+      } catch (e) { /* try next */ }
+    }
+    throw new Error("All proxies failed");
   }
 
-  async function fetchQuote(symbol) {
+  // ---- Yahoo Finance quote ----
+  async function fetchQuoteYahoo(symbol) {
     const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
-    const res = await fetch(proxy(url));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data?.quoteResponse?.result?.[0] || null;
+    const text = await fetchWithFallback(url);
+    const data = JSON.parse(text);
+    const q = data?.quoteResponse?.result?.[0];
+    if (!q || q.regularMarketPrice == null) throw new Error("no data");
+    return { ...q, _source: "Yahoo" };
   }
 
-  async function fetchHistory(symbol, range = "1mo") {
+  // ---- Stooq quote (fallback, CORS-friendly, no proxy) ----
+  // Stooq symbol conventions:
+  //   - US stocks: aapl.us, tsla.us
+  //   - SGX: d05.sg, s08.sg (Singapore uses .sg, not .si)
+  //   - HK: 0700.hk
+  //   - Index: ^spx -> ^spx
+  function yahooToStooq(sym) {
+    const s = sym.toLowerCase();
+    if (s.endsWith(".si")) return s.replace(".si", ".sg");
+    if (s.endsWith(".hk")) return s;
+    if (s.endsWith(".to")) return s;
+    if (s.endsWith(".l"))  return s.replace(".l", ".uk");
+    if (!s.includes(".")) return s + ".us"; // assume US
+    return s;
+  }
+  async function fetchQuoteStooq(symbol) {
+    const stq = yahooToStooq(symbol);
+    // Stooq lite CSV endpoint: allows CORS
+    const url = `https://stooq.com/q/l/?s=${encodeURIComponent(stq)}&f=sd2t2ohlcv&h&e=csv`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("stooq http " + res.status);
+    const csv = await res.text();
+    const lines = csv.trim().split("\n");
+    if (lines.length < 2) throw new Error("stooq no data");
+    const cols = lines[1].split(",");
+    // sym,date,time,open,high,low,close,volume
+    const [s, d, t, o, h, l, c, v] = cols;
+    const close = parseFloat(c);
+    const open  = parseFloat(o);
+    const high  = parseFloat(h);
+    const low   = parseFloat(l);
+    if (isNaN(close) || close === 0) throw new Error("stooq bad close");
+    // Stooq doesn't give previous close directly in this endpoint; use open as approximation for change
+    const change = close - open;
+    const pct = open ? (change / open) * 100 : 0;
+    return {
+      symbol: symbol,
+      shortName: symbol,
+      regularMarketPrice: close,
+      regularMarketChange: change,
+      regularMarketChangePercent: pct,
+      regularMarketPreviousClose: open,
+      regularMarketDayHigh: high,
+      regularMarketDayLow: low,
+      regularMarketVolume: parseInt(v) || 0,
+      currency: "",
+      _source: "Stooq"
+    };
+  }
+
+  // ---- Master quote fetcher: try Yahoo first, fall back to Stooq ----
+  async function fetchQuote(symbol) {
+    try {
+      return await fetchQuoteYahoo(symbol);
+    } catch (e) {
+      try {
+        return await fetchQuoteStooq(symbol);
+      } catch (e2) {
+        return null;
+      }
+    }
+  }
+
+  // ---- History (for sparkline) ----
+  async function fetchHistoryYahoo(symbol, range = "1mo") {
     const interval = (range === "5d") ? "15m"
-                   : (range === "1mo") ? "1d"
-                   : (range === "3mo") ? "1d"
-                   : (range === "6mo") ? "1d"
-                   : "1wk";
+                   : (range === "1y") ? "1wk" : "1d";
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}`;
-    const res = await fetch(proxy(url));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const text = await fetchWithFallback(url);
+    const data = JSON.parse(text);
     const result = data?.chart?.result?.[0];
-    if (!result) return [];
+    if (!result) throw new Error("no chart");
     const closes = result.indicators?.quote?.[0]?.close || [];
-    return closes.filter(v => v !== null && v !== undefined && !isNaN(v));
+    return closes.filter(v => v != null && !isNaN(v));
+  }
+  async function fetchHistoryStooq(symbol, range) {
+    // Stooq daily history CSV
+    const stq = yahooToStooq(symbol);
+    const days = range === "5d" ? 7 : range === "1mo" ? 32 : range === "3mo" ? 95
+               : range === "6mo" ? 185 : 370;
+    const d2 = new Date();
+    const d1 = new Date(Date.now() - days * 24 * 3600 * 1000);
+    const fmtD = (d) => d.getFullYear().toString() +
+                       String(d.getMonth()+1).padStart(2,"0") +
+                       String(d.getDate()).padStart(2,"0");
+    const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(stq)}&d1=${fmtD(d1)}&d2=${fmtD(d2)}&i=d`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("stooq hist http");
+    const csv = await res.text();
+    const lines = csv.trim().split("\n");
+    if (lines.length < 2) return [];
+    return lines.slice(1).map(l => parseFloat(l.split(",")[4]))
+                         .filter(v => !isNaN(v));
+  }
+  async function fetchHistory(symbol, range) {
+    try { return await fetchHistoryYahoo(symbol, range); }
+    catch (e) {
+      try { return await fetchHistoryStooq(symbol, range); }
+      catch (e2) { return []; }
+    }
   }
 
   function sparklineSVG(values, width = 110, height = 30) {
-    if (!values || values.length < 2) {
+    if (!values || values.length < 2)
       return `<span style="color:var(--muted); font-size:11px;">—</span>`;
-    }
     const min = Math.min(...values), max = Math.max(...values);
     const range = max - min || 1;
     const stepX = width / (values.length - 1);
@@ -320,20 +438,15 @@
     const stroke = rising ? "#22c55e" : "#ef4444";
     const fill   = rising ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)";
     const areaPath = `M 0,${height} L ${points.replace(/ /g, ' L ')} L ${width},${height} Z`;
-    return `
-      <svg class="sparkline" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-        <path d="${areaPath}" fill="${fill}" stroke="none"/>
-        <polyline fill="none" stroke="${stroke}" stroke-width="1.5" points="${points}"/>
-      </svg>
-    `;
+    return `<svg class="sparkline" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+      <path d="${areaPath}" fill="${fill}" stroke="none"/>
+      <polyline fill="none" stroke="${stroke}" stroke-width="1.5" points="${points}"/></svg>`;
   }
 
-  // ---------- Portfolio math (uses cached lastQuotes; no re-fetch) ----------
+  // ---------- Portfolio math ----------
   function recalcPortfolio() {
     let totalCost = 0, totalValue = 0, totalDayChg = 0;
-    let hasAny = false;
-    let currency = "";
-
+    let hasAny = false, currency = "";
     tickers.forEach(sym => {
       const q = lastQuotes[sym];
       const p = portfolio[sym] || { shares: 0, cost: 0 };
@@ -344,18 +457,15 @@
       const prev  = q.regularMarketPreviousClose || price;
       const value = price * p.shares;
       const cost  = (p.cost || 0) * p.shares;
-      const dayChg = (price - prev) * p.shares;
-      totalCost  += cost;
-      totalValue += value;
-      totalDayChg += dayChg;
+      totalCost  += cost; totalValue += value;
+      totalDayChg += (price - prev) * p.shares;
 
-      // Update row cells (market value + P/L) live
       const row = document.querySelector(`tr[data-sym="${sym}"]`);
       if (row) {
         const mv = row.querySelector(".mv");
         const pl = row.querySelector(".pl");
         const plp = row.querySelector(".plp");
-        if (p.shares > 0) {
+        if (p.shares > 0 && mv) {
           mv.textContent = fmt(value);
           if (p.cost > 0) {
             const plVal = value - cost;
@@ -369,36 +479,24 @@
             pl.textContent = "—"; plp.textContent = "—";
             pl.className = "pl"; plp.className = "plp";
           }
-        } else {
-          mv.textContent = "—"; pl.textContent = "—"; plp.textContent = "—";
         }
       }
     });
-
-    // Summary cards
     const plTotal = totalValue - totalCost;
     const plPct   = totalCost > 0 ? (plTotal / totalCost) * 100 : 0;
     const dayPct  = (totalValue - totalDayChg) > 0 ? (totalDayChg / (totalValue - totalDayChg)) * 100 : 0;
     const cur = currency ? " " + currency : "";
-
     document.getElementById("sumCost").textContent  = hasAny ? fmt(totalCost) + cur  : "—";
     document.getElementById("sumValue").textContent = hasAny ? fmt(totalValue) + cur : "—";
-
-    const plEl   = document.getElementById("sumPL");
-    const plPctEl= document.getElementById("sumPLPct");
-    const dayEl  = document.getElementById("sumDay");
-    const dayPctEl = document.getElementById("sumDayPct");
-
+    const plEl = document.getElementById("sumPL"), plPctEl = document.getElementById("sumPLPct");
+    const dayEl = document.getElementById("sumDay"), dayPctEl = document.getElementById("sumDayPct");
     if (hasAny) {
       const plCls = plTotal >= 0 ? "up" : "down";
-      plEl.className = "summary-value " + plCls;
-      plPctEl.className = "summary-sub " + plCls;
+      plEl.className = "summary-value " + plCls; plPctEl.className = "summary-sub " + plCls;
       plEl.textContent = (plTotal >= 0 ? "+" : "") + fmt(plTotal) + cur;
       plPctEl.textContent = (plTotal >= 0 ? "+" : "") + fmt(plPct) + "%";
-
       const dayCls = totalDayChg >= 0 ? "up" : "down";
-      dayEl.className = "summary-value " + dayCls;
-      dayPctEl.className = "summary-sub " + dayCls;
+      dayEl.className = "summary-value " + dayCls; dayPctEl.className = "summary-sub " + dayCls;
       dayEl.textContent = (totalDayChg >= 0 ? "+" : "") + fmt(totalDayChg) + cur;
       dayPctEl.textContent = (totalDayChg >= 0 ? "+" : "") + fmt(dayPct) + "%";
     } else {
@@ -407,63 +505,55 @@
       plEl.className = "summary-value"; plPctEl.className = "summary-sub";
       dayEl.className = "summary-value"; dayPctEl.className = "summary-sub";
     }
-
-    // Footer totals row
     const foot = document.getElementById("quotesFoot");
-    if (hasAny) {
-      const cls = plTotal >= 0 ? "up" : "down";
-      foot.innerHTML = `
-        <tr>
-          <td colspan="7" style="text-align:right;">Portfolio Total</td>
-          <td>${fmt(totalValue)}</td>
-          <td class="${cls}">${plTotal >= 0 ? "+" : ""}${fmt(plTotal)}</td>
-          <td class="${cls}">${plTotal >= 0 ? "+" : ""}${fmt(plPct)}%</td>
-          <td></td>
-        </tr>`;
-    } else {
-      foot.innerHTML = "";
-    }
+    foot.innerHTML = hasAny ? `
+      <tr>
+        <td colspan="7" style="text-align:right;">Portfolio Total</td>
+        <td>${fmt(totalValue)}</td>
+        <td class="${plTotal >= 0 ? 'up' : 'down'}">${plTotal >= 0 ? '+' : ''}${fmt(plTotal)}</td>
+        <td class="${plTotal >= 0 ? 'up' : 'down'}">${plTotal >= 0 ? '+' : ''}${fmt(plPct)}%</td>
+        <td></td>
+      </tr>` : "";
   }
 
   // ---------- Main refresh ----------
   async function refreshAll() {
     const tbody = document.getElementById("quotesBody");
     const statusDiv = document.getElementById("status");
-    const errorDiv = document.getElementById("error");
-    errorDiv.textContent = "";
+    const banner = document.getElementById("banner");
+    banner.classList.remove("show");
 
     if (tickers.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--muted);">No tickers loaded. Enter some above and click Load.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--muted);">No tickers loaded.</td></tr>`;
       document.getElementById("quotesFoot").innerHTML = "";
-      statusDiv.textContent = "";
-      recalcPortfolio();
-      return;
+      statusDiv.textContent = ""; recalcPortfolio(); return;
     }
 
     statusDiv.textContent = "Loading...";
     tbody.innerHTML = tickers.map(t =>
-      `<tr><td class="symbol">${t}</td><td colspan="10" style="color:var(--muted);">Loading...</td></tr>`
+      `<tr data-sym="${t}"><td class="symbol">${t}</td><td colspan="10" style="color:var(--muted);">Loading...</td></tr>`
     ).join("");
 
-    const quotePromises   = tickers.map(t => fetchQuote(t).catch(() => null));
-    const historyPromises = tickers.map(t => fetchHistory(t, sparkRange).catch(() => []));
-    const [quotes, histories] = await Promise.all([
-      Promise.all(quotePromises),
-      Promise.all(historyPromises)
-    ]);
+    const quotes = await Promise.all(tickers.map(t => fetchQuote(t).catch(() => null)));
+    const histories = await Promise.all(tickers.map(t => fetchHistory(t, sparkRange).catch(() => [])));
 
     lastQuotes = {};
+    let failCount = 0;
+    let usingFallback = false;
+
     const rows = quotes.map((q, i) => {
       const symbol = tickers[i];
       if (!q) {
+        failCount++;
         return `
           <tr data-sym="${symbol}">
             <td class="symbol">${symbol}</td>
-            <td colspan="9" style="color:var(--down);">Failed to load (check symbol)</td>
+            <td colspan="9" style="color:var(--down);">Failed to load — try again in a moment, or check symbol</td>
             <td><button class="remove" onclick="removeTicker('${symbol}')">✕</button></td>
           </tr>`;
       }
       lastQuotes[symbol] = q;
+      if (q._source === "Stooq") usingFallback = true;
       const price = q.regularMarketPrice;
       const change = q.regularMarketChange;
       const pct = q.regularMarketChangePercent;
@@ -471,11 +561,12 @@
       const arrow = change >= 0 ? "▲" : "▼";
       const spark = sparklineSVG(histories[i]);
       const p = portfolio[symbol] || { shares: 0, cost: 0 };
+      const sourceBadge = q._source ? `<span class="source-badge">${q._source}</span>` : "";
 
       return `
         <tr data-sym="${symbol}">
           <td>
-            <div class="symbol">${q.symbol}</div>
+            <div class="symbol">${q.symbol}${sourceBadge}</div>
             <div class="name">${(q.shortName || q.longName || "").slice(0, 28)}</div>
           </td>
           <td>${fmt(price)}</td>
@@ -492,18 +583,27 @@
           <td class="pl">—</td>
           <td class="plp">—</td>
           <td><button class="remove" title="Remove" onclick="removeTicker('${symbol}')">✕</button></td>
-        </tr>
-      `;
+        </tr>`;
     });
 
     tbody.innerHTML = rows.join("");
     recalcPortfolio();
-    statusDiv.textContent = `Last updated: ${new Date().toLocaleString()} • Sparkline range: ${sparkRange.toUpperCase()}`;
+
+    let msg = `Last updated: ${new Date().toLocaleString()} • Range: ${sparkRange.toUpperCase()}`;
+    if (usingFallback) msg += " • ⚠ Some symbols using Stooq fallback";
+    statusDiv.textContent = msg;
+
+    if (failCount === tickers.length) {
+      banner.textContent = "⚠ All quote sources failed. Yahoo Finance and Stooq may be blocked on your network, or all CORS proxies are down. Try again in a moment or check your VPN/firewall.";
+      banner.classList.add("show");
+    } else if (failCount > 0) {
+      banner.textContent = `⚠ ${failCount} of ${tickers.length} symbol(s) failed. Check symbol spelling (Yahoo uses e.g. D05.SI for SGX, AAPL for US).`;
+      banner.classList.add("show");
+    }
   }
 
-  // ---------- CSV Export ----------
   function exportCSV() {
-    const headers = ["Symbol","Name","Price","Change","Change%","Shares","Cost/Share","Market Value","P/L","P/L%","Currency"];
+    const headers = ["Symbol","Name","Price","Change","Change%","Shares","Cost/Share","Market Value","P/L","P/L%","Currency","Source"];
     const lines = [headers.join(",")];
     tickers.forEach(sym => {
       const q = lastQuotes[sym]; if (!q) return;
@@ -520,19 +620,16 @@
         (q.regularMarketChangePercent || 0).toFixed(4),
         p.shares || 0, p.cost || 0,
         value.toFixed(2), pl.toFixed(2), plPct.toFixed(2),
-        q.currency || ""
+        q.currency || "", q._source || ""
       ].join(","));
     });
     const blob = new Blob([lines.join("\n")], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
+    const a = document.createElement("a"); a.href = url;
     a.download = `portfolio_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    a.click(); URL.revokeObjectURL(url);
   }
 
-  // Initial load
   refreshAll();
 </script>
 
