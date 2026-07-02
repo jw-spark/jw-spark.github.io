@@ -40,6 +40,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Stock Price & Portfolio Watcher</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E" />
 <style>
   :root {
     --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --muted: #94a3b8;
@@ -136,10 +137,18 @@
     <label>
       <b style="color:var(--text)">Twelve Data</b>
       <a href="https://twelvedata.com/register" target="_blank">Get free key →</a>
-      <span style="color:var(--muted); font-size:12px;">(better for SGX/HK)</span>
+      <span style="color:var(--muted); font-size:12px;">(US only on free tier)</span>
     </label>
     <input id="twelveKey" type="password" placeholder="Twelve Data API key" />
     <button class="secondary" onclick="saveApiKey('twelve')">Save</button>
+  </div>
+  <div class="apikey-row" style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
+    <label>
+      <b style="color:var(--warn)">🔥 Cloudflare Worker (recommended for SGX/HK)</b>
+      <span style="color:var(--muted); font-size:12px;">— see setup guide at top of HTML file</span>
+    </label>
+    <input id="workerUrl" type="text" placeholder="https://your-worker.workers.dev" style="min-width: 280px;" />
+    <button class="secondary" onclick="saveApiKey('worker')">Save</button>
   </div>
   <p style="color: var(--muted); font-size: 12px; margin-top: 10px;">
     Keys are stored only in your browser's localStorage. Finnhub = 60 req/min free. Twelve Data = 800 req/day free with SGX/HK support.
@@ -191,7 +200,8 @@
   // ---------- Persisted state ----------
   const LS = {
     TICKERS: "sw_tickers_v2", RANGE: "sw_range_v2", AUTO: "sw_auto_v2",
-    PORTFOLIO: "sw_portfolio_v2", FINNHUB: "sw_finnhub_key", TWELVE: "sw_twelve_key"
+    PORTFOLIO: "sw_portfolio_v2", FINNHUB: "sw_finnhub_key", TWELVE: "sw_twelve_key",
+    WORKER: "sw_worker_url"
   };
 
   let tickers = JSON.parse(localStorage.getItem(LS.TICKERS) || '["D05.SI","S08.SI","O39.SI"]');
@@ -200,6 +210,7 @@
   let portfolio = JSON.parse(localStorage.getItem(LS.PORTFOLIO) || "{}");
   let finnhubKey = localStorage.getItem(LS.FINNHUB) || "";
   let twelveKey  = localStorage.getItem(LS.TWELVE) || "";
+  let workerUrl  = localStorage.getItem(LS.WORKER) || "";
   let autoTimer = null;
   let lastQuotes = {};
 
@@ -208,6 +219,7 @@
   document.getElementById("autoRefresh").checked = autoOn;
   document.getElementById("finnhubKey").value = finnhubKey;
   document.getElementById("twelveKey").value = twelveKey;
+  document.getElementById("workerUrl").value = workerUrl;
   if (autoOn) autoTimer = setInterval(refreshAll, 30000);
   // Open the API key panel if no keys are configured
   if (!finnhubKey && !twelveKey) document.getElementById("apiKeyPanel").open = true;
@@ -224,9 +236,12 @@
     if (which === "finnhub") {
       finnhubKey = document.getElementById("finnhubKey").value.trim();
       localStorage.setItem(LS.FINNHUB, finnhubKey);
-    } else {
+    } else if (which === "twelve") {
       twelveKey = document.getElementById("twelveKey").value.trim();
       localStorage.setItem(LS.TWELVE, twelveKey);
+    } else if (which === "worker") {
+      workerUrl = document.getElementById("workerUrl").value.trim().replace(/\/$/, "");
+      localStorage.setItem(LS.WORKER, workerUrl);
     }
     refreshAll();
   }
@@ -364,21 +379,26 @@
   }
 
   // ---- Yahoo via proxies (last resort) ----
-  // Multiple CORS proxies rotated in order. Public services can go down —
-  // if all fail, deploy your own via Cloudflare Workers (see notes at bottom).
-  const PROXIES = [
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-    (url) => `https://proxy.cors.sh/${url}`,
-    (url) => `https://cors-proxy.htmldriven.com/?url=${encodeURIComponent(url)}`,
-  ];
+  // User's own Cloudflare Worker (if configured) is tried first.
+  // Public fallback proxies (unreliable in 2026 — most now require paid keys).
+  function buildProxies() {
+    const list = [];
+    if (workerUrl) {
+      list.push((url) => `${workerUrl}/?url=${encodeURIComponent(url)}`);
+    }
+    list.push((url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+    list.push((url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`);
+    return list;
+  }
   let lastProxyIdx = 0;
   async function fetchWithProxy(url) {
-    const order = [lastProxyIdx, ...PROXIES.map((_, i) => i).filter(i => i !== lastProxyIdx)];
+    const PROXIES = buildProxies();
+    const order = [lastProxyIdx, ...PROXIES.map((_, i) => i).filter(i => i !== lastProxyIdx)]
+                  .filter(i => i < PROXIES.length);
     for (const idx of order) {
       try {
         const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 7000);
+        const t = setTimeout(() => ctrl.abort(), 8000);
         const res = await fetch(PROXIES[idx](url), { signal: ctrl.signal });
         clearTimeout(t);
         if (res.ok) {
@@ -411,34 +431,22 @@
   // Twelve Data FREE tier: only US stocks + trial symbol D05.SI for SGX.
   // Finnhub FREE tier: only US stocks.
   // For everything else (SGX, HK, etc.), Yahoo (via proxy) is the only free option.
-  function isUSSymbol(sym)  { return !sym.includes("."); }
-  function isTrialSymbol(sym) { return sym.toUpperCase() === "D05.SI"; }
+  function isUSSymbol(sym) { return !sym.includes("."); }
 
   async function fetchQuote(symbol) {
-    const isUS = isUSSymbol(symbol);
-    // For US: try direct-CORS APIs first (fastest & most reliable)
-    if (isUS) {
+    // For US stocks: use direct-CORS APIs (fastest & most reliable)
+    if (isUSSymbol(symbol)) {
       if (finnhubKey) { try { return await fetchQuoteFinnhub(symbol); } catch (e) {} }
       if (twelveKey)  { try { return await fetchQuoteTwelve(symbol); } catch (e) {} }
-    } else {
-      // For non-US: try Twelve Data only for known-supported trial symbols
-      if (twelveKey && isTrialSymbol(symbol)) {
-        try { return await fetchQuoteTwelve(symbol); } catch (e) {}
-      }
     }
-    // Universal fallback: Yahoo via proxy
+    // For SGX/HK/other or if US APIs failed: fall back to Yahoo via proxy
     try { return await fetchQuoteYahoo(symbol); } catch (e) {}
     return null;
   }
   async function fetchHistory(symbol, range) {
-    const isUS = isUSSymbol(symbol);
-    if (isUS) {
+    if (isUSSymbol(symbol)) {
       if (finnhubKey) { try { return await fetchHistoryFinnhub(symbol, range); } catch (e) {} }
       if (twelveKey)  { try { return await fetchHistoryTwelve(symbol, range); } catch (e) {} }
-    } else {
-      if (twelveKey && isTrialSymbol(symbol)) {
-        try { return await fetchHistoryTwelve(symbol, range); } catch (e) {}
-      }
     }
     try { return await fetchHistoryYahoo(symbol, range); } catch (e) {}
     return [];
@@ -595,11 +603,11 @@
     statusDiv.textContent = msg;
 
     if (failCount === tickers.length) {
-      banner.innerHTML = `⚠ <b>All symbols failed.</b> Public CORS proxies are unreliable when this page runs from ${location.origin}.
-        <br>👉 Add a free <b>Twelve Data</b> API key above (best for SGX/HK) or <b>Finnhub</b> (US stocks). Both are free to register and work directly with no proxy.`;
+      banner.innerHTML = `⚠ <b>All symbols failed.</b> Public CORS proxies are down/blocked from <code>${location.origin}</code>.
+        <br>👉 <b>Recommended fix (5 min, 100% free):</b> deploy your own Cloudflare Worker. The setup code is in a comment at the top of this HTML file — open in a text editor to see. Then paste your Worker URL into the "🔥 Cloudflare Worker" field above.`;
       banner.classList.add("show");
     } else if (failCount > 0) {
-      banner.innerHTML = `⚠ ${failCount} of ${tickers.length} symbol(s) failed. Consider adding a Twelve Data API key for better coverage.`;
+      banner.innerHTML = `⚠ ${failCount} of ${tickers.length} symbol(s) failed. For 100% reliable SGX/HK coverage, deploy your own Cloudflare Worker (setup guide at top of HTML file).`;
       banner.classList.add("show");
     }
   }
