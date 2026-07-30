@@ -135,8 +135,9 @@ button:disabled {
 <h2>🔮 Bus Arrival Predictor — Day &amp; Hour Lookup</h2>
 <div class="small">
     Pick a bus stop, day of week and hour. The predictor scans historical Supabase records
-    (<code>bus_arrivals</code>) collected at that same weekday + hour in the past, and estimates
-    the typical wait time and clock-time arrival pattern for each bus service.
+    (<code>bus_arrivals</code>) collected at that same weekday + hour in the past, and reconstructs
+    a mini "timetable" — the distinct clock-times each bus service has historically arrived within
+    that hour — so you still get a useful estimate even if the live tracking API is down.
 </div>
 
 <div class="section controls">
@@ -271,6 +272,41 @@ function minutesToClock(mins) {
     return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
 }
 
+// ✅ Group individual historical arrival clock-times into distinct "arrival slots"
+// e.g. a bus running every ~15-20 mins within the hour will show up as several
+// separate slots instead of being flattened into one single average time.
+function getClusterGapMinutes() {
+    if (CONFIG.PREDICTION && CONFIG.PREDICTION.CLUSTER_GAP_MINUTES) {
+        return CONFIG.PREDICTION.CLUSTER_GAP_MINUTES;
+    }
+    return 10; // default: treat arrivals >10 mins apart as separate slots
+}
+
+function clusterArrivalTimes(minutesArr) {
+    if (!minutesArr.length) return [];
+    const sorted = [...minutesArr].sort((a, b) => a - b);
+    const gap = getClusterGapMinutes();
+    const clusters = [];
+    let current = [sorted[0]];
+    for (let i = 1; i < sorted.length; i++) {
+        if (sorted[i] - current[current.length - 1] <= gap) {
+            current.push(sorted[i]);
+        } else {
+            clusters.push(current);
+            current = [sorted[i]];
+        }
+    }
+    clusters.push(current);
+    return clusters.map(function(c) {
+        return {
+            avgMinute: average(c),
+            count: c.length,
+            earliest: Math.min(...c),
+            latest: Math.max(...c)
+        };
+    }).sort(function(a, b) { return a.avgMinute - b.avgMinute; });
+}
+
 // ---------- Fetch historical rows from Supabase ----------
 async function fetchHistoryRows(stop) {
     const queryLimit = (CONFIG.PREDICTION && CONFIG.PREDICTION.QUERY_LIMIT) || 5000;
@@ -330,16 +366,24 @@ function buildServiceStats(rows) {
     const arrivalClockMinutes = rows.map(function(r) {
         return minutesSinceMidnight(r.estimated_arrival);
     });
+    const clusters = clusterArrivalTimes(arrivalClockMinutes);
     return {
         samples: rows.length,
         avgWait: average(waits),
         medianWait: median(waits),
         p25Wait: percentile(waits, 25),
         p75Wait: percentile(waits, 75),
-        avgArrivalClock: minutesToClock(average(arrivalClockMinutes)),
-        medianArrivalClock: minutesToClock(median(arrivalClockMinutes)),
         earliestArrivalClock: minutesToClock(Math.min(...arrivalClockMinutes)),
-        latestArrivalClock: minutesToClock(Math.max(...arrivalClockMinutes))
+        latestArrivalClock: minutesToClock(Math.max(...arrivalClockMinutes)),
+        // ✅ Multiple estimated arrival slots within the hour (the "timetable")
+        arrivalSlots: clusters.map(function(c) {
+            return {
+                time: minutesToClock(c.avgMinute),
+                rangeStart: minutesToClock(c.earliest),
+                rangeEnd: minutesToClock(c.latest),
+                count: c.count
+            };
+        })
     };
 }
 
@@ -367,24 +411,35 @@ function renderResults(stop, day, hour, grouped, totalFetched, dateRange) {
     services.forEach(function(serviceNo) {
         const stats = buildServiceStats(grouped[serviceNo]);
         const lowData = stats.samples < 5;
+
+        const slotsHtml = stats.arrivalSlots.map(function(slot) {
+            const slotLowData = slot.count < 3;
+            return `
+                <div class="kv" style="margin-top:4px;">
+                    <b>~${slot.time}</b>
+                    <span class="small">(seen ${slot.rangeStart}–${slot.rangeEnd}, ${slot.count} sample${slot.count > 1 ? "s" : ""})</span>
+                    ${slotLowData ? '<span class="badge low-data-badge" style="margin-left:6px;">Low confidence</span>' : ""}
+                </div>
+            `;
+        }).join("");
+
         const div = document.createElement("div");
         div.className = "card";
         div.innerHTML = `
             <div class="bus-no">Bus ${serviceNo}</div>
             <div class="small">Matching rule: ${day}, hour ${String(hour).padStart(2, "0")}:00–${String(hour).padStart(2, "0")}:59 (all historical matches, any minute)</div>
             <div class="divider"></div>
-            <div class="kv"><b>Predicted arrival time:</b> ${stats.avgArrivalClock}</div>
-            <div class="kv"><b>Median arrival time:</b> ${stats.medianArrivalClock}</div>
-            <div class="kv"><b>Observed range:</b> ${stats.earliestArrivalClock} – ${stats.latestArrivalClock}</div>
+            <div class="kv"><b>Estimated arrival times:</b></div>
+            ${slotsHtml || '<div class="small">No distinct arrival slots found.</div>'}
             <div class="divider"></div>
-            <div class="kv"><b>Average wait after snapshot:</b> ${stats.avgWait !== null ? stats.avgWait + " mins" : "N/A"}</div>
-            <div class="kv"><b>Median wait:</b> ${stats.medianWait !== null ? stats.medianWait + " mins" : "N/A"}</div>
+            <div class="kv"><b>Observed range (whole hour):</b> ${stats.earliestArrivalClock} – ${stats.latestArrivalClock}</div>
+            <div class="kv"><b>Typical wait after a live check:</b> ${stats.avgWait !== null ? stats.avgWait + " mins (median " + stats.medianWait + ")" : "N/A"}</div>
             <div class="kv"><b>Confidence band (P25–P75):</b> ${stats.p25Wait !== null ? stats.p25Wait + "–" + stats.p75Wait + " mins" : "N/A"}</div>
             <div class="divider"></div>
             <div>${lowData
-                ? '<span class="badge low-data-badge">Low sample size — treat with caution</span>'
+                ? '<span class="badge low-data-badge">Low overall sample size — treat with caution</span>'
                 : '<span class="badge normal-badge">Sufficient sample size</span>'}</div>
-            <div class="small">Historical matched samples: ${stats.samples}</div>
+            <div class="small">Historical matched samples (this hour): ${stats.samples}</div>
         `;
         resultListEl.appendChild(div);
     });
