@@ -1,142 +1,1737 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
->
-<title>Bus Arrival Predictor - By Day &amp; Hour</title>
+    <meta charset="utf-8">
 
-<style>
-* {
-    box-sizing: border-box;
-}
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
+    >
 
-body {
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: #fff;
-    padding: 20px;
-    margin: 0;
-}
+    <title>Bus Arrival Predictor</title>
 
-h2,
-h3 {
-    margin-top: 0;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-code {
-    color: #b9ffd1;
-}
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
 
-.section {
-    margin-bottom: 24px;
-}
+        h2,
+        h3 {
+            margin-top: 0;
+        }
 
-.card {
-    background: #1c1c1c;
-    border: 1px solid #2e2e2e;
-    border-radius: 10px;
-    padding: 12px;
-    margin: 8px 0;
-}
+        .small {
+            color: #bbb;
+            font-size: 13px;
+        }
 
-.bus-no {
-    font-size: 20px;
-    font-weight: bold;
-}
+        .section {
+            margin-bottom: 24px;
+        }
 
-.badge {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: 12px;
-    margin-right: 6px;
-    margin-top: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+            background: #1c1c1c;
+            border: 1px solid #2e2e2e;
+            border-radius: 10px;
+            padding: 16px;
+        }
 
-.good {
-    color: #7cfc98;
-}
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
 
-.warn {
-    color: #ffd966;
-}
+        .field label {
+            font-size: 12px;
+            color: #bbb;
+        }
 
-.bad {
-    color: #ff7b7b;
-}
+        select,
+        input {
+            background: #0d0d0d;
+            color: #fff;
+            border: 1px solid #2e2e2e;
+            border-radius: 6px;
+            padding: 9px 10px;
+            font-size: 14px;
+        }
 
-.normal-badge {
-    background: rgba(124, 252, 152, 0.1);
-    color: #b9ffd1;
-    border-color: rgba(124, 252, 152, 0.25);
-}
+        button {
+            background: #2f6fed;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 18px;
+            font-weight: bold;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
 
-.low-data-badge {
-    background: rgba(255, 217, 102, 0.1);
-    color: #ffe9a8;
-    border-color: rgba(255, 217, 102, 0.25);
-}
+        button:hover {
+            background: #4c85ff;
+        }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 12px;
-}
+        button:disabled {
+            background: #444;
+            cursor: not-allowed;
+        }
 
-.small {
-    color: #bbb;
-    font-size: 13px;
-}
+        .grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(310px, 1fr));
+            gap: 12px;
+        }
 
-pre {
-    background: #0d0d0d;
-    border: 1px solid #2e2e2e;
-    border-radius: 8px;
-    padding: 10px;
-    max-height: 260px;
-    overflow: auto;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
+        .card {
+            background: #1c1c1c;
+            border: 1px solid #2e2e2e;
+            border-radius: 10px;
+            padding: 14px;
+        }
 
-.kv {
-    margin-top: 8px;
-    line-height: 1.6;
-}
+        .bus-no {
+            font-size: 21px;
+            font-weight: bold;
+        }
 
-.kv b {
-    display: inline-block;
-    min-width: 170px;
-}
+        .divider {
+            border-top: 1px solid #2e2e2e;
+            margin: 10px 0;
+        }
 
-.divider {
-    margin: 8px 0;
-    border-top: 1px solid #2e2e2e;
-}
+        .kv {
+            line-height: 1.6;
+            margin-top: 6px;
+        }
 
-.controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: flex-end;
-    background: #1c1c1c;
-    border: 1px solid #2e2e2e;
-    border-radius: 10px;
-    padding: 16px;
-}
+        .kv b {
+            display: inline-block;
+            min-width: 175px;
+        }
 
-.field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            margin-top: 6px;
+        }
 
-.field label {
-    font-size: 12px;
-    color: #bbb;
-}
+        .ok {
+            color: #b9ffd1;
+            background: rgba(124, 252, 152, 0.1);
+            border: 1px solid rgba(124, 252, 152, 0.25);
+        }
 
+        .warn {
+            color: #ffe9a8;
+            background: rgba(255, 217, 102, 0.1);
+            border: 1px solid rgba(255, 217, 102, 0.25);
+        }
+
+        .error {
+            color: #ffb3b3;
+            background: #321818;
+            border-color: #8d3d3d;
+        }
+
+        pre {
+            background: #0d0d0d;
+            border: 1px solid #2e2e2e;
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 300px;
+            overflow: auto;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .controls {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .field,
+            select,
+            input,
+            button {
+                width: 100%;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kv b {
+                display: block;
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>🔮 Bus Arrival Predictor</h2>
+
+    <p class="small">
+        Select a historical weekday and hour. The page searches
+        backwards through Supabase in 1,000-record pages until
+        matching historical records are found.
+    </p>
+
+    <div
+        id="startupError"
+        class="card error hidden"
+    ></div>
+
+    <div class="section controls">
+
+        <div class="field">
+            <label for="stopSelect">
+                Bus Stop
+            </label>
+
+            <select id="stopSelect"></select>
+        </div>
+
+        <div class="field">
+            <label for="daySelect">
+                Historical Day
+            </label>
+
+            <select id="daySelect">
+                <option value="Mon">Monday</option>
+                <option value="Tue">Tuesday</option>
+                <option value="Wed">Wednesday</option>
+                <option value="Thu">Thursday</option>
+                <option value="Fri">Friday</option>
+                <option value="Sat">Saturday</option>
+                <option value="Sun">Sunday</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="hourSelect">
+                Hour
+            </label>
+
+            <select id="hourSelect"></select>
+        </div>
+
+        <div class="field">
+            <label for="serviceInput">
+                Bus Service Number, optional
+            </label>
+
+            <input
+                id="serviceInput"
+                type="text"
+                inputmode="numeric"
+                placeholder="e.g. 24"
+            >
+        </div>
+
+        <div class="field">
+            <button
+                id="predictBtn"
+                type="button"
+            >
+                Predict
+            </button>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <h3>Debug Log</h3>
+
+        <pre id="status">Starting...</pre>
+    </div>
+
+    <div class="section">
+        <h3>📊 Prediction Results</h3>
+
+        <div
+            id="resultMeta"
+            class="small"
+        ></div>
+
+        <div
+            id="resultList"
+            class="grid"
+        ></div>
+    </div>
+
+    <!-- config.js must be in the same folder -->
+    <script src="config.js"></script>
+
+    <script>
+        "use strict";
+
+        const statusEl =
+            document.getElementById("status");
+
+        const stopSelect =
+            document.getElementById("stopSelect");
+
+        const daySelect =
+            document.getElementById("daySelect");
+
+        const hourSelect =
+            document.getElementById("hourSelect");
+
+        const serviceInput =
+            document.getElementById("serviceInput");
+
+        const predictBtn =
+            document.getElementById("predictBtn");
+
+        const resultMeta =
+            document.getElementById("resultMeta");
+
+        const resultList =
+            document.getElementById("resultList");
+
+        const startupError =
+            document.getElementById("startupError");
+
+
+        // -------------------------------------------------
+        // Error handling
+        // -------------------------------------------------
+
+        function showFatal(message) {
+            startupError.classList.remove("hidden");
+            startupError.textContent = message;
+
+            statusEl.textContent =
+                "ERROR: " + message;
+
+            predictBtn.disabled = true;
+        }
+
+
+        window.addEventListener(
+            "error",
+            function(event) {
+                if (!statusEl) {
+                    return;
+                }
+
+                statusEl.textContent +=
+                    "\nJAVASCRIPT ERROR: " +
+                    event.message +
+                    "\nLine: " +
+                    event.lineno;
+            }
+        );
+
+
+        // -------------------------------------------------
+        // Configuration
+        // -------------------------------------------------
+
+        function getPredictionConfig() {
+            return CONFIG.PREDICTION || {};
+        }
+
+
+        function getTimeZone() {
+            return (
+                getPredictionConfig().TIME_ZONE ||
+                "Asia/Singapore"
+            );
+        }
+
+
+        function validateConfig() {
+            if (typeof CONFIG === "undefined") {
+                throw new Error(
+                    "config.js did not load. " +
+                    "Put config.js beside index.html."
+                );
+            }
+
+            if (
+                !CONFIG.SUPABASE_URL ||
+                CONFIG.SUPABASE_URL.includes(
+                    "YOUR-PROJECT"
+                )
+            ) {
+                throw new Error(
+                    "Replace SUPABASE_URL in config.js " +
+                    "with your actual Supabase URL."
+                );
+            }
+
+            if (
+                !CONFIG.SUPABASE_KEY ||
+                CONFIG.SUPABASE_KEY.includes(
+                    "YOUR-SUPABASE"
+                )
+            ) {
+                throw new Error(
+                    "Replace SUPABASE_KEY in config.js " +
+                    "with your complete key."
+                );
+            }
+
+            if (
+                !Array.isArray(CONFIG.BUS_STOPS) ||
+                CONFIG.BUS_STOPS.length === 0
+            ) {
+                throw new Error(
+                    "BUS_STOPS is empty in config.js."
+                );
+            }
+        }
+
+
+        // -------------------------------------------------
+        // Logging
+        // -------------------------------------------------
+
+        function log(message) {
+            console.log(message);
+
+            if (statusEl.textContent) {
+                statusEl.textContent += "\n";
+            }
+
+            statusEl.textContent += message;
+
+            statusEl.scrollTop =
+                statusEl.scrollHeight;
+        }
+
+
+        function clearLog() {
+            statusEl.textContent = "";
+        }
+
+
+        // -------------------------------------------------
+        // Singapore time helpers
+        // -------------------------------------------------
+
+        function getDateParts(dateValue) {
+            const date = new Date(dateValue);
+
+            if (Number.isNaN(date.getTime())) {
+                return null;
+            }
+
+            const formattedParts =
+                new Intl.DateTimeFormat(
+                    "en-SG",
+                    {
+                        weekday: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hourCycle: "h23",
+                        timeZone: getTimeZone()
+                    }
+                ).formatToParts(date);
+
+            const output = {};
+
+            formattedParts.forEach(
+                function(part) {
+                    output[part.type] =
+                        part.value;
+                }
+            );
+
+            return output;
+        }
+
+
+        function getWeekday(dateValue) {
+            const dateParts =
+                getDateParts(dateValue);
+
+            return dateParts
+                ? dateParts.weekday
+                : null;
+        }
+
+
+        function getHour(dateValue) {
+            const dateParts =
+                getDateParts(dateValue);
+
+            return dateParts
+                ? Number(dateParts.hour)
+                : NaN;
+        }
+
+
+        function minutesSinceMidnight(
+            dateValue
+        ) {
+            const dateParts =
+                getDateParts(dateValue);
+
+            if (!dateParts) {
+                return NaN;
+            }
+
+            return (
+                Number(dateParts.hour) * 60 +
+                Number(dateParts.minute)
+            );
+        }
+
+
+        function minutesToClock(minutes) {
+            if (!Number.isFinite(minutes)) {
+                return "N/A";
+            }
+
+            const wrapped =
+                (
+                    (
+                        Math.round(minutes) %
+                        1440
+                    ) +
+                    1440
+                ) %
+                1440;
+
+            const hour =
+                Math.floor(wrapped / 60);
+
+            const minute =
+                wrapped % 60;
+
+            return (
+                String(hour).padStart(2, "0") +
+                ":" +
+                String(minute).padStart(2, "0")
+            );
+        }
+
+
+        // -------------------------------------------------
+        // Statistical helpers
+        // -------------------------------------------------
+
+        function average(values) {
+            if (!values.length) {
+                return null;
+            }
+
+            const total =
+                values.reduce(
+                    function(sum, value) {
+                        return sum + value;
+                    },
+                    0
+                );
+
+            return Math.round(
+                total / values.length
+            );
+        }
+
+
+        function median(values) {
+            if (!values.length) {
+                return null;
+            }
+
+            const sorted =
+                [...values].sort(
+                    function(a, b) {
+                        return a - b;
+                    }
+                );
+
+            const middle =
+                Math.floor(
+                    sorted.length / 2
+                );
+
+            if (sorted.length % 2 === 0) {
+                return (
+                    sorted[middle - 1] +
+                    sorted[middle]
+                ) / 2;
+            }
+
+            return sorted[middle];
+        }
+
+
+        function percentile(
+            values,
+            percentage
+        ) {
+            if (!values.length) {
+                return null;
+            }
+
+            const sorted =
+                [...values].sort(
+                    function(a, b) {
+                        return a - b;
+                    }
+                );
+
+            const index =
+                Math.floor(
+                    (
+                        percentage /
+                        100
+                    ) *
+                    (
+                        sorted.length -
+                        1
+                    )
+                );
+
+            return sorted[index];
+        }
+
+
+        // -------------------------------------------------
+        // Match historical rows
+        // -------------------------------------------------
+
+        function rowMatchesSelection(
+            row,
+            selectedDay,
+            selectedHour,
+            selectedService
+        ) {
+            if (
+                !row.collected_at ||
+                !row.estimated_arrival
+            ) {
+                return false;
+            }
+
+            const collectedTime =
+                new Date(
+                    row.collected_at
+                ).getTime();
+
+            const arrivalTime =
+                new Date(
+                    row.estimated_arrival
+                ).getTime();
+
+            if (
+                !Number.isFinite(
+                    collectedTime
+                ) ||
+                !Number.isFinite(
+                    arrivalTime
+                )
+            ) {
+                return false;
+            }
+
+            /*
+             * Reject incorrectly future-dated
+             * collection records.
+             */
+            if (
+               *collectedTime >
+                Da*e.now()
+            ) {
+          *     return false;
+            }
+
+*           if (
+                ge*Weekday(
+                    colle*tedTime
+                ) !== sele*tedDay
+            ) {
+           *    return false;
+            }
+
+ *          if (
+                get*our(
+                    collected*ime
+                ) !== selected*our
+            ) {
+              * return false;
+            }
+
+    *       if (selectedService) {
+    *           const recordService =
+ *                  String(
+        *               row.service_no || "*
+                    )
+           *        .trim()
+                  * .toLowerCase();
+
+                *onst wantedService =
+             *      selectedService
+            *       .trim()
+                   *.toLowerCase();
+
+                i* (
+                    recordServi*e !==
+                    wantedSe*vice
+                ) {
+         *          return false;
+          *     }
+            }
+
+            *onst waitingMinutes =
+            *   Math.round(
+                   *(
+                        arrivalT*me -
+                        colle*tedTime
+                    ) /
+  *                 60000
+           *    );
+
+            return (
+     *          Number.isFinite(
+       *            waitingMinutes
+       *        ) &&
+                waiti*gMinutes >= 0 &&
+                w*itingMinutes <= 120
+            );*        }
+
+
+        function filte*Rows(
+            rows,
+          * selectedDay,
+            selected*our,
+            selectedService
+ *      ) {
+            return rows.*ilter(
+                function(ro*) {
+                    return row*atchesSelection(
+                 *      row,
+                       *selectedDay,
+                     *  selectedHour,
+                  *     selectedService
+             *      );
+                }
+       *    );
+        }
+
+
+        // ----*----------------------------------*---------
+        // Fetch histori*al Supabase records
+        // ---*----------------------------------*----------
+
+        async function*fetchHistoryRows(
+            stop*
+            selectedDay,
+        *   selectedHour,
+            selec*edService
+        ) {
+            *onst predictionConfig =
+          *     getPredictionConfig();
+
+     *      const maximumRows =
+        *       predictionConfig
+          *         .QUERY_LIMIT ||
+         *      10000;
+
+            const pa*eSize =
+                Math.min(
+*                   predictionConfi*
+                        .PAGE_SIZ* ||
+                    1000,
+    *               1000
+              * );
+
+            const minimumMatc*es =
+                predictionCon*ig
+                    .MIN_MATCHI*G_SAMPLES ||
+                20;
+
+*           const allRows = [];
+
+  *         let offset = 0;
+         *  let pageNumber = 1;
+            *et matchingCount = 0;
+
+           *const baseUrl =
+                CO*FIG.SUPABASE_URL
+                 *  .replace(
+                      * /\/+$/,
+                        "*
+                    );
+
+         *  while (
+                allRows.*ength <
+                maximumRow*
+            ) {
+                c*nst remainingRows =
+              *     maximumRows -
+               *    allRows.length;
+
+             *  const currentPageSize =
+        *           Math.min(
+             *          pageSize,
+              *         remainingRows
+           *        );
+
+                const *ueryParameters = [
+                    "select=" +
+                    "bus_stop_code," +
+                    "service_no," +
+                    "sequence," +
+                    "estimated_arrival," +
+                    "collected_at",
+
+                    "bus_stop_code=eq." +
+                    encodeURIComponent(
+                        stop
+                    ),
+
+                    "collected_at=lte." +
+                    encodeURIComponent(
+                        new Date()
+                            .toISOString()
+                    ),
+
+                    "order=collected_at.desc",
+
+                    "limit=" +
+                    currentPageSize,
+
+                    "offset=" +
+                    offset
+                ];
+
+                /*
+                 * Apply sequence=next only when
+                 * enabled in config.js.
+                 */
+                if (
+       *            predictionConfig
+     *                  .FILTER_SEQUENCE*NEXT !==
+                    false*                ) {
+              *     queryParameters.splice(
+     *                  2,
+             *          0,
+                     *  "sequence=eq.next"
+             *      );
+                }
+
+      *         const requestUrl =
+      *             baseUrl +
+           *        "/rest/v1/bus_arrivals?" +*                    queryParameters.join("&");
+
+                log(
+                    "Fetching page " +
+                    pageNumber +
+                    " with offset " +
+                    offset +
+                    " and limit " +
+                    currentPageSize +
+                    "..."
+                );
+
+                const response =
+                    await fetch(
+                        requestUrl,
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "apikey":
+                                    CONFIG
+                                        .SUPABASE_KEY,
+
+                                "Authorization":
+                                    "Bearer " +
+                                    CONFIG
+                                        .SUPABASE_KEY,
+
+                                "Accept":
+                                    "application/json"
+                            },
+
+                            cache: "no-store"
+                        }
+                    );
+
+                if (!response.ok) {
+                    const responseText =
+                        await response.text();
+
+                    throw new Error(
+                        "Supabase HTTP " +
+                        response.status +
+                        ": " +
+                        responseText
+                    );
+                }
+
+                const pageRows =
+                    await response.json();
+
+                if (
+                    !Array.isArray(
+                        pageRows
+                    )
+                ) {
+                    throw new Error(
+                        "Unexpected Supabase response."
+                    );
+                }
+
+                log(
+                    "Page " +
+                    pageNumber +
+                    " returned " +
+                    pageRows.length +
+                    " rows."
+                );
+
+                if (
+                    pageRows.length === 0
+                ) {
+                    break;
+                }
+
+                allRows.push(
+                    ...pageRows
+                );
+
+                matchingCount =
+                    filterRows(
+                        allRows,
+                        selectedDay,
+                        selectedHour,
+                        selectedService
+                    ).length;
+
+                log(
+                    "Loaded " +
+                    allRows.length +
+                    " raw rows. Found " +
+                    matchingCount +
+                    " matching " +
+                    selectedDay +
+                    " records."
+                );
+
+                /*
+                 * Stop once sufficient historical
+                 * samples have been found.
+                 */
+                if (
+                    matchingCount >=
+                    minimumMatches
+                ) {
+                    log(
+                        "Sufficient historical " +
+                        "samples found."
+                    );
+
+                    break;
+                }
+
+                /*
+                 * A short response normally means
+                 * no more records are available.
+                 */
+                if (
+                    pageRows.length <
+                    currentPageSize
+                ) {
+                    log(
+                        "Reached the oldest " +
+                        "available record."
+                    );
+
+                    break;
+                }
+
+                offset +=
+                    pageRows.length;
+
+                pageNumber++;
+            }
+
+            if (
+                allRows.length >=
+                maximumRows
+            ) {
+                log(
+                    "Maximum search limit " +
+                    "reached: " +
+                    maximumRows +
+                    " records."
+                );
+            }
+
+            return allRows;
+        }
+
+
+        // -------------------------------------------------
+        // Arrival clustering
+        // -------------------------------------------------
+
+        function clusterArrivalTimes(
+            values
+        ) {
+            const validValues =
+                values
+                    .filter(
+                        function(value) {
+                            return Number
+                                .isFinite(
+                                    value
+                                );
+                        }
+                    )
+                    .sort(
+                        function(a, b) {
+                            return a - b;
+                        }
+                    );
+
+            if (
+                validValues.length === 0
+            ) {
+                return [];
+            }
+
+            const gapMinutes =
+                getPredictionConfig()
+                    .CLUSTER_GAP_MINUTES ||
+                10;
+
+            const clusters = [];
+
+            let currentCluster = [
+                validValues[0]
+            ];
+
+            for (
+                let index = 1;
+                index <
+                validValues.length;
+                index++
+            ) {
+                const previousValue =
+                    currentCluster[
+                        currentCluster
+                            .length -
+                        1
+                    ];
+
+                if (
+                    validValues[index] -
+                    previousValue <=
+                    gapMinutes
+                ) {
+                    currentCluster.push(
+                        validValues[index]
+                    );
+                } else {
+                    clusters.push(
+                        currentCluster
+                    );
+
+                    currentCluster = [
+                        validValues[index]
+                    ];
+                }
+            }
+
+            clusters.push(
+                currentCluster
+            );
+
+            return clusters.map(
+                function(cluster) {
+                    return {
+                        time:
+                            minutesToClock(
+                                average(
+                                    cluster
+                                )
+                            ),
+
+                        from:
+                            minutesToClock(
+                                Math.min(
+                                    ...cluster
+                                )
+                            ),
+
+                        to:
+                            minutesToClock(
+                                Math.max(
+                                    ...cluster
+                                )
+                            ),
+
+                        count:
+                            cluster.length
+                    };
+                }
+            );
+        }
+
+
+        // -------------------------------------------------
+        // Build statistics
+        // -------------------------------------------------
+
+        function buildStatistics(rows) {
+            const waitingTimes =
+                rows
+                    .map(
+                        function(row) {
+                            return Math.round(
+                                (
+                                    new Date(
+                                        row
+                                        .estimated_arrival
+                                    ) -
+                                    new Date(
+                                        row
+                                        .collected_at
+                                    )
+                                ) /
+                                60000
+                            );
+                        }
+                    )
+                    .filter(
+                        function(value) {
+                            return Number
+                                .isFinite(
+                                    value
+                                );
+                        }
+                    );
+
+            const arrivalMinutes =
+                rows
+                    .map(
+                        function(row) {
+                            return (
+                                minutesSinceMidnight(
+                                    row
+                                    .estimated_arrival
+                                )
+                            );
+                        }
+                    )
+                    .filter(
+                        function(value) {
+                            return Number
+                                .isFinite(
+                                    value
+                                );
+                        }
+                    );
+
+            return {
+                samples:
+                    rows.length,
+
+                averageWait:
+                    average(
+                        waitingTimes
+                    ),
+
+                medianWait:
+                    median(
+                        waitingTimes
+                    ),
+
+                p25:
+                    percentile(
+                        waitingTimes,
+                        25
+                    ),
+
+                p75:
+                    percentile(
+                        waitingTimes,
+                        75
+                    ),
+
+                earliest:
+                    arrivalMinutes.length
+                        ? minutesToClock(
+                            Math.min(
+                                ...arrivalMinutes
+                            )
+                        )
+                        : "N/A",
+
+                latest:
+                    arrivalMinutes.length
+                        ? minutesToClock(
+                            Math.max(
+                                ...arrivalMinutes
+                            )
+                        )
+                        : "N/A",
+
+                arrivalSlots:
+                    clusterArrivalTimes(
+                        arrivalMinutes
+                    )
+            };
+        }
+
+
+        // -------------------------------------------------
+        // HTML protection
+        // -------------------------------------------------
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#39;"
+                );
+        }
+
+
+        // -------------------------------------------------
+        // Render results
+        // -------------------------------------------------
+
+        function renderResults(
+            stop,
+            selectedDay,
+            selectedHour,
+            rows,
+            rawRowCount
+        ) {
+            resultList.innerHTML = "";
+
+            const grouped = {};
+
+            rows.forEach(
+                function(row) {
+                    const service =
+                        String(
+                            row.service_no ||
+                            "Unknown"
+                        );
+
+                    if (!grouped[service]) {
+                        grouped[service] = [];
+                    }
+
+                    grouped[service].push(
+                        row
+                    );
+                }
+            );
+
+            const services =
+                Object
+                    .keys(grouped)
+                    .sort(
+                        function(a, b) {
+                            return a.localeCompare(
+                                b,
+                                undefined,
+                                {
+                                    numeric: true
+                                }
+                            );
+                        }
+                    );
+
+            const hourText =
+                String(
+                    selectedHour
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+            resultMeta.textContent =
+                selectedDay +
+                " " +
+                hourText +
+                ":00-" +
+                hourText +
+                ":59, Singapore time. " +
+                rawRowCount +
+                " raw rows searched. " +
+                rows.length +
+                " rows matched.";
+
+            if (
+                services.length === 0
+            ) {
+                resultList.innerHTML = `
+                    <div class="card">
+                        No matching historical records were found.
+
+                        <br><br>
+
+                        If the debug log says that page 1 returned
+                        0 records, change
+                        <b>FILTER_SEQUENCE_NEXT</b> to
+                        <b>false</b> in config.js.
+
+                        <br><br>
+
+                        If raw records were loaded but no matches
+                        were found, try another hour or increase
+                        <b>QUERY_LIMIT</b>.
+                    </div>
+                `;
+
+                return;
+            }
+
+            services.forEach(
+                function(service) {
+                    const statistics =
+                        buildStatistics(
+                            grouped[service]
+                        );
+
+                    const slotHtml =
+                        statistics
+                            .arrivalSlots
+                            .map(
+                                function(slot) {
+                                    return `
+                                        <div class="kv">
+                                            <b>
+                                                ~${escapeHtml(
+                                                    slot.time
+                                                )}
+                                            </b>
+
+                                            <span class="small">
+                                                Observed
+                                                ${escapeHtml(
+                                                    slot.from
+                                                )}
+                                                to
+                                                ${escapeHtml(
+                                                    slot.to
+                                                )},
+                                                ${slot.count}
+                                                samples
+                                            </span>
+                                        </div>
+                                    `;
+                                }
+                            )
+                            .join("");
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+                    card.className =
+                        "card";
+
+                    card.innerHTML = `
+                        <div class="bus-no">
+                            Bus ${escapeHtml(
+                                service
+                            )}
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="kv">
+                            <b>
+                                Estimated arrival times:
+                            </b>
+                        </div>
+
+                        ${
+                            slotHtml ||
+                            "No arrival slots found."
+                        }
+
+                        <div class="divider"></div>
+
+                        <div class="kv">
+                            <b>
+                                Observed range:
+                            </b>
+
+                            ${statistics.earliest}
+                            to
+                            ${statistics.latest}
+                        </div>
+
+                        <div class="kv">
+                            <b>
+                                Typical wait:
+                            </b>
+
+                            ${
+                                statistics
+                                    .averageWait ??
+                                "N/A"
+                            }
+                            minutes
+
+                            &#40;median
+                            ${
+                                statistics
+                                    .medianWait ??
+                                "N/A"
+                            }
+                            minutes&#41;
+                        </div>
+
+                        <div class="kv">
+                            <b>
+                                P25-P75:
+                            </b>
+
+                            ${
+                                statistics.p25 ??
+                                "N/A"
+                            }
+                            to
+                            ${
+                                statistics.p75 ??
+                                "N/A"
+                            }
+                            minutes
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <span class="badge ${
+                            statistics.samples < 5
+                                ? "warn"
+                                : "ok"
+                        }">
+                            ${statistics.samples}
+                            matching samples
+                        </span>
+                    `;
+
+                    resultList.appendChild(
+                        card
+                    );
+                }
+            );
+        }
+
+
+        // -------------------------------------------------
+        // Main prediction
+        // -------------------------------------------------
+
+        async function runPrediction() {
+            clearLog();
+
+            resultMeta.textContent = "";
+
+            resultList.innerHTML = `
+                <div class="card">
+                    Searching older historical records...
+                </div>
+            `;
+
+            predictBtn.disabled = true;
+
+            predictBtn.textContent =
+                "Predicting...";
+
+            try {
+                validateConfig();
+
+                const stop =
+                    stopSelect.value;
+
+                const selectedDay =
+                    daySelect.value;
+
+                const selectedHour =
+                    Number(
+                        hourSelect.value
+                    );
+
+                const selectedService =
+                    serviceInput
+                        .value
+                        .trim();
+
+                log(
+                    "Lookup: stop=" +
+                    stop +
+                    ", day=" +
+                    selectedDay +
+                    ", hour=" +
+                    selectedHour +
+                    ", service=" +
+                    (
+                        selectedService ||
+                        "ALL"
+                    )
+                );
+
+                const rawRows =
+                    await fetchHistoryRows(
+                        stop,
+                        selectedDay,
+                        selectedHour,
+                        selectedService
+                    );
+
+                let matchingRows =
+                    filterRows(
+                        rawRows,
+                        selectedDay,
+                        selectedHour,
+                        selectedService
+                    );
+
+                /*
+                 * Apply the config service filter
+                 * only if no service was entered.
+                 */
+                if (
+                    !selectedService &&
+                    CONFIG.FILTER &&
+                    CONFIG.FILTER
+                        .ENABLE_SERVICE_FILTER
+                ) {
+                    const allowedServices =
+                        (
+                            CONFIG.FILTER
+                                .SERVICES ||
+                            []
+                        ).map(
+                            function(value) {
+                                return String(
+                                    value
+                                );
+                            }
+                        );
+
+                    matchingRows =
+                        matchingRows.filter(
+                            function(row) {
+                                return (
+                                    allowedServices
+                                        .includes(
+                                            String(
+                                                row
+                                                .service_no
+                                            )
+                                        )
+                                );
+                            }
+                        );
+
+                    log(
+                        "Configured service filter left " +
+                        matchingRows.length +
+                        " rows."
+                    );
+                }
+
+                renderResults(
+                    stop,
+                    selectedDay,
+                    selectedHour,
+                    matchingRows,
+                    rawRows.length
+                );
+
+                log("Prediction completed.");
+
+            } catch (error) {
+                const message =
+                    error &&
+                    error.message
+                        ? error.message
+                        : String(error);
+
+                log(
+                    "ERROR: " +
+                    message
+                );
+
+                resultList.innerHTML = `
+                    <div class="card error">
+                        ${escapeHtml(message)}
+                    </div>
+                `;
+
+            } finally {
+                predictBtn.disabled =
+                    false;
+
+                predictBtn.textContent =
+                    "Predict";
+            }
+        }
+
+
+        // -------------------------------------------------
+        // Initialize webpage
+        // -------------------------------------------------
+
+        function initialize() {
+            try {
+                validateConfig();
+
+                stopSelect.innerHTML = "";
+
+                CONFIG.BUS_STOPS.forEach(
+                    function(stop) {
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+                        option.value =
+                            String(stop);
+
+                        option.textContent =
+                            String(stop);
+
+                        stopSelect.appendChild(
+                            option
+                        );
+                    }
+                );
+
+                hourSelect.innerHTML = "";
+
+                for (
+                    let selectedHour = 0;
+                    selectedHour < 24;
+                    selectedHour++
+                ) {
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    const hourText =
+                        String(
+                            selectedHour
+                        ).padStart(
+                            2,
+                            "0"
+                        );
+
+                    option.value =
+                        String(
+                            selectedHour
+                        );
+
+                    option.textContent =
+                        hourText +
+                        ":00 - " +
+                        hourText +
+                        ":59";
+
+                    hourSelect.appendChild(
+                        option
+                    );
+                }
+
+                hourSelect.value =
+                    String(
+                        getHour(
+                            Date.now()
+                        )
+                    );
+
+                daySelect.value =
+                    getWeekday(
+                        Date.now()
+                    );
+
+                predictBtn.addEventListener(
+                    "click",
+                    runPrediction
+                );
+
+                serviceInput.addEventListener(
+                    "keydown",
+                    function(event) {
+                        if (
+                            event.key ===
+                            "Enter"
+                        ) {
+                            runPrediction();
+                        }
+                    }
+                );
+
+                statusEl.textContent =
+                    "Ready. Select a historical " +
+                    "day and hour, then press Predict.";
+
+            } catch (error) {
+                const message =
+                    error &&
+                    error.message
+                        ? error.message
+                        : String(error);
+
+                showFatal(message);
+            }
+        }
+
+
+        initialize();
+    </script>
+
+</body>
+</html>
