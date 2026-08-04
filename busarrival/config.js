@@ -3,15 +3,22 @@ const CONFIG = {
     SUPABASE_URL: "https://klqphxtpwmlkfvueukpx.supabase.co",
     SUPABASE_KEY: "sb_publishable_dhPq5ssXWqeB084gDSOe-A_igNiQVpg",
 
-    BUS_STOPS: ["97039"],
-    
+    BUS_STOPS: [
+        "97039"
+    ],
+
     DEBUG: {
         ENABLE: true
     },
 
     FILTER: {
         ENABLE_SERVICE_FILTER: false,
-        SERVICES: ["2", "5", "24"]
+
+        SERVICES: [
+            "2",
+            "5",
+            "24"
+        ]
     },
 
     DEDUP: {
@@ -26,28 +33,38 @@ const CONFIG = {
     },
 
     REFRESH_INTERVAL_MS: 5 * 60 * 1000,
+
     DELAY_THRESHOLD_MINUTES: 15,
 
-    // Existing dashboard history setting
     HISTORY_LIMIT: 500,
 
     PREDICTION: {
-        // Existing prediction settings
         SAME_WEEKDAY_ONLY: true,
+
         BUCKET_MINUTES: 30,
+
         LIVE_WEIGHT: 0.7,
+
         HISTORY_WEIGHT: 0.3,
 
-        // Historical lookup settings
+        // Maximum number of past records to search.
         QUERY_LIMIT: 10000,
-        PAGE_SIZE: 1000,
-        MIN_MATCHING_SAMPLES: 50,
 
-        // Arrival times separated by more than 10 minutes
-        // are treated as different arrival slots.
+        // Supabase normally allows up to 1,000 rows per response.
+        PAGE_SIZE: 1000,
+
+        // Stop searching after this many matching records are found.
+        MIN_MATCHING_SAMPLES: 20,
+
+        // Arrival records separated by more than this value
+        // are treated as separate arrival slots.
         CLUSTER_GAP_MINUTES: 10,
 
-        // Explicit timezone for weekday and hour matching
-        TIME_ZONE: "Asia/Singapore"
+        TIME_ZONE: "Asia/Singapore",
+
+        // Keep this as true if your sequence column contains "next".
+        // Change it to false if page 1 returns 0 rows even though
+        // bus_arrivals contains records.
+        FILTER_SEQUENCE_NEXT: true
     }
 };
