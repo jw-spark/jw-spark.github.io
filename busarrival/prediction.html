@@ -1,505 +1,83 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Bus Arrival Predictor — By Day &amp; Hour</title>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: #fff;
-    padding: 20px;
-    margin: 0;
-}
-h2, h3 {
-    margin-top: 0;
-}
-.section {
-    margin-bottom: 24px;
-}
-.card {
-    background: #1c1c1c;
-    border: 1px solid #2e2e2e;
-    border-radius: 10px;
-    padding: 12px;
-    margin: 8px 0;
-}
-.bus-no {
-    font-size: 20px;
-    font-weight: bold;
-}
-.badge {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: 12px;
-    margin-right: 6px;
-    margin-top: 6px;
-    border: 1px solid rgba(255,255,255,0.15);
-}
-.good { color: #7CFC98; }
-.warn { color: #FFD966; }
-.bad  { color: #FF7B7B; }
-.normal-badge {
-    background: rgba(124, 252, 152, 0.10);
-    color: #B9FFD1;
-    border-color: rgba(124, 252, 152, 0.25);
-}
-.low-data-badge {
-    background: rgba(255, 217, 102, 0.10);
-    color: #FFE9A8;
-    border-color: rgba(255, 217, 102, 0.25);
-}
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 12px;
-}
-.small {
-    color: #bbb;
-    font-size: 13px;
-}
-pre {
-    background: #0d0d0d;
-    border: 1px solid #2e2e2e;
-    border-radius: 8px;
-    padding: 10px;
-    max-height: 200px;
-    overflow: auto;
-    white-space: pre-wrap;
-}
-.kv {
-    margin-top: 8px;
-    line-height: 1.6;
-}
-.kv b {
-    display: inline-block;
-    min-width: 170px;
-}
-.divider {
-    margin: 8px 0;
-    border-top: 1px solid #2e2e2e;
-}
-.controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: flex-end;
-    background: #1c1c1c;
-    border: 1px solid #2e2e2e;
-    border-radius: 10px;
-    padding: 16px;
-}
-.field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-.field label {
-    font-size: 12px;
-    color: #bbb;
-}
-select, input {
-    background: #0d0d0d;
-    color: #fff;
-    border: 1px solid #2e2e2e;
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-size: 14px;
-}
-button {
-    background: #2f6fed;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 18px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-}
-button:hover {
-    background: #4c85ff;
-}
-button:disabled {
-    background: #444;
-    cursor: not-allowed;
-}
-.empty-state {
-    color: #bbb;
-    font-style: italic;
-}
-</style>
-</head>
-<body>
-
-<h2>🔮 Bus Arrival Predictor — Day &amp; Hour Lookup</h2>
-<div class="small">
-    Pick a bus stop, day of week and hour. The predictor scans historical Supabase records
-    (<code>bus_arrivals</code>) collected at that same weekday + hour in the past, and reconstructs
-    a mini "timetable" — the distinct clock-times each bus service has historically arrived within
-    that hour — so you still get a useful estimate even if the live tracking API is down.
-</div>
-
-<div class="section controls">
-    <div class="field">
-        <label for="stopSelect">Bus Stop</label>
-        <select id="stopSelect"></select>
-    </div>
-    <div class="field">
-        <label for="daySelect">Day of Week</label>
-        <select id="daySelect">
-            <option value="Mon">Monday</option>
-            <option value="Tue">Tuesday</option>
-            <option value="Wed">Wednesday</option>
-            <option value="Thu">Thursday</option>
-            <option value="Fri">Friday</option>
-            <option value="Sat">Saturday</option>
-            <option value="Sun">Sunday</option>
-        </select>
-    </div>
-    <div class="field">
-        <label for="hourSelect">Hour of Day</label>
-        <select id="hourSelect"></select>
-    </div>
-    <div class="field">
-        <label for="serviceInput">Bus Service No. (optional)</label>
-        <input id="serviceInput" type="text" placeholder="e.g. 24 (leave blank for all)">
-    </div>
-    <div class="field">
-        <button id="predictBtn">Predict</button>
-    </div>
-</div>
-
-<div class="section">
-    <h3>Debug Log</h3>
-    <pre id="status">Waiting for input...</pre>
-</div>
-
-<div class="section">
-    <h3>📊 Prediction Results</h3>
-    <div id="resultMeta" class="small"></div>
-    <div id="resultList" class="grid"></div>
-</div>
-
-<!-- IMPORTANT: config.js must exist in the same folder -->
-<script src="config.js"></script>
-<script>
-const statusEl = document.getElementById("status");
-const stopSelect = document.getElementById("stopSelect");
-const daySelect = document.getElementById("daySelect");
-const hourSelect = document.getElementById("hourSelect");
-const serviceInput = document.getElementById("serviceInput");
-const predictBtn = document.getElementById("predictBtn");
-const resultListEl = document.getElementById("resultList");
-const resultMetaEl = document.getElementById("resultMeta");
-
-function log(msg) {
-    console.log(msg);
-    statusEl.innerText += msg + "\n";
-}
-
-function clearLog() {
-    statusEl.innerText = "";
-}
-
-// ---------- Setup dropdowns ----------
-function populateStops() {
-    stopSelect.innerHTML = "";
-    (CONFIG.BUS_STOPS || []).forEach(function(stop) {
-        const opt = document.createElement("option");
-        opt.value = stop;
-        opt.innerText = stop;
-        stopSelect.appendChild(opt);
-    });
-}
-
-function populateHours() {
-    hourSelect.innerHTML = "";
-    for (let h = 0; h < 24; h++) {
-        const opt = document.createElement("option");
-        opt.value = h;
-        const label = String(h).padStart(2, "0") + ":00 - " + String(h).padStart(2, "0") + ":59";
-        opt.innerText = label;
-        hourSelect.appendChild(opt);
-    }
-    // Default to the current hour for convenience
-    hourSelect.value = new Date().getHours();
-}
-
-function defaultToday() {
-    const weekday = new Date().toLocaleDateString("en-SG", { weekday: "short" });
-    daySelect.value = weekday;
-}
-
-// ---------- Helpers (consistent with dashboard's V4.1 logic) ----------
-function getWeekdayName(dateObj) {
-    const d = new Date(dateObj);
-    return d.toLocaleDateString("en-SG", { weekday: "short" }); // Mon, Tue...
-}
-
-function median(arr) {
-    if (!arr.length) return null;
-    const sorted = [...arr].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 === 0
-        ? (sorted[mid - 1] + sorted[mid]) / 2
-        : sorted[mid];
-}
-
-function percentile(arr, p) {
-    if (!arr.length) return null;
-    const sorted = [...arr].sort((a, b) => a - b);
-    const idx = Math.floor((p / 100) * (sorted.length - 1));
-    return sorted[idx];
-}
-
-function average(arr) {
-    if (!arr.length) return null;
-    return Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
-}
-
-// Convert a Date into "minutes since midnight" (local time) so clock-times can be averaged
-function minutesSinceMidnight(dateObj) {
-    const d = new Date(dateObj);
-    return d.getHours() * 60 + d.getMinutes();
-}
-
-function minutesToClock(mins) {
-    if (mins === null || mins === undefined || Number.isNaN(mins)) return "N/A";
-    const wrapped = ((Math.round(mins) % 1440) + 1440) % 1440;
-    const h = Math.floor(wrapped / 60);
-    const m = wrapped % 60;
-    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
-}
-
-// ✅ Group individual historical arrival clock-times into distinct "arrival slots"
-// e.g. a bus running every ~15-20 mins within the hour will show up as several
-// separate slots instead of being flattened into one single average time.
-function getClusterGapMinutes() {
-    if (CONFIG.PREDICTION && CONFIG.PREDICTION.CLUSTER_GAP_MINUTES) {
-        return CONFIG.PREDICTION.CLUSTER_GAP_MINUTES;
-    }
-    return 10; // default: treat arrivals >10 mins apart as separate slots
-}
-
-function clusterArrivalTimes(minutesArr) {
-    if (!minutesArr.length) return [];
-    const sorted = [...minutesArr].sort((a, b) => a - b);
-    const gap = getClusterGapMinutes();
-    const clusters = [];
-    let current = [sorted[0]];
-    for (let i = 1; i < sorted.length; i++) {
-        if (sorted[i] - current[current.length - 1] <= gap) {
-            current.push(sorted[i]);
-        } else {
-            clusters.push(current);
-            current = [sorted[i]];
-        }
-    }
-    clusters.push(current);
-    return clusters.map(function(c) {
-        return {
-            avgMinute: average(c),
-            count: c.length,
-            earliest: Math.min(...c),
-            latest: Math.max(...c)
-        };
-    }).sort(function(a, b) { return a.avgMinute - b.avgMinute; });
-}
-
 // ---------- Fetch historical rows from Supabase ----------
+// Fetches multiple pages because Supabase/PostgREST may cap each response,
+// commonly at 1,000 rows even when a larger limit is requested.
 async function fetchHistoryRows(stop) {
-    const queryLimit = (CONFIG.PREDICTION && CONFIG.PREDICTION.QUERY_LIMIT) || 5000;
-    const url =
-        CONFIG.SUPABASE_URL +
-        "/rest/v1/bus_arrivals" +
-        "?select=bus_stop_code,service_no,sequence,estimated_arrival,collected_at" +
-        "&bus_stop_code=eq." + encodeURIComponent(stop) +
-        "&sequence=eq.next" +
-        "&order=collected_at.desc" +
-        "&limit=" + queryLimit;
-    log("Fetching Supabase history: " + url);
-    const resp = await fetch(url, {
-        headers: {
-            "apikey": CONFIG.SUPABASE_KEY,
-            "Authorization": "Bearer " + CONFIG.SUPABASE_KEY
+    const predictionConfig = CONFIG.PREDICTION || {};
+
+    // Total historical records to retrieve for this bus stop.
+    const maxRows = predictionConfig.QUERY_LIMIT || 3000;
+
+    // Keep this at or below the Supabase API maximum rows per response.
+    const pageSize = predictionConfig.PAGE_SIZE || 1000;
+
+    const allRows = [];
+    let offset = 0;
+    let pageNumber = 1;
+
+    // Do not retrieve records whose collection time is in the future.
+    const nowIso = new Date().toISOString();
+
+    while (allRows.length < maxRows) {
+        const remaining = maxRows - allRows.length;
+        const currentPageSize = Math.min(pageSize, remaining);
+
+        const url =
+            CONFIG.SUPABASE_URL +
+            "/rest/v1/bus_arrivals" +
+            "?select=bus_stop_code,service_no,sequence,estimated_arrival,collected_at" +
+            "&bus_stop_code=eq." + encodeURIComponent(stop) +
+            "&sequence=eq.next" +
+            "&collected_at=lte." + encodeURIComponent(nowIso) +
+            "&order=collected_at.desc" +
+            "&limit=" + currentPageSize +
+            "&offset=" + offset;
+
+        log(
+            "Fetching history page " + pageNumber +
+            ": offset=" + offset +
+            ", limit=" + currentPageSize
+        );
+
+        const resp = await fetch(url, {
+            headers: {
+                "apikey": CONFIG.SUPABASE_KEY,
+                "Authorization": "Bearer " + CONFIG.SUPABASE_KEY,
+                "Accept": "application/json"
+            }
+        });
+
+        if (!resp.ok) {
+            const t = await resp.text();
+            throw new Error(
+                "Supabase history HTTP " + resp.status + " -> " + t
+            );
         }
-    });
-    if (!resp.ok) {
-        const t = await resp.text();
-        throw new Error("Supabase history HTTP " + resp.status + " -> " + t);
-    }
-    const rows = await resp.json();
-    log("Supabase rows loaded: " + rows.length);
-    return rows;
-}
 
-// ---------- Filter + aggregate ----------
-function filterRows(rows, targetDay, targetHour, targetService) {
-    return rows.filter(function(r) {
-        if (!r.collected_at || !r.estimated_arrival) return false;
-        const collected = new Date(r.collected_at);
-        if (getWeekdayName(collected) !== targetDay) return false;
-        if (collected.getHours() !== targetHour) return false;
-        if (targetService && String(r.service_no).trim().toLowerCase() !== targetService.trim().toLowerCase()) {
-            return false;
+        const pageRows = await resp.json();
+
+        log(
+            "Page " + pageNumber +
+            " returned " + pageRows.length + " rows"
+        );
+
+        if (!Array.isArray(pageRows) || pageRows.length === 0) {
+            log("No more historical rows available.");
+            break;
         }
-        const wait = Math.round((new Date(r.estimated_arrival) - collected) / 60000);
-        return Number.isFinite(wait) && wait >= 0 && wait <= 120;
-    });
-}
 
-function groupByService(rows) {
-    const grouped = {};
-    rows.forEach(function(r) {
-        const service = r.service_no;
-        if (!grouped[service]) grouped[service] = [];
-        grouped[service].push(r);
-    });
-    return grouped;
-}
+        allRows.push(...pageRows);
 
-function buildServiceStats(rows) {
-    const waits = rows.map(function(r) {
-        return Math.round((new Date(r.estimated_arrival) - new Date(r.collected_at)) / 60000);
-    });
-    const arrivalClockMinutes = rows.map(function(r) {
-        return minutesSinceMidnight(r.estimated_arrival);
-    });
-    const clusters = clusterArrivalTimes(arrivalClockMinutes);
-    return {
-        samples: rows.length,
-        avgWait: average(waits),
-        medianWait: median(waits),
-        p25Wait: percentile(waits, 25),
-        p75Wait: percentile(waits, 75),
-        earliestArrivalClock: minutesToClock(Math.min(...arrivalClockMinutes)),
-        latestArrivalClock: minutesToClock(Math.max(...arrivalClockMinutes)),
-        // ✅ Multiple estimated arrival slots within the hour (the "timetable")
-        arrivalSlots: clusters.map(function(c) {
-            return {
-                time: minutesToClock(c.avgMinute),
-                rangeStart: minutesToClock(c.earliest),
-                rangeEnd: minutesToClock(c.latest),
-                count: c.count
-            };
-        })
-    };
-}
+        // A short page means that the server has no more records.
+        if (pageRows.length < currentPageSize) {
+            log("Reached the oldest available record.");
+            break;
+        }
 
-// ---------- Render ----------
-function renderResults(stop, day, hour, grouped, totalFetched, dateRange) {
-    resultListEl.innerHTML = "";
-    const services = Object.keys(grouped).sort();
-
-    const rangeText = dateRange
-        ? `Data span: ${dateRange.earliest} → ${dateRange.latest} (${totalFetched} raw rows fetched for stop ${stop})`
-        : `No data available for stop ${stop}`;
-    resultMetaEl.innerText =
-        `Query: ${day}, ${String(hour).padStart(2, "0")}:00–${String(hour).padStart(2, "0")}:59 window · ${rangeText}`;
-
-    if (services.length === 0) {
-        const div = document.createElement("div");
-        div.className = "card empty-state";
-        div.innerText =
-            `No historical records found for ${day} around ${String(hour).padStart(2, "0")}:00 at stop ${stop}. ` +
-            `Try a different hour/day, remove the service filter, or allow more time for data collection.`;
-        resultListEl.appendChild(div);
-        return;
+        offset += pageRows.length;
+        pageNumber++;
     }
 
-    services.forEach(function(serviceNo) {
-        const stats = buildServiceStats(grouped[serviceNo]);
-        const lowData = stats.samples < 5;
+    log("Total Supabase history rows loaded: " + allRows.length);
 
-        const slotsHtml = stats.arrivalSlots.map(function(slot) {
-            const slotLowData = slot.count < 3;
-            return `
-                <div class="kv" style="margin-top:4px;">
-                    <b>~${slot.time}</b>
-                    <span class="small">(seen ${slot.rangeStart}–${slot.rangeEnd}, ${slot.count} sample${slot.count > 1 ? "s" : ""})</span>
-                    ${slotLowData ? '<span class="badge low-data-badge" style="margin-left:6px;">Low confidence</span>' : ""}
-                </div>
-            `;
-        }).join("");
-
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-            <div class="bus-no">Bus ${serviceNo}</div>
-            <div class="small">Matching rule: ${day}, hour ${String(hour).padStart(2, "0")}:00–${String(hour).padStart(2, "0")}:59 (all historical matches, any minute)</div>
-            <div class="divider"></div>
-            <div class="kv"><b>Estimated arrival times:</b></div>
-            ${slotsHtml || '<div class="small">No distinct arrival slots found.</div>'}
-            <div class="divider"></div>
-            <div class="kv"><b>Observed range (whole hour):</b> ${stats.earliestArrivalClock} – ${stats.latestArrivalClock}</div>
-            <div class="kv"><b>Typical wait after a live check:</b> ${stats.avgWait !== null ? stats.avgWait + " mins (median " + stats.medianWait + ")" : "N/A"}</div>
-            <div class="kv"><b>Confidence band (P25–P75):</b> ${stats.p25Wait !== null ? stats.p25Wait + "–" + stats.p75Wait + " mins" : "N/A"}</div>
-            <div class="divider"></div>
-            <div>${lowData
-                ? '<span class="badge low-data-badge">Low overall sample size — treat with caution</span>'
-                : '<span class="badge normal-badge">Sufficient sample size</span>'}</div>
-            <div class="small">Historical matched samples (this hour): ${stats.samples}</div>
-        `;
-        resultListEl.appendChild(div);
-    });
+    return allRows.slice(0, maxRows);
 }
-
-// ---------- Main flow ----------
-async function runPrediction() {
-    clearLog();
-    resultListEl.innerHTML = "";
-    resultMetaEl.innerText = "";
-    predictBtn.disabled = true;
-    predictBtn.innerText = "Predicting...";
-    try {
-        const stop = stopSelect.value;
-        const day = daySelect.value;
-        const hour = parseInt(hourSelect.value, 10);
-        const service = serviceInput.value.trim();
-
-        log(`Looking up: stop=${stop}, day=${day}, hour=${hour}, service=${service || "ALL"}`);
-
-        const rows = await fetchHistoryRows(stop);
-        let dateRange = null;
-        if (rows.length > 0) {
-            const dates = rows.map(r => new Date(r.collected_at).getTime()).filter(t => !Number.isNaN(t));
-            dateRange = {
-                earliest: new Date(Math.min(...dates)).toLocaleDateString("en-SG"),
-                latest: new Date(Math.max(...dates)).toLocaleDateString("en-SG")
-            };
-        }
-
-        const matched = filterRows(rows, day, hour, service);
-        log(`Matched rows for ${day} @ ${hour}:00 window: ${matched.length}`);
-
-        // Respect config service filter if enabled and no explicit service typed
-        let finalRows = matched;
-        if (!service && CONFIG.FILTER && CONFIG.FILTER.ENABLE_SERVICE_FILTER) {
-            finalRows = matched.filter(function(r) {
-                return CONFIG.FILTER.SERVICES.includes(String(r.service_no));
-            });
-            log(`Applied CONFIG.FILTER.SERVICES -> ${finalRows.length} rows remain`);
-        }
-
-        const grouped = groupByService(finalRows);
-        renderResults(stop, day, hour, grouped, rows.length, dateRange);
-        log("Prediction complete.");
-    } catch (e) {
-        log("ERROR: " + e.message);
-        resultListEl.innerHTML = `<div class="card empty-state">Something went wrong: ${e.message}</div>`;
-    } finally {
-        predictBtn.disabled = false;
-        predictBtn.innerText = "Predict";
-    }
-}
-
-// ---------- Init ----------
-populateStops();
-populateHours();
-defaultToday();
-predictBtn.addEventListener("click", runPrediction);
-log("Ready. Choose a bus stop, day and hour, then select Predict.");
-</script>
-</body>
-</html>
