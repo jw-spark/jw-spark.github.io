@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台北 · 宜兰 亲子长辈家庭旅行 | 行程卡片</title>
+<style>
+  :root {
+    --ink: #202124;
+    --gray: #5f6368;
+    --lightgray: #80868b;
+    --divider: #e8eaed;
+    --accent: #FFC107;
+    --accent-dark: #B8720A;
+    --blue: #1a73e8;
+    --green: #1e8e3e;
+    --card-bg: #ffffff;
+    --page-bg: #f6f7f9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    background: var(--page-bg);
+    color: var(--ink);
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 0 60px; }
+
+  /* ---------- Cover ---------- */
+  .cover {
+    background: linear-gradient(135deg,#20303d 0%, #16232d 100%);
+    color: #fff;
+    padding: 56px 28px 40px;
+    text-align: center;
+  }
+  .cover h1 { font-size: 1.6em; margin: 0 0 8px; font-weight: 700; }
+  .cover .sub { color: var(--accent); font-weight: 700; font-size: 1.05em; margin-bottom: 18px; }
+  .cover .meta { font-size: 0.92em; opacity: 0.9; margin: 3px 0; }
+
+  /* ---------- Section label ---------- */
+  .section-label {
+    font-size: 0.8em;
+    font-weight: 700;
+    color: var(--gray);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 26px 20px 8px;
+  }
+
+  /* ---------- Card container ---------- */
+  .card {
+    background: var(--card-bg);
+    margin: 0 16px 14px;
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 18px;
+    gap: 14px;
+  }
+  .card-header.clickable { cursor: default; }
+  .icon-badge {
+    flex: 0 0 auto;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    background: #FFF3D6;
+  }
+  .icon-badge.blue { background: #E3EEFD; }
+  .icon-badge.green { background: #E2F3E5; }
+  .icon-badge.orange { background: #FDECD8; }
+  .icon-badge.gray { background: #F1F3F4; }
+  .icon-badge.purple { background: #EFE5FB; }
+
+  .card-main { flex: 1 1 auto; min-width: 0; }
+  .card-title { font-weight: 700; font-size: 1.0em; color: var(--ink); }
+  .card-sub { font-size: 0.85em; color: var(--gray); margin-top: 2px; }
+  .card-right { flex: 0 0 auto; text-align: right; }
+  .card-right .t1 { font-weight: 700; font-size: 0.92em; color: var(--ink); }
+  .card-right .t2 { font-size: 0.8em; color: var(--lightgray); margin-top: 2px; }
+
+  .divider { height: 1px; background: var(--divider); margin: 0 18px; }
+
+  /* ---------- Row inside a card (timeline items) ---------- */
+  .row {
+    display: flex;
+    align-items: flex-start;
+    padding: 14px 18px;
+    gap: 14px;
+  }
+  .row .icon-badge { width: 36px; height: 36px; font-size: 16px; }
+  .row .card-main { padding-top: 2px; }
+  .row .card-title { font-size: 0.95em; }
+  .row .card-sub { font-size: 0.85em; line-height: 1.5; }
+  .row .time-tag {
+    flex: 0 0 auto;
+    font-weight: 700;
+    font-size: 0.82em;
+    color: var(--blue);
+    background: #E3EEFD;
+    padding: 4px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  /* ---------- Day pill header ---------- */
+  .day-pill-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 20px 4px;
+  }
+  .day-pill {
+    background: var(--ink);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.82em;
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+  .day-pill-row .day-date { font-weight: 700; font-size: 1.05em; }
+  .day-pill-row .day-place { color: var(--gray); font-size: 0.88em; }
+  .day-theme-line {
+    padding: 4px 20px 14px;
+    font-size: 0.88em;
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
+
+  /* ---------- Info note card (tips / rain backup) ---------- */
+  .note-card {
+    margin: 0 16px 14px;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 0.86em;
+    line-height: 1.6;
+  }
+  .note-card.tip { background: #FFF8E1; border: 1px solid #FDE9A8; }
+  .note-card.rain { background: #E8F0FE; border: 1px solid #C6DAFC; }
+  .note-card.green { background: #E6F4EA; border: 1px solid #BEE3C6; }
+  .note-card .note-title { font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .note-card ul { margin: 0; padding-left: 18px; }
+  .note-card li { margin-bottom: 4px; }
+
+  /* ---------- overview mini list ---------- */
+  .mini-list .row { padding: 12px 18px; }
+  .mini-list .icon-badge { width: 32px; height: 32px; font-size: 14px; }
+
+  /* ---------- table-like grid for hotels ---------- */
+  .kv-row {
+    display: flex; justify-content: space-between; padding: 10px 18px;
+    font-size: 0.88em;
+  }
+  .kv-row .k { color: var(--gray); }
+  .kv-row .v { font-weight: 600; text-align: right; }
+
+  footer.foot {
+    text-align: center; color: var(--lightgray); font-size: 0.78em; padding: 30px 20px 10px;
+  }
+
+  /* nav chips */
+  .nav-chips {
+    display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 16px 4px;
+  }
+  .nav-chips a {
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid var(--divider);
+    color: var(--ink);
+    font-size: 0.78em;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 16px;
+  }
+  .nav-chips a:hover { background: #f1f3f4; }
+
+  @media print {
+    body { background: #fff; }
+    .card, .note-card { box-shadow: none; border: 1px solid var(--divider); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="cover">
+    <h1>台北 · 宜兰 亲子长辈家庭旅行</h1>
+    <div class="sub">完整详细行程手册 · 卡片版</div>
+    <div class="meta">2026年10月25日（日）— 10月31日（六）· 7天7夜</div>
+    <div class="meta">一家五口（含5岁小朋友、3位长辈）· 新加坡往返</div>
+  </div>
+
+  <div class="nav-chips">
+    <a href="#flight">航班</a>
+    <a href="#overview">总览</a>
+    <a href="#hotel">住宿</a>
+    <a href="#day1">Day1</a>
+    <a href="#day2">Day2</a>
+    <a href="#day3">Day3</a>
+    <a href="#day4">Day4</a>
+    <a href="#day5">Day5</a>
+    <a href="#day6">Day6</a>
+    <a href="#day7">Day7</a>
+    <a href="#tips">提醒</a>
+  </div>
+
+  <!-- ===================== 航班信息 ===================== -->
+  <div class="section-label" id="flight">✈️ 航班信息</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-badge blue">✈️</div>
+      <div class="card-main">
+        <div class="card-title">Sun, Oct 25 · 12:55 AM – 5:30 AM</div>
+        <div class="card-sub">Scoot</div>
+      </div>
+      <div class="card-right">
+        <div class="t1">4 hr 35 min</div>
+        <div class="t2">SIN–TPE</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="card-header">
+      <div class="icon-badge blue">✈️</div>
+      <div class="card-main">
+        <div class="card-title">Sat, Oct 31 · 11:20 PM – 4:00 AM<sup>+1</sup></div>
+        <div class="card-sub">Scoot</div>
+      </div>
+      <div class="card-right">
+        <div class="t1">4 hr 40 min</div>
+        <div class="t2">TPE–SIN</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-card tip">
+    <div class="note-title">⚠️ 航班关键提醒</div>
+    <ul>
+      <li>实际落地日为10/25清晨，而非原计划的10/24，全程行程已顺延1天。</li>
+      <li>回程为深夜23:20起飞的红眼航班，10/31全天仍可安排完整活动，但晚间需预留充裕时间前往机场。</li>
+      <li>去程抵达后为清晨5:30，多数酒店下午3点后才能入住，请提前与酒店沟通寄放行李或加订提前入住服务。</li>
+      <li>建议全员搭配飞行前后各休息一晚的心理准备，尤其两位长辈与5岁小朋友需要充分调整时差。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== 行程总览 ===================== -->
+  <div class="section-label" id="overview">🗓️ 行程总览</div>
+
+  <div class="card mini-list">
+    <div class="row"><div class="icon-badge gray">1</div><div class="card-main"><div class="card-title">10/25（日）台北</div><div class="card-sub">清晨抵达＋轻松适应</div></div><div class="card-right"><div class="t2">台北车站周边</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">2</div><div class="card-main"><div class="card-title">10/26（一）台北</div><div class="card-sub">大稻埕老街＋西门町/家乐福</div></div><div class="card-right"><div class="t2">台北车站周边</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">3</div><div class="card-main"><div class="card-title">10/27（二）台北→宜兰</div><div class="card-sub">火车南下＋几米公园</div></div><div class="card-right"><div class="t2">宜兰车站周边</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">4</div><div class="card-main"><div class="card-title">10/28（三）宜兰</div><div class="card-sub">传艺中心＋冬山河</div></div><div class="card-right"><div class="t2">宜兰车站周边</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">5</div><div class="card-main"><div class="card-title">10/29（四）宜兰</div><div class="card-sub">梅花湖＋罗东夜市</div></div><div class="card-right"><div class="t2">宜兰车站周边</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">6</div><div class="card-main"><div class="card-title">10/30（五）宜兰→台北</div><div class="card-sub">火车北返＋后车站商圈</div></div><div class="card-right"><div class="t2">台北车站周边</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">7</div><div class="card-main"><div class="card-title">10/31（六）台北</div><div class="card-sub">八里左岸半日游＋深夜飞返</div></div><div class="card-right"><div class="t2">无（当晚返程）</div></div></div>
+  </div>
+
+  <div class="note-card green">
+    <div class="note-title">✅ 住宿分配</div>
+    <ul>
+      <li>台北车站周边（Day1-2、Day6-7）共3晚；宜兰车站周边（Day3-5）共3晚，全程仅需换宿1次。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== 住宿建议 ===================== -->
+  <div class="section-label" id="hotel">🏨 住宿建议</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-badge orange">🏨</div>
+      <div class="card-main">
+        <div class="card-title">台北凯撒大饭店</div>
+        <div class="card-sub">距台北车站约100米，直接连接机场捷运/台铁/客运总站</div>
+      </div>
+      <div class="card-right"><div class="t1">8.2-8.4</div><div class="t2">推荐</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="card-header">
+      <div class="icon-badge gray">🏨</div>
+      <div class="card-main">
+        <div class="card-title">台北天成大饭店</div>
+        <div class="card-sub">距车站仅50米，近西门町、宁夏夜市约1.2公里</div>
+      </div>
+      <div class="card-right"><div class="t1">8.3</div><div class="t2">备选</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-badge orange">🏨</div>
+      <div class="card-main">
+        <div class="card-title">宜兰兰城晶英酒店</div>
+        <div class="card-sub">步行约10分钟至火车站，楼下家乐福，室内外泳池+水疗</div>
+      </div>
+      <div class="card-right"><div class="t1">9.0-9.1</div><div class="t2">推荐</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="card-header">
+      <div class="icon-badge gray">🏨</div>
+      <div class="card-main">
+        <div class="card-title">富翔大饭店</div>
+        <div class="card-sub">步行约3分钟至火车站，近东门夜市3分钟车程，有亲子房型</div>
+      </div>
+      <div class="card-right"><div class="t1">8.2-8.3</div><div class="t2">备选</div></div>
+    </div>
+  </div>
+
+  <div class="note-card rain">
+    <div class="note-title">🌦️ 天气小知识</div>
+    <ul>
+      <li>台北10月平均气温约22-24°C，月降雨量约220mm，逐渐转凉但偶有阵雨。</li>
+      <li>宜兰面向东北季风，10月降雨机率高于台北，建议携带轻便雨具、防滑防水鞋。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== DAY 1 ===================== -->
+  <div id="day1"></div>
+  <div class="day-pill-row"><span class="day-pill">DAY 1</span><span class="day-date">10/25（日）</span><span class="day-place">台北</span></div>
+  <div class="day-theme-line">清晨抵达，轻松适应——不安排大景点，重点是补眠调时差</div>
+
+  <div class="card">
+    <div class="row"><div class="icon-badge blue">✈️</div><div class="card-main"><div class="card-title">抵达桃园国际机场</div><div class="card-sub">办理入境、领取行李；机舱清晨较冷，建议随身备外套</div></div><div class="time-tag">凌晨5:30</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge purple">🚄</div><div class="card-main"><div class="card-title">机场捷运至台北车站</div><div class="card-sub">约35-50分钟；先寄放行李，或提前加订日间使用服务</div></div><div class="time-tag">6-7点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">☕</div><div class="card-main"><div class="card-title">车站周边早餐＋休息</div><div class="card-sub">让长辈和小朋友补眠调整时差</div></div><div class="time-tag">7-11点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge orange">🏨</div><div class="card-main"><div class="card-title">办理酒店入住</div><div class="card-sub">房间休息片刻</div></div><div class="time-tag">下午2-3点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge green">🚶</div><div class="card-main"><div class="card-title">车站周边／赤峰街散步</div><div class="card-sub">平地为主，无需爬坡</div></div><div class="time-tag">下午4-6点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">车站周边简单晚餐</div><div class="card-sub">早点休息，为明日储备体力</div></div><div class="time-tag">晚上</div></div>
+  </div>
+
+  <div class="note-card tip">
+    <div class="note-title">💡 交通指南</div>
+    <ul>
+      <li>桃园机场→台北车站：机场捷运直达车约35-40分钟，票价NT$150</li>
+      <li>建议全家购买「悠遊卡 EasyCard」，捷运/公车/部分台铁均可刷卡</li>
+      <li>无需另购特定周游券，全程以悠遊卡+台铁对号车票为主</li>
+    </ul>
+  </div>
+  <div class="note-card tip">
+    <div class="note-title">👨‍👩‍👧 亲子/长辈贴心提示</div>
+    <ul>
+      <li>红眼航班后的第一天，行程务必排松，重点让长辈小朋友睡回笼觉。</li>
+      <li>清晨抵达、下午才能入住的空档，建议提前与酒店确认寄放行李方案。</li>
+      <li>若有人疲惫，可直接在饭店休息，晚餐叫外送即可，不必勉强出门。</li>
+    </ul>
+  </div>
+  <div class="note-card rain">
+    <div class="note-title">🌧️ 雨天备案</div>
+    <ul>
+      <li>直接留在台北车站地下街（Y/Z/K区美食街及商店），全程有遮蔽。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== DAY 2 ===================== -->
+  <div id="day2"></div>
+  <div class="day-pill-row"><span class="day-pill">DAY 2</span><span class="day-date">10/26（一）</span><span class="day-place">台北</span></div>
+  <div class="day-theme-line">大稻埕老街 + 西门町/家乐福购物夜</div>
+
+  <div class="card">
+    <div class="row"><div class="icon-badge green">🏛️</div><div class="card-main"><div class="card-title">大稻埕迪化街</div><div class="card-sub">南北货、布行、老建筑，地势平坦，可顺游霞海城隍庙</div></div><div class="time-tag">9:30-12:00</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">迪化街周边午餐</div><div class="card-sub">南北货小吃、传统台式餐馆，座位充足</div></div><div class="time-tag">中午</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge purple">🎡</div><div class="card-main"><div class="card-title">西门町逛街</div><div class="card-sub">西门红楼、彩虹广场；避开阿宗面线等久候名店</div></div><div class="time-tag">下午2-5点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge orange">🛒</div><div class="card-main"><div class="card-title">家乐福采购</div><div class="card-sub">西门店或桂林店，零食、日用品、伴手礼</div></div><div class="time-tag">傍晚5-7点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">西门町晚餐</div><div class="card-sub">推荐三味食堂、万国卤味等，无需久候</div></div><div class="time-tag">晚上</div></div>
+  </div>
+
+  <div class="note-card tip">
+    <div class="note-title">💡 交通指南</div>
+    <ul>
+      <li>饭店→大稻埕：捷运或步行+短程德士约15-20分钟</li>
+      <li>大稻埕→西门町：捷运板南线/松山新店线转乘，约15-20分钟</li>
+      <li>西门町→饭店：搭1站捷运回台北车站，或步行约20分钟</li>
+    </ul>
+  </div>
+  <div class="note-card tip">
+    <div class="note-title">👨‍👩‍👧 亲子/长辈贴心提示</div>
+    <ul>
+      <li>两地均为平地行走，中途多处可休息（茶馆、诚品书店）。</li>
+      <li>西门町假日/周一人潮多，建议错开下午2-6点高峰时段。</li>
+    </ul>
+  </div>
+  <div class="note-card rain">
+    <div class="note-title">🌧️ 雨天备案</div>
+    <ul>
+      <li>大稻埕改为室内的「新芳春茶行」或永乐市场逛布行。</li>
+      <li>西门町室内商场多（诚品西门店、唐吉诃德），下雨不受影响。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== DAY 3 ===================== -->
+  <div id="day3"></div>
+  <div class="day-pill-row"><span class="day-pill">DAY 3</span><span class="day-date">10/27（二）</span><span class="day-place">台北→宜兰</span></div>
+  <div class="day-theme-line">搭火车南下宜兰，下午安排最轻松的拍照打卡景点</div>
+
+  <div class="card">
+    <div class="row"><div class="icon-badge gray">🧳</div><div class="card-main"><div class="card-title">台北酒店退房</div><div class="card-sub">前往台北车站</div></div><div class="time-tag">9-10点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge purple">🚄</div><div class="card-main"><div class="card-title">台铁南下宜兰</div><div class="card-sub">车程约70-90分钟</div></div><div class="time-tag">10-12点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">抵达入住＋午餐</div><div class="card-sub">三星葱饼、宜兰糕渣、卜肉等（避开牛肉）</div></div><div class="time-tag">中午</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge green">🎨</div><div class="card-main"><div class="card-title">几米公园</div><div class="card-sub">车站南侧步行5分钟，装置艺术拍照，平坦无需爬坡</div></div><div class="time-tag">下午2-4点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge orange">🏮</div><div class="card-main"><div class="card-title">东门夜市</div><div class="card-sub">规模适中，比罗东夜市清静</div></div><div class="time-tag">晚上</div></div>
+  </div>
+
+  <div class="note-card tip">
+    <div class="note-title">💡 交通指南</div>
+    <ul>
+      <li>台北→宜兰：自强号/普悠玛/太鲁阁约68-90分钟，票价约NT$306</li>
+      <li>亦可搭葛玛兰客运（车程90-120分钟，NT$150-160）</li>
+      <li>建议提前于台铁官网/App订票（可提前28天），确保对号座位</li>
+    </ul>
+  </div>
+  <div class="note-card tip">
+    <div class="note-title">👨‍👩‍👧 亲子/长辈贴心提示</div>
+    <ul>
+      <li>对号列车有行李放置区，建议订靠走道座位方便长辈进出。</li>
+      <li>几米公园无门票、无需久站，是暖身的最佳选择。</li>
+    </ul>
+  </div>
+  <div class="note-card rain">
+    <div class="note-title">🌧️ 雨天备案</div>
+    <ul>
+      <li>几米公园部分装置有遮蔽；雨大可改宜兰酒厂或橘之乡蜜饯观光工厂（室内DIY）。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== DAY 4 ===================== -->
+  <div id="day4"></div>
+  <div class="day-pill-row"><span class="day-pill">DAY 4</span><span class="day-date">10/28（三）</span><span class="day-place">宜兰</span></div>
+  <div class="day-theme-line">国立传统艺术中心 + 冬山河亲水公园——平坦好走，最适合三代同游</div>
+
+  <div class="card">
+    <div class="row"><div class="icon-badge green">🏮</div><div class="card-main"><div class="card-title">国立传统艺术中心</div><div class="card-sub">传统建筑街区、DIY手作、布袋戏表演，步道平坦，提供免费轮椅</div></div><div class="time-tag">9:30-12:30</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">传艺美食街午餐</div><div class="card-sub">选择多样，含儿童餐</div></div><div class="time-tag">中午</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge blue">🌊</div><div class="card-main"><div class="card-title">冬山河亲水公园</div><div class="card-sub">与传艺中心相邻，散步看水岸风光，无需额外交通</div></div><div class="time-tag">下午2-4点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">返回市区晚餐</div><div class="card-sub">推荐正好鲜肉小笼包、宜兰卜肉等</div></div><div class="time-tag">傍晚</div></div>
+  </div>
+
+  <div class="note-card tip">
+    <div class="note-title">💡 交通指南</div>
+    <ul>
+      <li>宜兰车站→传艺中心：台湾好行/客运接驳或计程车约20-25分钟，建议直接叫车</li>
+      <li>传艺中心→冬山河：步行或园区接驳车，距离很近</li>
+    </ul>
+  </div>
+  <div class="note-card tip">
+    <div class="note-title">👨‍👩‍👧 亲子/长辈贴心提示</div>
+    <ul>
+      <li>传艺中心休息区多、洗手间有扶手，是最对老人家友善的景点之一。</li>
+      <li>建议9:30入园，避开人潮，下午留给亲水公园放松散步。</li>
+    </ul>
+  </div>
+  <div class="note-card rain">
+    <div class="note-title">🌧️ 雨天备案</div>
+    <ul>
+      <li>传艺中心多为有遮雨走廊的建筑群，小雨影响不大。</li>
+      <li>雨大可改下午为安永心食馆（室内亲子景点，AR互动）。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== DAY 5 ===================== -->
+  <div id="day5"></div>
+  <div class="day-pill-row"><span class="day-pill">DAY 5</span><span class="day-date">10/29（四）</span><span class="day-place">宜兰</span></div>
+  <div class="day-theme-line">梅花湖 + 罗东夜市——宜兰最适合长辈的湖畔散步景点</div>
+
+  <div class="card">
+    <div class="row"><div class="icon-badge blue">🌊</div><div class="card-main"><div class="card-title">梅花湖风景区</div><div class="card-sub">环湖步道约4公里，平坦沿途有凉亭座椅，可租电动船游湖</div></div><div class="time-tag">9:30-11:30</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">梅花湖周边午餐</div><div class="card-sub">或返回市区用餐</div></div><div class="time-tag">中午</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge green">🚶</div><div class="card-main"><div class="card-title">龙潭湖公园／酒店午休</div><div class="card-sub">平坦好走免门票，视长辈体力弹性安排</div></div><div class="time-tag">下午2-4点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge orange">🏮</div><div class="card-main"><div class="card-title">罗东夜市</div><div class="card-sub">推荐龙凤腿、包心粉圆、卜肉；避开排队摊位</div></div><div class="time-tag">傍晚5-6点</div></div>
+  </div>
+
+  <div class="note-card tip">
+    <div class="note-title">💡 交通指南</div>
+    <ul>
+      <li>宜兰/罗东车站→梅花湖：计程车约15-20分钟，或台湾好行冬山河线</li>
+      <li>罗东车站步行至罗东夜市约5-10分钟</li>
+    </ul>
+  </div>
+  <div class="note-card tip">
+    <div class="note-title">👨‍👩‍👧 亲子/长辈贴心提示</div>
+    <ul>
+      <li>梅花湖遮荫较少，建议戴帽子防晒，携带折叠椅供长辈休息。</li>
+      <li>罗东夜市建议错峰前往，分散式用餐减少排队等待。</li>
+    </ul>
+  </div>
+  <div class="note-card rain">
+    <div class="note-title">🌧️ 雨天备案</div>
+    <ul>
+      <li>雨大改室内的宜兰美术馆或中兴文化创意园区。</li>
+      <li>罗东夜市半开放式摊位，小雨携伞前往即可。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== DAY 6 ===================== -->
+  <div id="day6"></div>
+  <div class="day-pill-row"><span class="day-pill">DAY 6</span><span class="day-date">10/30（五）</span><span class="day-place">宜兰→台北</span></div>
+  <div class="day-theme-line">火车北返，下午轻松巷弄漫步，晚上早点休息</div>
+
+  <div class="card">
+    <div class="row"><div class="icon-badge gray">🧳</div><div class="card-main"><div class="card-title">宜兰酒店退房</div><div class="card-sub">前往车站</div></div><div class="time-tag">9-10点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge purple">🚄</div><div class="card-main"><div class="card-title">台铁返回台北</div><div class="card-sub">车程约70-90分钟</div></div><div class="time-tag">10-12点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge orange">🏨</div><div class="card-main"><div class="card-title">入住酒店＋午餐</div><div class="card-sub">台北车站周边</div></div><div class="time-tag">中午</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge green">🚶</div><div class="card-main"><div class="card-title">后车站商圈/赤峰街漫步</div><div class="card-sub">南京西路商圈，节奏悠闲不费体力</div></div><div class="time-tag">下午2-4点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">车站周边晚餐</div><div class="card-sub">早点休息，隔天仍有全天行程</div></div><div class="time-tag">晚上</div></div>
+  </div>
+
+  <div class="note-card tip">
+    <div class="note-title">💡 交通指南</div>
+    <ul>
+      <li>宜兰→台北：台铁对号列车约68-90分钟</li>
+      <li>抵达后步行即可探索周边商圈</li>
+    </ul>
+  </div>
+  <div class="note-card tip">
+    <div class="note-title">👨‍👩‍👧 亲子/长辈贴心提示</div>
+    <ul>
+      <li>今天以「过渡+休整」为主，刻意不排太多行程。</li>
+      <li>若较累，下午可留酒店午休，晚上再简单出门觅食。</li>
+    </ul>
+  </div>
+  <div class="note-card rain">
+    <div class="note-title">🌧️ 雨天备案</div>
+    <ul>
+      <li>台北车站本身是大型室内商场，雨天完全不受影响。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== DAY 7 ===================== -->
+  <div id="day7"></div>
+  <div class="day-pill-row"><span class="day-pill">DAY 7</span><span class="day-date">10/31（六）</span><span class="day-place">台北</span></div>
+  <div class="day-theme-line">八里左岸半日游（全天升级版）+ 深夜飞返新加坡</div>
+
+  <div class="card">
+    <div class="row"><div class="icon-badge gray">🧳</div><div class="card-main"><div class="card-title">酒店退房</div><div class="card-sub">行李寄放前台或车站寄存柜</div></div><div class="time-tag">上午9点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge purple">⛴️</div><div class="card-main"><div class="card-title">淡水站→渡轮至八里</div><div class="card-sub">捷运淡水信义线，转搭蓝色公路渡轮</div></div><div class="time-tag">9:30-10点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge green">🌉</div><div class="card-main"><div class="card-title">八里左岸公园</div><div class="card-sub">共融式儿童游戏区、观景台眺望淡江大桥，平坦好走</div></div><div class="time-tag">10:30-1点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">八里老街午餐</div><div class="card-sub">花枝烧、孔雀蛤等，座位充足不用久候</div></div><div class="time-tag">中午</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge orange">☕</div><div class="card-main"><div class="card-title">河岸咖啡厅休息</div><div class="card-sub">或视体力提早返程</div></div><div class="time-tag">下午2-4点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge purple">⛴️</div><div class="card-main"><div class="card-title">返回市区取行李</div><div class="card-sub">渡轮/公车返回，简单梳洗</div></div><div class="time-tag">下午4-6点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🍜</div><div class="card-main"><div class="card-title">车站周边晚餐</div><div class="card-sub">避免吃太饱太油腻，防红眼航班肠胃不适</div></div><div class="time-tag">晚上6-8点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge blue">🚄</div><div class="card-main"><div class="card-title">机场捷运前往桃园机场</div><div class="card-sub">国际线建议提前3小时办理登机</div></div><div class="time-tag">8:30-9点</div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge blue">✈️</div><div class="card-main"><div class="card-title">起飞返回新加坡</div><div class="card-sub">11/1凌晨4:00抵达</div></div><div class="time-tag">晚上11:20</div></div>
+  </div>
+
+  <div class="note-card tip">
+    <div class="note-title">💡 交通指南</div>
+    <ul>
+      <li>台北车站→淡水站：捷运直达约35-40分钟</li>
+      <li>淡水→八里：渡轮约10分钟，也可捷运转公车（红13）直达</li>
+      <li>台北车站→桃园机场：机场捷运直达约35分钟</li>
+    </ul>
+  </div>
+  <div class="note-card tip">
+    <div class="note-title">👨‍👩‍👧 亲子/长辈贴心提示</div>
+    <ul>
+      <li>全天在外，建议安排1-2次室内休息，避免长辈体力透支后还要熬夜。</li>
+      <li>白天行程留余裕，下午4点后就该准备收尾。</li>
+      <li>行李提前一晚整理好大件，当天只处理随身物品。</li>
+      <li>渡轮甲板风大，年长者留意保暖防滑。</li>
+    </ul>
+  </div>
+  <div class="note-card rain">
+    <div class="note-title">🌧️ 雨天备案</div>
+    <ul>
+      <li>改为室内的十三行博物馆（就在八里）。</li>
+      <li>或改台北车站周边室内商场半日，晚上直接前往机场。</li>
+    </ul>
+  </div>
+
+  <!-- ===================== 打包提醒 ===================== -->
+  <div class="section-label" id="tips">🎒 打包与实用提醒</div>
+
+  <div class="card mini-list">
+    <div class="row"><div class="icon-badge blue">🚊</div><div class="card-main"><div class="card-title">交通票券</div><div class="card-sub">悠遊卡EasyCard；台铁对号座提前订票（可提前28天）；短程可搭德士</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge orange">🍽️</div><div class="card-main"><div class="card-title">饮食安排</div><div class="card-sub">已避开牛肉料理；均避开长时间排队名店</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge green">👴</div><div class="card-main"><div class="card-title">长辈友善设计</div><div class="card-sub">全程避开陡坡爬山路线，多处提供轮椅租借</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge purple">🎒</div><div class="card-main"><div class="card-title">必备物品</div><div class="card-sub">雨具防滑鞋、常用药品、防蚊液、折叠椅、保暖外套、行动电源</div></div></div>
+    <div class="divider"></div>
+    <div class="row"><div class="icon-badge gray">🛡️</div><div class="card-main"><div class="card-title">保险与其他</div><div class="card-sub">建议购买涵盖延误/取消的旅游保险；10/31保留体力</div></div></div>
+  </div>
+
+  <div class="note-card green">
+    <div class="note-title">✅ 行程核心原则回顾</div>
+    <ul>
+      <li><strong>松弛有度</strong>：每天上午1个大景点，下午1-2个轻松活动。</li>
+      <li><strong>交通简单</strong>：台铁+捷运+公车+悠遊卡，不自驾。</li>
+      <li><strong>住宿集中</strong>：全程仅换宿1次。</li>
+      <li><strong>避坑到位</strong>：避开排队网红店、陡峭路线、文创/101/九份/十份/故宫/圆山。</li>
+      <li><strong>指定景点全达成</strong>：台北后街、西门町、家乐福、八里左岸皆已排入。</li>
+    </ul>
+  </div>
+
+  <footer class="foot">台北 · 宜兰 亲子长辈行程手册 &nbsp;|&nbsp; 2026年10月25日 — 10月31日</footer>
+
+</div>
+</body>
+</html>
