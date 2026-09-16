@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台北 · 宜兰 亲子长辈家庭旅行 | 完整详细行程手册</title>
+<style>
+  :root {
+    --primary: #2E5266;
+    --accent: #B8720A;
+    --bg-light: #F5F8FA;
+    --border: #CCCCCC;
+    --warn-bg: #FFF4E5;
+    --warn-border: #F0C36D;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #222;
+    background: #fff;
+    line-height: 1.7;
+  }
+  .cover {
+    background: linear-gradient(135deg, var(--primary) 0%, #1b3a4b 100%);
+    color: #fff;
+    padding: 80px 40px 60px;
+    text-align: center;
+  }
+  .cover h1 {
+    font-size: 2.4em;
+    margin: 0 0 10px;
+    letter-spacing: 1px;
+  }
+  .cover .subtitle {
+    font-size: 1.3em;
+    color: #FFD9A0;
+    font-weight: 600;
+    margin-bottom: 25px;
+  }
+  .cover .meta {
+    font-size: 1.05em;
+    margin: 6px 0;
+    opacity: 0.95;
+  }
+  .cover .flights {
+    margin-top: 30px;
+    font-size: 0.95em;
+    font-style: italic;
+    opacity: 0.9;
+    line-height: 1.9;
+  }
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 10px 30px 60px;
+  }
+  nav.toc {
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 30px;
+    margin: 30px 0 40px;
+  }
+  nav.toc h2 { margin-top: 0; color: var(--primary); }
+  nav.toc ul { list-style: none; padding-left: 0; columns: 2; }
+  nav.toc li { margin-bottom: 8px; break-inside: avoid; }
+  nav.toc a { color: var(--primary); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  h1.section-title {
+    color: var(--primary);
+    font-size: 1.7em;
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 8px;
+    margin-top: 55px;
+  }
+  h2.day-title {
+    color: #fff;
+    background: var(--primary);
+    padding: 12px 20px;
+    border-radius: 8px 8px 0 0;
+    margin: 45px 0 0;
+    font-size: 1.35em;
+  }
+  .day-block {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 22px 25px 30px;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+  .day-theme {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.08em;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border);
+  }
+  h3.sub {
+    color: var(--primary);
+    font-size: 1.12em;
+    margin-top: 22px;
+    margin-bottom: 10px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0 20px;
+    font-size: 0.95em;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+  }
+  tr:nth-child(even) td { background: var(--bg-light); }
+  .timeline-table td:first-child {
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--primary);
+    width: 130px;
+  }
+  ul.plain-list { padding-left: 22px; margin: 8px 0 18px; }
+  ul.plain-list li { margin-bottom: 6px; }
+
+  .callout {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    border-left: 5px solid var(--accent);
+    border-radius: 6px;
+    padding: 14px 20px;
+    margin: 14px 0 20px;
+  }
+  .callout .callout-title {
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .callout ul { margin: 0; padding-left: 20px; }
+  .callout li { margin-bottom: 5px; }
+
+  .rain-callout {
+    background: #E8F1F8;
+    border: 1px solid #B7D4E8;
+    border-left: 5px solid var(--primary);
+    border-radius: 6px;
+    padding: 14px 20px;
+    margin: 14px 0 20px;
+  }
+  .rain-callout .callout-title { font-weight: 700; color: var(--primary); margin-bottom: 8px; display: block; }
+  .rain-callout ul { margin: 0; padding-left: 20px; }
+  .rain-callout li { margin-bottom: 5px; }
+
+  .highlight-box {
+    background: #EAF3EC;
+    border: 1px solid #B9DCC0;
+    border-radius: 8px;
+    padding: 18px 24px;
+    margin: 20px 0 40px;
+  }
+  .highlight-box h3 { color: #2E6B3A; margin-top: 0; }
+  .highlight-box ul { padding-left: 20px; }
+  .highlight-box li { margin-bottom: 8px; }
+
+  .overview-badge {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 700;
+  }
+
+  footer.page-footer {
+    text-align: center;
+    color: #999;
+    font-size: 0.85em;
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h2.day-title { -webkit-print-color-adjust: exact; print-color-adjust: exact; page-break-before: always; }
+    th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 600px) {
+    .cover { padding: 50px 20px 40px; }
+    .cover h1 { font-size: 1.6em; }
+    .container { padding: 10px 16px 40px; }
+    nav.toc ul { columns: 1; }
+    .timeline-table td:first-child { width: 90px; font-size: 0.9em; }
+    table, th, td { font-size: 0.85em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>台北 · 宜兰 亲子长辈家庭旅行</h1>
+  <div class="subtitle">完整详细行程手册</div>
+  <div class="meta">2026年10月25日（日）— 10月31日（六）· 7天7夜</div>
+  <div class="meta">一家五口（含5岁小朋友、3位长辈）· 新加坡往返</div>
+  <div class="flights">
+    去程：Scoot SIN→TPE　10/25 00:55–05:30<br>
+    回程：Scoot TPE→SIN　10/31 23:20–11/1 04:00
+  </div>
+</div>
+
+<div class="container">
+
+  <nav class="toc">
+    <h2>目录</h2>
+    <ul>
+      <li><a href="#flight">一、航班信息</a></li>
+      <li><a href="#overview">二、行程总览</a></li>
+      <li><a href="#hotel">三、住宿建议</a></li>
+      <li><a href="#day1">Day 1｜10/25（日）台北</a></li>
+      <li><a href="#day2">Day 2｜10/26（一）台北</a></li>
+      <li><a href="#day3">Day 3｜10/27（二）台北→宜兰</a></li>
+      <li><a href="#day4">Day 4｜10/28（三）宜兰</a></li>
+      <li><a href="#day5">Day 5｜10/29（四）宜兰</a></li>
+      <li><a href="#day6">Day 6｜10/30（五）宜兰→台北</a></li>
+      <li><a href="#day7">Day 7｜10/31（六）台北</a></li>
+      <li><a href="#tips">四、打包与实用提醒</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============ 一、航班信息 ============ -->
+  <h1 class="section-title" id="flight">一、航班信息</h1>
+  <table>
+    <tr><th>航段</th><th>日期</th><th>时间</th><th>备注</th></tr>
+    <tr><td>SIN → TPE</td><td>10/25（日）</td><td>00:55 – 05:30（飞行4小时35分）</td><td>Scoot 酷航，清晨抵达桃园机场</td></tr>
+    <tr><td>TPE → SIN</td><td>10/31（六）</td><td>23:20 – 次日04:00（飞行4小时40分）</td><td>Scoot 酷航，红眼航班，11/1凌晨抵达新加坡</td></tr>
+  </table>
+
+  <div class="callout">
+    <span class="callout-title">⚠️ 航班关键提醒</span>
+    <ul>
+      <li>实际落地日为10/25清晨，而非原计划的10/24，全程行程已顺延1天。</li>
+      <li>回程为深夜23:20起飞的红眼航班，10/31全天仍可安排完整活动，但晚间需预留充裕时间前往机场。</li>
+      <li>去程抵达后为清晨5:30，多数酒店下午3点后才能入住，请提前与酒店沟通寄放行李或加订提前入住服务。</li>
+      <li>建议全员搭配飞行前后各休息一晚的心理准备，尤其两位长辈与5岁小朋友需要充分调整时差。</li>
+    </ul>
+  </div>
+
+  <!-- ============ 二、行程总览 ============ -->
+  <h1 class="section-title" id="overview">二、行程总览</h1>
+  <table>
+    <tr><th>天数</th><th>日期</th><th>地点</th><th>主题</th><th>住宿</th></tr>
+    <tr><td><span class="overview-badge">Day1</span></td><td>10/25（日）</td><td>台北</td><td>清晨抵达＋轻松适应</td><td>台北车站周边</td></tr>
+    <tr><td><span class="overview-badge">Day2</span></td><td>10/26（一）</td><td>台北</td><td>大稻埕老街＋西门町/家乐福</td><td>台北车站周边</td></tr>
+    <tr><td><span class="overview-badge">Day3</span></td><td>10/27（二）</td><td>台北→宜兰</td><td>火车南下＋几米公园</td><td>宜兰车站周边</td></tr>
+    <tr><td><span class="overview-badge">Day4</span></td><td>10/28（三）</td><td>宜兰</td><td>传艺中心＋冬山河</td><td>宜兰车站周边</td></tr>
+    <tr><td><span class="overview-badge">Day5</span></td><td>10/29（四）</td><td>宜兰</td><td>梅花湖＋罗东夜市</td><td>宜兰车站周边</td></tr>
+    <tr><td><span class="overview-badge">Day6</span></td><td>10/30（五）</td><td>宜兰→台北</td><td>火车北返＋后车站商圈</td><td>台北车站周边</td></tr>
+    <tr><td><span class="overview-badge">Day7</span></td><td>10/31（六）</td><td>台北</td><td>八里左岸半日游＋深夜飞返</td><td>无（当晚返程）</td></tr>
+  </table>
+  <p>住宿分配：台北车站周边（Day1-2、Day6-7）共3晚；宜兰车站周边（Day3-5）共3晚，全程仅需换宿1次，符合「不频繁换酒店」的需求。</p>
+
+  <!-- ============ 三、住宿建议 ============ -->
+  <h1 class="section-title" id="hotel">三、住宿建议</h1>
+
+  <h3 class="sub">台北车站周边（第1、2、6、7晚）</h3>
+  <ul class="plain-list">
+    <li><strong>推荐：台北凯撒大饭店 Caesar Park Hotel</strong> — 距台北车站约100米，步行1分钟内，直接连接机场捷运/台铁/客运总站，评价8.2-8.4分。</li>
+    <li><strong>备选：台北天成大饭店</strong> — 距车站仅50米，几乎相连，评价8.3分，距西门町、宁夏夜市约1.2公里。</li>
+  </ul>
+
+  <h3 class="sub">宜兰车站周边（第3、4、5晚）</h3>
+  <ul class="plain-list">
+    <li><strong>推荐：宜兰兰城晶英酒店 Silks Place Yilan</strong> — 距宜兰火车站步行约10分钟，坐拥月眉星宸广场6-11楼，楼下就有家乐福方便采买，室内外泳池+水疗中心，适合三代同游，评价9.0-9.1分。</li>
+    <li><strong>备选：富翔大饭店 Fu Hsiang Hotel</strong> — 距火车站步行约3分钟，距宜兰巴士站5分钟，近东门夜市3分钟车程，有亲子房型，评价8.2-8.3分。</li>
+  </ul>
+
+  <div class="rain-callout">
+    <span class="callout-title">🌦️ 天气小知识</span>
+    <ul>
+      <li>台北10月平均气温约22-24°C（最高约24-26°C），月降雨量约220mm，逐渐转凉但偶有阵雨。</li>
+      <li>宜兰地形面向东北季风，10月降雨机率一般高于台北，建议全程携带轻便雨具/雨衣，鞋子选防滑防水款。</li>
+    </ul>
+  </div>
+
+  <!-- ============ DAY 1 ============ -->
+  <h2 class="day-title" id="day1">Day 1｜10/25（日）台北</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：清晨抵达，轻松适应——不安排任何大景点，重点是让长辈和小朋友先补眠、调整时差</div>
+
+    <h3 class="sub">② 具体时间线</h3>
+    <table class="timeline-table">
+      <tr><th>时段</th><th>行程内容</th></tr>
+      <tr><td>凌晨5:30</td><td>抵达桃园国际机场，办理入境、领取行李（机舱清晨较冷，建议随身备一件外套）</td></tr>
+      <tr><td>上午6-7点</td><td>搭机场捷运至台北车站（约35-50分钟）；先在酒店大厅寄放行李，或提前加订日间使用/提前入住服务</td></tr>
+      <tr><td>上午7-11点</td><td>车站周边吃早餐、稍作休息，让长辈和小朋友补眠调整时差</td></tr>
+      <tr><td>下午2-3点</td><td>正式办理酒店入住，房间休息片刻</td></tr>
+      <tr><td>下午4-6点</td><td>台北车站周边／赤峰街文青区轻松散步（平地为主，无需爬坡）</td></tr>
+      <tr><td>晚上</td><td>车站周边简单晚餐，早点休息，为明日行程储备体力</td></tr>
+    </table>
+
+    <h3 class="sub">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>桃园机场→台北车站：机场捷运直达车约35-40分钟，普通车约50分钟，票价NT$150</li>
+      <li>抵达后建议全家购买「悠遊卡 EasyCard」（机场捷运站即可购买/加值），后续捷运、公车、部分台铁短程都能刷卡通行</li>
+      <li>无需另购特定周游券，全程以悠遊卡+台铁对号车票为主</li>
+    </ul>
+
+    <h3 class="sub">④ 亲子/长辈贴心提示</h3>
+    <div class="callout">
+      <span class="callout-title">贴心提示</span>
+      <ul>
+        <li>这天是红眼航班后的第一天，务必把行程排得非常松，重点是让长辈和小朋友睡个回笼觉，不要一下机就冲景点。</li>
+        <li>清晨抵达、下午才能入住的空档，建议提前一天与酒店确认是否可寄放行李或加价提前入住。</li>
+        <li>若小朋友或长辈出现疲惫，可直接在饭店休息，晚餐可叫外送或到车站地下街用餐，不必勉强出门。</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">⑤ 备选方案（雨天）</h3>
+    <div class="rain-callout">
+      <span class="callout-title">雨天备案</span>
+      <ul>
+        <li>若下雨，直接留在台北车站地下街（Y区/Z区/K区美食街及商店），全程有遮蔽，不受天气影响。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ DAY 2 ============ -->
+  <h2 class="day-title" id="day2">Day 2｜10/26（一）台北</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：大稻埕老街 + 西门町/家乐福购物夜</div>
+
+    <h3 class="sub">② 具体时间线</h3>
+    <table class="timeline-table">
+      <tr><th>时段</th><th>行程内容</th></tr>
+      <tr><td>上午9:30-12:00</td><td>大稻埕迪化街——南北货、布行、老建筑，地势平坦好走，适合长辈慢慢逛，可顺游霞海城隍庙</td></tr>
+      <tr><td>中午</td><td>迪化街周边用餐（南北货小吃、传统台式餐馆，座位充足）</td></tr>
+      <tr><td>下午2-5点</td><td>西门町——西门红楼（历史建筑，一楼有文创小店可歇脚）、彩虹广场拍照、逛街；避开阿宗面线等需久候名店，改选有座位的店家用餐</td></tr>
+      <tr><td>傍晚5-7点</td><td>家乐福（西门店或桂林店）采购零食、日用品、伴手礼，是当地人也爱去的24小时超市</td></tr>
+      <tr><td>晚上</td><td>西门町附近晚餐（推荐三味食堂、万国卤味等，无需久候）</td></tr>
+    </table>
+
+    <h3 class="sub">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>饭店→大稻埕：搭乘捷运或步行+短程德士约15-20分钟</li>
+      <li>大稻埕→西门町：捷运板南线/松山新店线转乘，约15-20分钟</li>
+      <li>西门町→饭店：西门站搭1站捷运回台北车站，或步行约20分钟</li>
+    </ul>
+
+    <h3 class="sub">④ 亲子/长辈贴心提示</h3>
+    <div class="callout">
+      <span class="callout-title">贴心提示</span>
+      <ul>
+        <li>大稻埕、西门町均为平地行走为主，中途多处可休息（茶馆、书店诚品）。</li>
+        <li>西门町假日/周一人潮较多，建议错开下午2-6点的高峰时段，或安排家人分批采购。</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">⑤ 备选方案（雨天）</h3>
+    <div class="rain-callout">
+      <span class="callout-title">雨天备案</span>
+      <ul>
+        <li>大稻埕可改为室内的「新芳春茶行」或永乐市场逛布行（室内空间）。</li>
+        <li>西门町本身室内商场多（诚品西门店、唐吉诃德、万年大楼），下雨完全不影响行程。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ DAY 3 ============ -->
+  <h2 class="day-title" id="day3">Day 3｜10/27（二）台北→宜兰</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：搭火车南下宜兰，下午安排最轻松的拍照打卡景点</div>
+
+    <h3 class="sub">② 具体时间线</h3>
+    <table class="timeline-table">
+      <tr><th>时段</th><th>行程内容</th></tr>
+      <tr><td>上午9-10点</td><td>台北酒店退房，前往台北车站</td></tr>
+      <tr><td>上午10-12点</td><td>搭台铁前往宜兰（车程约70-90分钟）</td></tr>
+      <tr><td>中午</td><td>抵达宜兰，入住酒店，附近用餐（推荐三星葱饼、宜兰糕渣、卜肉等在地小吃，避开牛肉料理）</td></tr>
+      <tr><td>下午2-4点</td><td>几米公园——就在宜兰火车站南侧，步行5分钟即达，装置艺术拍照打卡，园区平坦、无需爬坡</td></tr>
+      <tr><td>晚上</td><td>东门夜市（宜兰市区，规模适中，比罗东夜市清静，适合第一晚轻松逛逛）</td></tr>
+    </table>
+
+    <h3 class="sub">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>台北车站→宜兰车站：台铁自强号/普悠玛号/太鲁阁号约68-90分钟，票价约NT$306（普通区间车约NT$197但耗时较长，建议选对号列车较舒适）</li>
+      <li>宜兰没有高铁，只能搭台铁或葛玛兰客运（板桥站/台北转运站/市府转运站上车，车程约90-120分钟，票价NT$150-160）</li>
+      <li>建议提前于台铁官网/App订票（可提前28天订票），确保有对号座位，尤其是平日出行更容易订到理想车次</li>
+    </ul>
+
+    <h3 class="sub">④ 亲子/长辈贴心提示</h3>
+    <div class="callout">
+      <span class="callout-title">贴心提示</span>
+      <ul>
+        <li>台铁对号列车有行李放置区，建议提前上网订票选靠走道座位方便长辈进出。</li>
+        <li>几米公园无门票、无需久站，是抵达宜兰后暖身的最佳选择。</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">⑤ 备选方案（雨天）</h3>
+    <div class="rain-callout">
+      <span class="callout-title">雨天备案</span>
+      <ul>
+        <li>几米公园部分装置有遮蔽廊道，小雨影响不大；若雨势较大可改为宜兰酒厂（室内，可试饮、参观）或橘之乡蜜饯观光工厂（室内DIY体验）。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ DAY 4 ============ -->
+  <h2 class="day-title" id="day4">Day 4｜10/28（三）宜兰</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：国立传统艺术中心 + 冬山河亲水公园——园区平坦好走，轮椅/娃娃车皆可通行，最适合三代同游</div>
+
+    <h3 class="sub">② 具体时间线</h3>
+    <table class="timeline-table">
+      <tr><th>时段</th><th>行程内容</th></tr>
+      <tr><td>上午9:30-12:30</td><td>国立传统艺术中心——传统建筑街区、DIY手作体验、布袋戏表演，全区步道平坦，并提供免费轮椅出租，长辈行走无负担</td></tr>
+      <tr><td>中午</td><td>园区内传艺美食街用餐（选择多样，含儿童餐）</td></tr>
+      <tr><td>下午2-4点</td><td>冬山河亲水公园——与传艺中心相邻，可散步、看水岸风光，不必额外交通换乘，节奏放松</td></tr>
+      <tr><td>傍晚</td><td>返回宜兰市区，晚餐（推荐正好鲜肉小笼包、宜兰卜肉等）</td></tr>
+    </table>
+
+    <h3 class="sub">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>宜兰车站→传艺中心：可搭台湾好行/葛玛兰客运接驳或短程计程车（约20-25分钟），建议直接叫车最省力</li>
+      <li>传艺中心→冬山河亲水公园：步行或园区接驳车即可到达，两者距离很近</li>
+    </ul>
+
+    <h3 class="sub">④ 亲子/长辈贴心提示</h3>
+    <div class="callout">
+      <span class="callout-title">贴心提示</span>
+      <ul>
+        <li>传艺中心休息区多、洗手间有扶手，是公认对老人家最友善的宜兰景点之一。</li>
+        <li>建议上午9:30入园，避开假日人潮，中午前完成主要参观，下午留给亲水公园放松散步。</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">⑤ 备选方案（雨天）</h3>
+    <div class="rain-callout">
+      <span class="callout-title">雨天备案</span>
+      <ul>
+        <li>传艺中心内多为有遮雨走廊的建筑群，小雨基本不影响游览。</li>
+        <li>若雨势大，可将下午行程改为安永心食馆（室内亲子景点，AR互动，全馆室内）。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ DAY 5 ============ -->
+  <h2 class="day-title" id="day5">Day 5｜10/29（四）宜兰</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：梅花湖 + 罗东夜市——宜兰最适合长辈的湖畔散步景点，晚上体验在地美食</div>
+
+    <h3 class="sub">② 具体时间线</h3>
+    <table class="timeline-table">
+      <tr><th>时段</th><th>行程内容</th></tr>
+      <tr><td>上午9:30-11:30</td><td>梅花湖风景区——环湖步道全长约4公里，路面平坦、沿途有凉亭座椅，可散步、骑脚踏车或租电动船游湖，被公认是宜兰最适合带长辈的景点之一</td></tr>
+      <tr><td>中午</td><td>梅花湖周边或返回市区用餐</td></tr>
+      <tr><td>下午2-4点</td><td>轻松活动——龙潭湖公园（同样平坦好走，免门票）或直接回酒店午休，视长辈体力弹性安排</td></tr>
+      <tr><td>傍晚5-6点</td><td>罗东夜市——建议提前到，避开18:30-20:30的人潮高峰，推荐龙凤腿、包心粉圆、卜肉等，避开需要长时间排队的摊位</td></tr>
+    </table>
+
+    <h3 class="sub">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>宜兰/罗东车站→梅花湖：计程车约15-20分钟，或搭乘台湾好行冬山河线</li>
+      <li>罗东车站步行至罗东夜市约5-10分钟，非常方便，不需额外交通</li>
+    </ul>
+
+    <h3 class="sub">④ 亲子/长辈贴心提示</h3>
+    <div class="callout">
+      <span class="callout-title">贴心提示</span>
+      <ul>
+        <li>梅花湖夏秋两季遮荫较少，建议戴帽子防晒，携带折叠椅供长辈随时休息。</li>
+        <li>罗东夜市人潮较多，建议错峰前往，并采分散式用餐（每个人挑不同摊位，减少排队等待）。</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">⑤ 备选方案（雨天）</h3>
+    <div class="rain-callout">
+      <span class="callout-title">雨天备案</span>
+      <ul>
+        <li>梅花湖步道大部分无遮蔽，若雨大建议改为室内的宜兰美术馆或中兴文化创意园区（室内展览+市集）。</li>
+        <li>罗东夜市本身多为半开放式摊位，小雨影响不大，可携带雨伞前往。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ DAY 6 ============ -->
+  <h2 class="day-title" id="day6">Day 6｜10/30（五）宜兰→台北</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：火车北返，下午安排轻松的老台北巷弄漫步，晚上早点休息为隔天做准备</div>
+
+    <h3 class="sub">② 具体时间线</h3>
+    <table class="timeline-table">
+      <tr><th>时段</th><th>行程内容</th></tr>
+      <tr><td>上午9-10点</td><td>宜兰酒店退房，前往车站</td></tr>
+      <tr><td>上午10-12点</td><td>搭台铁返回台北（车程约70-90分钟）</td></tr>
+      <tr><td>中午</td><td>抵达台北车站，入住酒店，附近用餐</td></tr>
+      <tr><td>下午2-4点</td><td>台北车站后车站商圈/赤峰街文青区——延续Day1的散步路线，再深入逛逛周边巷弄小店、南京西路商圈，节奏悠闲不费体力</td></tr>
+      <tr><td>晚上</td><td>台北车站周边晚餐，早点休息（隔天仍有全天行程）</td></tr>
+    </table>
+
+    <h3 class="sub">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>宜兰车站→台北车站：台铁对号列车约68-90分钟</li>
+      <li>抵达后步行即可探索周边商圈，无需额外交通</li>
+    </ul>
+
+    <h3 class="sub">④ 亲子/长辈贴心提示</h3>
+    <div class="callout">
+      <span class="callout-title">贴心提示</span>
+      <ul>
+        <li>这天以「过渡+休整」为主，刻意不排太多行程，让大家从宜兰的连续外出中缓过来。</li>
+        <li>若长辈或小朋友较累，下午可直接留在酒店午休，晚上再简单出门觅食。</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">⑤ 备选方案（雨天）</h3>
+    <div class="rain-callout">
+      <span class="callout-title">雨天备案</span>
+      <ul>
+        <li>台北车站本身就是大型室内商场（地下街+车站大厅），雨天可直接在车站范围内购物用餐，完全不受影响。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ DAY 7 ============ -->
+  <h2 class="day-title" id="day7">Day 7｜10/31（六）台北</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：八里左岸半日游（全天，因回程为深夜航班而升级为完整一天）+ 深夜飞返新加坡</div>
+
+    <h3 class="sub">② 具体时间线</h3>
+    <table class="timeline-table">
+      <tr><th>时段</th><th>行程内容</th></tr>
+      <tr><td>上午9点</td><td>酒店退房（行李可寄放在酒店前台或车站行李寄存柜）</td></tr>
+      <tr><td>上午9:30-10点</td><td>捷运淡水信义线至淡水站，转搭渡轮（蓝色公路）至八里渡船头</td></tr>
+      <tr><td>上午10:30-下午1点</td><td>八里左岸公园——共融式儿童游戏区、观景台眺望淡江大桥，平坦好走，非常适合三代同游</td></tr>
+      <tr><td>中午</td><td>八里老街小吃午餐（花枝烧、孔雀蛤等在地小吃，座位充足不用久候）</td></tr>
+      <tr><td>下午2-4点</td><td>河岸咖啡厅稍坐休息，或视体力提早返程</td></tr>
+      <tr><td>下午4-6点</td><td>搭渡轮/公车返回市区，回酒店/车站取回行李，简单梳洗</td></tr>
+      <tr><td>晚上6-8点</td><td>台北车站周边晚餐（不建议吃太饱太油腻，避免红眼航班时肠胃不适）</td></tr>
+      <tr><td>晚上8:30-9点</td><td>搭机场捷运前往桃园机场（预留充裕时间，国际线建议提前3小时办理登机）</td></tr>
+      <tr><td>晚上11:20</td><td>起飞返回新加坡（11/1凌晨4:00抵达）</td></tr>
+    </table>
+
+    <h3 class="sub">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>台北车站→淡水站：捷运淡水信义线直达约35-40分钟</li>
+      <li>淡水→八里：渡轮（蓝色公路）约10分钟，风景绝佳，也可选择捷运至关渡站转乘公车（红13）直达八里左岸</li>
+      <li>台北车站→桃园机场：机场捷运直达车约35分钟，普通车约50分钟，建议预留充裕时间</li>
+    </ul>
+
+    <h3 class="sub">④ 亲子/长辈贴心提示</h3>
+    <div class="callout">
+      <span class="callout-title">贴心提示</span>
+      <ul>
+        <li>全天在外，建议中途安排1-2次室内休息（如河岸咖啡厅），避免长辈体力透支后还要熬夜搭红眼航班。</li>
+        <li>由于当晚要熬夜飞行，白天行程务必留有余裕，不要排得太满，下午4点后就该准备收尾。</li>
+        <li>建议行李提前一晚整理好大件行李，当天只处理随身物品，减少奔波。</li>
+        <li>渡轮甲板处风较大，建议年长者留意保暖及防滑，扶手多加留意。</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">⑤ 备选方案（雨天）</h3>
+    <div class="rain-callout">
+      <span class="callout-title">雨天备案</span>
+      <ul>
+        <li>改为室内的十三行博物馆（就在八里，介绍史前文化，适合全家参观）。</li>
+        <li>或直接取消八里行程，改为台北车站周边室内商场半日（如Q Square微风等），视喜好弹性调整，晚上直接前往机场。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ 四、打包与实用提醒 ============ -->
+  <h1 class="section-title" id="tips">四、打包与实用提醒</h1>
+
+  <h3 class="sub">交通票券</h3>
+  <ul class="plain-list">
+    <li>全员购买悠遊卡（EasyCard），可用于捷运、公车、部分超商消费</li>
+    <li>宜兰-台北之间的台铁对号座建议提前于官网/App订票（可提前28天），周末班次热门建议尽早锁定</li>
+    <li>全程不自驾，短程可搭德士（计程车），多数支援信用卡/Apple Pay/Line Pay等电子支付</li>
+  </ul>
+
+  <h3 class="sub">饮食安排</h3>
+  <ul class="plain-list">
+    <li>全程餐点已避开牛肉相关料理（如牛肉面、羊肉汤类可自行斟酌），以宜兰/台北在地猪肉、海鲜、面食为主</li>
+    <li>均避开需要长时间排队的网红名店，优先选择有座位、可快速用餐的店家</li>
+  </ul>
+
+  <h3 class="sub">长辈友善设计</h3>
+  <ul class="plain-list">
+    <li>传艺中心、梅花湖、几米公园、八里左岸皆为平坦步道或提供轮椅租借，全程避开陡坡爬山路线</li>
+    <li>每日行程遵循「上午1个大景点、下午1-2个轻松活动」的松弛节奏，确保充足休息时间</li>
+  </ul>
+
+  <h3 class="sub">必备物品清单</h3>
+  <ul class="plain-list">
+    <li>雨具：轻便雨衣/折叠伞（10月台北/宜兰均有降雨概率），防滑鞋</li>
+    <li>长辈常用药品（降血压药、肠胃药等）、老花眼镜</li>
+    <li>小朋友：防蚊液、常备退烧/肠胃药、安抚玩具、湿纸巾</li>
+    <li>轻便折叠椅或颈枕（供长辈随时休息、红眼航班使用）</li>
+    <li>保暖外套（清晨抵达及渡轮甲板风大时使用）</li>
+    <li>充电器/行动电源、悠遊卡（可提前在新加坡购买或抵达后于机场捷运站购买）</li>
+  </ul>
+
+  <h3 class="sub">保险与其他</h3>
+  <ul class="plain-list">
+    <li>建议购买涵盖班机延误/取消的旅游保险，尤其考虑到长辈同行及10月尾声偶有台风尾巴的可能性</li>
+    <li>回程为深夜红眼航班，建议全家在10/31当天避免安排过于紧凑的行程，保留体力</li>
+  </ul>
+
+  <div class="highlight-box">
+    <h3>✅ 行程核心原则回顾</h3>
+    <ul>
+      <li><strong>松弛有度</strong>：每天上午1个大景点，下午1-2个轻松活动，确保老人/小孩有充足休息时间。</li>
+      <li><strong>交通简单</strong>：全程依赖台铁+捷运+公车+悠遊卡，短程搭德士，不自驾、不换乘复杂周游券。</li>
+      <li><strong>住宿集中</strong>：台北车站周边（3晚）+ 宜兰车站/巴士站周边（3晚），全程仅换宿1次。</li>
+      <li><strong>避坑到位</strong>：避开长时间排队网红店、避开陡峭纯爬山路线、避开文创园区/101/九份/十份/故宫/圆山。</li>
+      <li><strong>指定景点全达成</strong>：台北后街、西门町、家乐福、八里左岸皆已排入行程。</li>
+    </ul>
+  </div>
+
+  <footer class="page-footer">
+    台北 · 宜兰 亲子长辈行程手册 &nbsp;|&nbsp; 2026年10月25日 — 10月31日
+  </footer>
+
+</div>
+</body>
+</html>
