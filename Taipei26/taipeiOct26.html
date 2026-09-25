@@ -125,10 +125,8 @@
   table.timeline tr:nth-child(even) td { background: var(--light-bg); }
   table.timeline tr:nth-child(odd) td { background: #ffffff; }
   table.timeline tr:first-child td { background: var(--navy); }
-
   ul.plain-list { margin: 8px 0 16px; padding-left: 22px; }
   ul.plain-list li { margin-bottom: 8px; }
-
   .tip-box, .rain-box, .note-box {
     border-radius: 6px;
     padding: 16px 18px;
@@ -151,7 +149,6 @@
   .note-box .box-title { color: var(--navy); font-weight: 700; margin-bottom: 8px; }
   .tip-box ul, .rain-box ul, .note-box ul { margin: 0; padding-left: 20px; }
   .tip-box li, .rain-box li, .note-box li { margin-bottom: 6px; }
-
   table.overview {
     width: 100%;
     border-collapse: collapse;
@@ -169,7 +166,6 @@
     border: 1px solid var(--border);
   }
   table.overview tr:nth-child(even) td { background: var(--light-bg); }
-
   .hotel-card {
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -193,7 +189,6 @@
     margin-right: 6px;
     margin-bottom: 4px;
   }
-
   .packing-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -215,7 +210,6 @@
     border-bottom: 2px solid var(--light-bg);
     padding-bottom: 6px;
   }
-
   .summary-box {
     border: 1px solid #F0DDB8;
     background: var(--gold-bg);
@@ -227,7 +221,6 @@
     color: var(--gold);
     margin-top: 0;
   }
-
   .footer-note {
     text-align: center;
     color: #888;
@@ -236,7 +229,6 @@
     padding-top: 20px;
     border-top: 1px solid var(--border);
   }
-
   .toc {
     background: var(--light-bg);
     border-radius: 8px;
@@ -248,13 +240,11 @@
   @media (max-width: 640px) { .toc ul { columns: 1; } }
   .toc a { color: var(--navy); text-decoration: none; }
   .toc a:hover { text-decoration: underline; }
-
   .star { color: var(--gold); }
 </style>
 </head>
 <body>
 <div class="container">
-
   <!-- COVER -->
   <div class="cover">
     <h1>台北・宜兰礁溪 旅行手册</h1>
@@ -267,7 +257,6 @@
       <span class="badge">✈️ 去程 TR898・回程 TR875（Scoot）</span>
     </div>
   </div>
-
   <!-- TOC -->
   <div class="toc">
     <h3>目录</h3>
@@ -278,15 +267,14 @@
       <li><a href="#day1">Day 1｜台北（抵达）</a></li>
       <li><a href="#day2">Day 2｜台北（动物园・临江街夜市）</a></li>
       <li><a href="#day3">Day 3｜台北→礁溪</a></li>
-      <li><a href="#day4">Day 4｜宜兰（传艺中心・冬山河）</a></li>
-      <li><a href="#day5">Day 5｜宜兰（梅花湖・罗东夜市）</a></li>
+      <li><a href="#day4">Day 4｜龙潭湖・宜兰市（观光工厂・东门夜市）</a></li>
+      <li><a href="#day5">Day 5｜五结・罗东（虎牌米粉・溪和水产・罗东夜市）</a></li>
       <li><a href="#day6">Day 6｜礁溪→台北（薑母鴨）</a></li>
       <li><a href="#day7">Day 7｜台北（南门市场・宁夏夜市・返程）</a></li>
       <li><a href="#packing">打包与实用提醒</a></li>
       <li><a href="#summary">行程核心原则回顾</a></li>
     </ul>
   </div>
-
   <!-- FLIGHTS -->
   <h2 class="section-title" id="flights">一、航班信息</h2>
   <table class="overview">
@@ -308,7 +296,6 @@
       <td>Scoot 酷航，桃园机场T1 → 樟宜机场T1，红眼航班</td>
     </tr>
   </table>
-
   <div class="hotel-card">
     <h4>🧳 订位与行李资讯</h4>
     <p><strong>订位代号（Booking Reference）：</strong>BG1V4U</p>
@@ -317,14 +304,12 @@
     <p><strong>去程座位（SIN→TPE，TR898）：</strong>21H、21J、21K、22H、22J、22K（共6席）</p>
     <p><strong>回程座位（TPE→SIN，TR875）：</strong>19H、19J、19K、20H、20J、20K（共6席）</p>
   </div>
-
   <div class="note-box">
     <div class="box-title">🚄 台北↔礁溪 交通备选</div>
     <ul>
       <li>台北车站至礁溪车站之间，除台铁自强号对号列车外，亦可选择<strong>普悠玛号火车</strong>或<strong>葛玛兰客运（巴士）</strong>往返，两者车程相近，建议依车次时间与座位供应弹性选择，对号列车建议提前于台铁官网/App订票。</li>
     </ul>
   </div>
-
   <div class="note-box">
     <div class="box-title">✈️ 航班提醒</div>
     <ul>
@@ -334,7 +319,6 @@
       <li>订位代号 BG1V4U 项下开放网络值机的时间为出发前一段时间，建议出发前留意Scoot开放值机的通知邮件。</li>
     </ul>
   </div>
-
   <!-- OVERVIEW -->
   <h2 class="section-title" id="overview">二、行程总览</h2>
   <table class="overview">
@@ -343,27 +327,27 @@
     </tr>
     <tr>
       <td>Day 1</td><td>10/25（日）</td><td>台北</td>
-      <td>清晨抵达＋后站商圈＋京站午餐＋地下街</td><td>台北车站周边</td>
+      <td>清晨抵达＋后站商圈＋京站午餐＋地下街</td><td>Roaders Plus 行旅（台北站前馆）</td>
     </tr>
     <tr>
       <td>Day 2</td><td>10/26（一）</td><td>台北</td>
-      <td>木栅动物园＋临江街观光夜市（通化夜市）</td><td>台北车站周边</td>
+      <td>木栅动物园＋临江街观光夜市（通化夜市）</td><td>Roaders Plus 行旅（台北站前馆）</td>
     </tr>
     <tr>
       <td>Day 3</td><td>10/27（二）</td><td>台北→礁溪</td>
-      <td>火车南下＋几米公园＋温泉初体验</td><td>礁溪</td>
+      <td>火车南下＋几米公园＋温泉初体验</td><td>Hotel PIN Jiaoxi（品文旅礁溪）</td>
     </tr>
     <tr>
-      <td>Day 4</td><td>10/28（三）</td><td>宜兰</td>
-      <td>传艺中心＋冬山河</td><td>礁溪</td>
+      <td>Day 4</td><td>10/28（三）</td><td>礁溪龙潭湖・宜兰市</td>
+      <td>潭酵天地＋龙潭客栈＋龙潭庙口臭豆腐＋橘之乡＋亚典菓子工场＋东门观光夜市</td><td>Hotel PIN Jiaoxi（品文旅礁溪）</td>
     </tr>
     <tr>
-      <td>Day 5</td><td>10/29（四）</td><td>宜兰</td>
-      <td>梅花湖＋罗东夜市</td><td>礁溪</td>
+      <td>Day 5</td><td>10/29（四）</td><td>五结・罗东</td>
+      <td>虎牌米粉观光工厂＋溪和水产观光工厂＋罗东观光夜市</td><td>Hotel PIN Jiaoxi（品文旅礁溪）</td>
     </tr>
     <tr>
       <td>Day 6</td><td>10/30（五）</td><td>礁溪→台北</td>
-      <td>火车北返＋后站商圈＋三重霸味薑母鴨晚餐</td><td>台北车站周边</td>
+      <td>火车北返＋后站商圈＋三重霸味薑母鴨晚餐</td><td>Roaders Plus 行旅（台北站前馆）</td>
     </tr>
     <tr>
       <td>Day 7</td><td>10/31（六）－11/1（日）</td><td>台北</td>
@@ -405,14 +389,13 @@
 
   <div class="note-box">
     <div class="box-title">⚠️ 提醒</div>
-    <p style="margin:0;">礁溪与宜兰火车站为台铁邻近两站（礁溪先到、宜兰在后），从台北搭车至礁溪与至宜兰车程几乎相同（约60-80分钟）。但几米公园、传艺中心、梅花湖、罗东夜市等景点均在宜兰／罗东一带，从礁溪出发需额外 15-30 分钟计程车车程，已在各日交通指南中详细注明车程与预估车资。</p>
+    <p style="margin:0;">礁溪与宜兰火车站为台铁邻近两站（礁溪先到、宜兰在后），车程约10分钟，班次密集，白天时段皆可安心搭乘。但几米公园、橘之乡／亚典菓子工场、东门观光夜市、虎牌米粉／溪和水产观光工厂、罗东夜市等景点均在宜兰市／五结／罗东一带，从礁溪出发需额外的车程或步行，已在各日交通指南中详细注明，优先建议以台铁往返，仅在末班车已过或时间不合适时才改搭计程车。</p>
   </div>
 
   <!-- DAY 1 -->
   <h2 class="day-title" id="day1">Day 1｜10/25（日） 台北（抵达日）</h2>
   <div class="day-block">
     <div class="day-theme">① 今日主题：红眼航班清晨抵达，先寄放行李，以酒店周边商圈熟悉环境，不排远程景点</div>
-
     <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
       <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
@@ -424,7 +407,6 @@
       <tr><td class="time">下午3:00</td><td>返回酒店办理入住手续，稍作休息</td></tr>
       <tr><td class="time">晚上</td><td>酒店周边简单晚餐，早点休息调整时差</td></tr>
     </table>
-
     <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
       <li>桃园机场→台北车站：机场捷运直达车约35分钟，普通车约50分钟</li>
@@ -432,7 +414,6 @@
       <li>后站商圈→京站 Q Square：步行约5-8分钟</li>
       <li>京站→台北地下街：地下通道直接连通，无需出站</li>
     </ul>
-
     <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
       <div class="box-title">贴心提示</div>
@@ -442,7 +423,6 @@
         <li>地下街、京站均为室内空调环境，是调整时差、避免日晒的最佳选择。</li>
       </ul>
     </div>
-
     <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
       <div class="box-title">雨天备案</div>
@@ -451,12 +431,10 @@
       </ul>
     </div>
   </div>
-
   <!-- DAY 2 (更新: 木栅动物园＋临江街观光夜市) -->
   <h2 class="day-title" id="day2">Day 2｜10/26（一） 台北</h2>
   <div class="day-block">
     <div class="day-theme">① 今日主题：木栅动物园亲子日＋临江街观光夜市（通化夜市）在地美食之夜</div>
-
     <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
       <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
@@ -468,7 +446,6 @@
       <tr><td class="time">傍晚5:30-7:30</td><td>临江街观光夜市（通化夜市）——3号出口步行约5分钟；推荐梁记卤味、御品元冰火汤圆、传奇地瓜球等米其林必比登推荐店家</td></tr>
       <tr><td class="time">晚上7:30起</td><td>搭红线返回台北车站酒店，早点休息</td></tr>
     </table>
-
     <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
       <li>台北车站→动物园站：捷运文湖线（棕线）直达，全程约30-35分钟，无需转乘</li>
@@ -476,7 +453,6 @@
       <li>信义安和站→临江街观光夜市：3号出口步行约5分钟即达</li>
       <li>临江街观光夜市→台北车站：搭红线直达约15-20分钟</li>
     </ul>
-
     <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
       <div class="box-title">贴心提示</div>
@@ -488,7 +464,6 @@
         <li>夜市营业至深夜，但主力摊位18:00-21:00最热闹，建议19:00前入场、20:30左右离开，避免太晚返回酒店。</li>
       </ul>
     </div>
-
     <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
       <div class="box-title">雨天备案</div>
@@ -498,134 +473,142 @@
       </ul>
     </div>
   </div>
-
   <!-- DAY 3 -->
   <h2 class="day-title" id="day3">Day 3｜10/27（二） 台北→礁溪</h2>
   <div class="day-block">
-    <div class="day-theme">① 今日主题：搭火车南下礁溪，下午安排最轻松的拍照打卡景点，晚上温泉初体验</div>
-
+    <div class="day-theme">① 今日主题：搭火车南下礁溪，下午安排最轻松的拍照打卡景点，晚上温泉初体验——礁溪与宜兰之间同样以台铁往返，不需要计程车</div>
     <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
       <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
       <tr><td class="time">上午9-10点</td><td>台北酒店退房，前往台北车站</td></tr>
       <tr><td class="time">上午10-12点</td><td>搭台铁前往礁溪（车程约60-80分钟）</td></tr>
       <tr><td class="time">中午</td><td>抵达礁溪火车站，搭乘 Hotel PIN Jiaoxi 的免费接驳车（或计程车约5分钟）入住酒店；午餐于礁溪街区用餐（推荐三星葱饼、宜兰糕渣、卜肉等在地小吃，避开牛肉料理）</td></tr>
-      <tr><td class="time">下午2-4点</td><td>几米公园——从礁溪搭计程车约15-20分钟至宜兰火车站南侧，装置艺术拍照打卡，园区平坦、无需爬坡</td></tr>
-      <tr><td class="time">晚上</td><td>搭计程车返回礁溪（约15-20分钟），礁溪街区觅食（多家温泉美食、伴手礼店步行可达），回酒店泡汤放松、早点休息</td></tr>
+      <tr><td class="time">下午1:45-2:00</td><td>礁溪车站搭台铁前往宜兰车站（1站，车程约10分钟）</td></tr>
+      <tr><td class="time">下午2:00-4:00</td><td>几米公园——就在宜兰火车站南侧，出站步行1-2分钟即达，装置艺术拍照打卡，园区平坦、无需爬坡</td></tr>
+      <tr><td class="time">傍晚4:00-4:15</td><td>步行回宜兰车站，搭台铁返回礁溪车站（约10分钟）</td></tr>
+      <tr><td class="time">晚上</td><td>礁溪街区觅食（多家温泉美食、伴手礼店步行可达），回酒店泡汤放松、早点休息</td></tr>
     </table>
-
     <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
       <li>台北车站→礁溪车站：台铁自强号/普悠玛号/太鲁阁号约60-80分钟，票价约NT$277（普通区间车约NT$179但耗时较长，建议选对号列车较舒适）</li>
       <li>礁溪没有高铁，只能搭台铁或葛玛兰客运（板桥站/台北转运站/市府转运站上车，车程约80-110分钟，票价NT$140-150）</li>
       <li>礁溪车站→Hotel PIN Jiaoxi：酒店提供免费接驳车（需前一天电话预约），或计程车约5分钟即达</li>
-      <li>礁溪→宜兰市区（几米公园等景点）：计程车约15-20分钟，车资约NT$250-300</li>
-      <li>建议提前于台铁官网/App订票（可提前28天订票），确保有对号座位，尤其平日出行更容易订到理想车次</li>
+      <li>礁溪车站↔宜兰车站（几米公园）：优先搭台铁往返，仅1站、车程约10分钟，班次密集（日间大致每20-40分钟一班），且几米公园就在宜兰站旁，比叫计程车更省心省钱；仅当时段太晚已过末班车，或返程时间不方便衔接车次时，才改搭计程车（约15-20分钟）</li>
+      <li>建议提前于台铁官网/App订票（可提前28天订票），确保有对号座位，尤其平日出行更容易订到理想车次；区间车（普通车）无需事先订位，可随到随搭，礁溪↔宜兰这类短程移动建议直接搭区间车</li>
     </ul>
-
     <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
       <div class="box-title">贴心提示</div>
       <ul>
         <li>台铁对号列车有行李放置区，建议提前上网订票选靠走道座位方便长辈进出。</li>
+        <li>礁溪↔宜兰这段車程很短，直接在车站现场买票搭区间车即可，不需要提前订位，比叫车更省事，也能让长辈和小朋友体验一下台湾在地小火车。</li>
         <li>几米公园无门票、无需久站，是抵达宜兰后暖身的最佳选择；若长辈较累，也可直接留在礁溪酒店泡汤休息，晚上再出门觅食。</li>
         <li>Hotel PIN Jiaoxi 每间客房均附温泉浴池，抵达当天即可入房泡汤舒缓长途舟车劳顿；下午起大厅提供免费迎宾点心，也是不错的休息选择。</li>
       </ul>
     </div>
-
     <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
       <div class="box-title">雨天备案</div>
       <ul>
-        <li>几米公园部分装置有遮蔽廊道，小雨影响不大；若雨势较大可改为宜兰酒厂（室内，可试饮、参观）或橘之乡蜜饯观光工厂（室内DIY体验），或直接留在酒店室内泡汤、游戏室，不受天气影响。</li>
+        <li>几米公园部分装置有遮蔽廊道，小雨影响不大；若雨势较大可改为宜兰酒厂（室内，可试饮、参观），或直接留在酒店室内泡汤、游戏室，不受天气影响。</li>
       </ul>
     </div>
   </div>
-
   <!-- DAY 4 -->
-  <h2 class="day-title" id="day4">Day 4｜10/28（三） 宜兰</h2>
+  <h2 class="day-title" id="day4">Day 4｜10/28（三） 礁溪龙潭湖・宜兰市</h2>
   <div class="day-block">
-    <div class="day-theme">① 今日主题：国立传统艺术中心＋冬山河亲水公园——园区平坦好走，轮椅/娃娃车皆可通行，最适合三代同游</div>
-
+    <div class="day-theme">① 今日主题：龙潭湖畔到宜兰市梅洲二路的「串联式步行」观光工厂之旅——潭酵天地、龙潭客栈、龙潭庙口传统臭豆腐、橘之乡、亚典菓子工场沿途相接，皆可步行往来，晚上转往东门观光夜市（当天为周三，礁溪观光夜市仅周五六日营业不开市，故改推荐每日营业的宜兰市东门观光夜市）</div>
     <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
       <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
-      <tr><td class="time">上午9:30-12:30</td><td>国立传统艺术中心——传统建筑街区、DIY手作体验、布袋戏表演，全区步道平坦，并提供免费轮椅出租，长辈行走无负担</td></tr>
-      <tr><td class="time">中午</td><td>园区内传艺美食街用餐（选择多样，含儿童餐）</td></tr>
-      <tr><td class="time">下午2-4点</td><td>冬山河亲水公园——与传艺中心相邻，可散步、看水岸风光，不必额外交通换乘，节奏放松</td></tr>
-      <tr><td class="time">傍晚</td><td>搭计程车返回礁溪（约30-35分钟），礁溪街区晚餐（推荐正好鲜肉小笼包、宜兰卜肉等），回酒店泡汤休息</td></tr>
+      <tr><td class="time">上午10:00-12:30</td><td>潭酵天地观光工厂——礁溪乡漳福路25号，紧邻龙潭湖，免门票，两三层楼高的旋转溜滑梯、醋醋小火车、巴萨米克醋免费试饮，透明化酿醋产线可参观</td></tr>
+      <tr><td class="time">中午12:30-2:00</td><td>龙潭客栈午餐——招牌烤鸡全只（需提前2小时电话预订：0952-223-649）、塔香蛤蜊、南方澳小卷都很推荐，价位亲民；用餐前后可顺游龙潭湖环湖步道稍作散步</td></tr>
+      <tr><td class="time">下午2:00-2:30</td><td>步行至龙潭庙口传统臭豆腐（三皇路56号，约15-20分钟，沿途为乡间道路，可慢慢散步）</td></tr>
+      <tr><td class="time">下午2:30-3:00</td><td>龙潭庙口传统臭豆腐——礁溪在地50年老店，外酥内软、配料丰富，当作下午茶点心（周一公休，本行程周三照常营业）</td></tr>
+      <tr><td class="time">下午3:00-4:30</td><td>橘之乡蜜饯形象馆——免门票，巨人桌椅拍照、免费金枣茶试饮、金橘蜜饯DIY</td></tr>
+      <tr><td class="time">下午4:30-5:30</td><td>亚典菓子工场——可参观德国年轮蛋糕烘焙区、现场试吃＋研磨咖啡招待</td></tr>
+      <tr><td class="time">傍晚5:15-5:30</td><td>亚典菓子工场→宜兰车站：计程车约15分钟（东门观光夜市就在车站附近，步行可达）</td></tr>
+      <tr><td class="time">晚上5:30-8:00</td><td>东门观光夜市晚餐——宜兰市聖后街东港陆桥下，从宜兰车站步行可达；夜市每日17:00-00:00营业，推荐彭记葱油饼、30年老店龙凤腿、天桥下麻辣臭豆腐、善美三色布丁豆花等</td></tr>
+      <tr><td class="time">晚上8:00起</td><td>步行约10分钟返回宜兰车站，搭台铁1站至礁溪车站（车程约10分钟），再步行5-10分钟回酒店泡汤休息</td></tr>
     </table>
-
     <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>礁溪→传艺中心：建议直接叫计程车前往（约30-35分钟，车资约NT$450-500），比搭乘接驳客运更省力省时</li>
-      <li>传艺中心→冬山河亲水公园：步行或园区接驳车即可到达，两者距离很近</li>
+      <li>礁溪酒店→潭酵天地观光工厂：计程车约20分钟</li>
+      <li>潭酵天地→龙潭客栈：同在漳福路上，步行约5分钟（25号→89号，沿路即达）</li>
+      <li>龙潭客栈→龙潭庙口传统臭豆腐（三皇路56号）：步行约15-20分钟（约1.2公里）</li>
+      <li>龙潭庙口传统臭豆腐→橘之乡蜜饯形象馆（宜兰市梅洲二路33号）：步行约15-20分钟（约1.1公里）</li>
+      <li>橘之乡→亚典菓子工场：同在梅洲二路，33号→122号，步行约10分钟内即达</li>
+      <li>亚典菓子工场→宜兰车站：计程车约15分钟，东门观光夜市就在车站附近，步行可达，晚餐后直接由车站搭车返程</li>
+      <li>东门观光夜市→礁溪酒店：夜市步行约10分钟至宜兰车站，搭台铁至礁溪车站（约10分钟），出站步行5-10分钟即达酒店，比叫计程车更省心</li>
+      <li>提醒：礁溪观光夜市固定仅于每周五、六、日营业，10/28（三）当天没有营业，因此本日晚市改安排在宜兰市、每日营业的东门观光夜市</li>
     </ul>
-
     <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
       <div class="box-title">贴心提示</div>
       <ul>
-        <li>传艺中心休息区多、洗手间有扶手，是公认对老人家最友善的宜兰景点之一。</li>
-        <li>建议上午9:30入园，避开假日人潮，中午前完成主要参观，下午留给亲水公园放松散步。</li>
+        <li>今天下午是「串联式步行」路线，龙潭客栈→龙潭庙口臭豆腐→橘之乡→亚典菓子工场全程约3公里，虽然沿途景点相接、不需要频繁叫车，但累计走路量不小，建议携带轻便推车、帽子与水，并把节奏放慢，随时留意长辈与小朋友的体力状况。</li>
+        <li>若中途走累了，任何一段都可以改叫计程车（三皇路、梅洲二路一带路边招车不算方便，建议请店家协助叫车或使用叫车App）。</li>
+        <li>龙潭客栈座位不多、平日晚间6点打烊，若想吃招牌烤鸡全只务必提前2小时以上电话预订，人少也可只订半只。</li>
+        <li>龙潭庙口传统臭豆腐营业至19:00（周一公休，本行程安排在周三造访无虞）。</li>
+        <li>潭酵天地、橘之乡、亚典菓子工场三处皆为免门票的观光工厂，且大部分展区为室内或有遮蔽走廊，是很好的中途歇脚点。</li>
+        <li>东门观光夜市规模比罗东夜市小、动线简单，带长辈小孩走起来压力较小，每日17:00-24:00营业不受星期几影响。</li>
       </ul>
     </div>
-
     <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
       <div class="box-title">雨天备案</div>
       <ul>
-        <li>传艺中心内多为有遮雨走廊的建筑群，小雨基本不影响游览。</li>
-        <li>若雨势大，可将下午行程改为安永心食馆（室内亲子景点，AR互动，全馆室内）。</li>
+        <li>今天下午安排了较多户外步行路段（龙潭客栈↔龙潭庙口臭豆腐↔橘之乡），若遇雨天，建议直接把这几段步行改为计程车接驳，几个观光工厂本身则是绝佳雨天备案，几乎全馆室内或有遮雨走廊。</li>
+        <li>龙潭客栈、龙潭庙口臭豆腐皆为室内／半室内用餐环境，雨天造访无碍。</li>
+        <li>东门观光夜市位于东港陆桥桥下，部分摊位有遮蔽，小雨影响不大；若雨势较大可考虑改为附近的宜兰酒厂展售中心或蘭阳博物馆室内参观后再折返酒店。</li>
       </ul>
     </div>
   </div>
-
   <!-- DAY 5 -->
-  <h2 class="day-title" id="day5">Day 5｜10/29（四） 宜兰</h2>
+  <h2 class="day-title" id="day5">Day 5｜10/29（四） 五结・罗东</h2>
   <div class="day-block">
-    <div class="day-theme">① 今日主题：梅花湖＋罗东夜市——宜兰最适合长辈的湖畔散步景点，晚上体验在地美食</div>
-
+    <div class="day-theme">① 今日主题：五结利泽工业区观光工厂之旅——虎牌米粉那个年代观光工厂与溪和水产观光工厂相邻，步行即可往来，晚上罗东观光夜市收尾</div>
     <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
       <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
-      <tr><td class="time">上午9:30-11:30</td><td>梅花湖风景区——环湖步道全长约4公里，路面平坦、沿途有凉亭座椅，可散步、骑脚踏车或租电动船游湖，被公认是宜兰最适合带长辈的景点之一</td></tr>
-      <tr><td class="time">中午</td><td>梅花湖周边或返回市区用餐</td></tr>
-      <tr><td class="time">下午2-4点</td><td>轻松活动——龙潭湖公园（同样平坦好走，免门票）或直接回酒店午休，视长辈体力弹性安排</td></tr>
-      <tr><td class="time">傍晚5-6点</td><td>罗东夜市——建议提前到，避开18:30-20:30的人潮高峰，推荐龙凤腿、包心粉圆、卜肉等，避开需要长时间排队的摊位</td></tr>
-      <tr><td class="time">晚上7:30起</td><td>搭计程车返回礁溪（约20-25分钟），回酒店泡汤休息</td></tr>
+      <tr><td class="time">上午9:00-9:15</td><td>礁溪车站搭台铁前往罗东车站（车程约10-15分钟）</td></tr>
+      <tr><td class="time">上午9:30-12:30</td><td>虎牌米粉那个年代观光工厂——五结乡利兴三路5号，罗东车站搭计程车约15分钟即达，重现1970年代复古街景，可免费吃到饱炒米粉、体验彩绘碗米粉／电锅炒米粉DIY，全票NT$200（含100元抵用券＋兑换券），营业09:00-16:30，免费停车场</td></tr>
+      <tr><td class="time">中午12:30-14:00</td><td>溪和水产观光工厂——门票NT$100可全额折抵消费，可参观水产漫画主题馆、DIY现烫海鲜／生米煮成熟饭／小卷压饼，也可直接在馆内田妈妈海膳厨房用餐当作午餐（周三固定公休，本行程安排在周四造访无虞）</td></tr>
+      <tr><td class="time">下午2:00-3:30</td><td>弹性休息时段——可留在馆内悠闲选购伴手礼，或搭车前往罗东（约25-30分钟）并稍作休息，或提前往夜市周边商圈逛逛，视长辈与小朋友体力安排</td></tr>
+      <tr><td class="time">晚上5:30-8:00</td><td>罗东观光夜市晚餐——建议提前到，避开18:30-20:30的人潮高峰，推荐阿灶伯当归羊肉汤、包心粉圆、糕渣卜肉等，避开需要长时间排队的摊位</td></tr>
+      <tr><td class="time">晚上8:00起</td><td>步行约10分钟至罗东车站，搭台铁返回礁溪车站（约10-15分钟），再步行5-10分钟回酒店泡汤休息</td></tr>
     </table>
-
     <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>礁溪→梅花湖：建议直接叫计程车前往，约25-30分钟，车资约NT$400-450</li>
-      <li>梅花湖/龙潭湖→罗东夜市：计程车约15-20分钟；罗东夜市→礁溪：车程约20-25分钟，建议提前查好当晚计程车叫车方式或请饭店协助代叫车</li>
+      <li>礁溪车站→罗东车站：台铁约10-15分钟（酒店步行5-10分钟即达礁溪车站）</li>
+      <li>罗东车站→虎牌米粉观光工厂：计程车约15分钟</li>
+      <li>虎牌米粉→溪和水产观光工厂：同在利泽工业区利兴路上，两馆相邻，步行约5-10分钟即达，无需叫车</li>
+      <li>溪和水产→罗东：车程约25-30分钟</li>
+      <li>罗东观光夜市→礁溪酒店：夜市步行约10分钟至罗东车站，搭台铁返回礁溪车站（约10-15分钟），出站步行5-10分钟即达酒店，比叫计程车更省心</li>
     </ul>
-
     <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
       <div class="box-title">贴心提示</div>
       <ul>
-        <li>梅花湖夏秋两季遮荫较少，建议戴帽子防晒，携带折叠椅供长辈随时休息。</li>
-        <li>罗东夜市人潮较多，建议错峰前往，并采分散式用餐（每个人挑不同摊位，减少排队等待）。</li>
+        <li>虎牌米粉、溪和水产两馆都提供免费停车场，且皆有空调、能全馆室内参观，两馆相邻步行可达，很适合安排在同一个上午一次逛完，不必频繁叫车。</li>
+        <li>溪和水产观光工厂周三固定休馆，本行程安排在周四造访无虞；若临时调整行程日期，务必先确认当天是否开馆。</li>
+        <li>虎牌米粉的炒米粉吃到饱、溪和水产的DIY川烫海鲜都很适合当作午餐，两馆几乎可以把中午的用餐都解决，不必额外安排餐厅。</li>
+        <li>若长辈或小朋友体力有限，下午可出发去罗东附近休息，再出发去罗东夜市用餐即可。</li>
       </ul>
     </div>
-
     <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
       <div class="box-title">雨天备案</div>
       <ul>
-        <li>梅花湖步道大部分无遮蔽，若雨大建议改为室内的宜兰美术馆或中兴文化创意园区（室内展览＋市集）。</li>
+        <li>虎牌米粉、溪和水产两个观光工厂皆为室内空间，是很理想的雨天备案，可以把停留时间拉长、减少户外行程。</li>
         <li>罗东夜市本身多为半开放式摊位，小雨影响不大，可携带雨伞前往。</li>
       </ul>
     </div>
   </div>
-
   <!-- DAY 6 -->
   <h2 class="day-title" id="day6">Day 6｜10/30（五） 礁溪→台北</h2>
   <div class="day-block">
     <div class="day-theme">① 今日主题：火车北返，下午安排轻松的老台北巷弄漫步，傍晚前往三重品尝霸味薑母鴨进补</div>
-
     <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
       <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
@@ -637,14 +620,12 @@
       <tr><td class="time">傍晚5:30-7点</td><td><strong>三重霸味薑母鴨『全台总店』</strong>——全家共享招牌炭火薑母鴨、霸味三宝（小丸子、鈴鈴卷、鮮豆皮）进补暖身，建议17:00左右提早入座，避开18:30-20:30排队高峰</td></tr>
       <tr><td class="time">晚上7:30-8:30</td><td>搭捷运返回台北车站酒店，早点休息</td></tr>
     </table>
-
     <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
       <li>礁溪车站→台北车站：台铁对号列车约60-80分钟</li>
       <li>抵达后步行即可探索周边商圈，无需额外交通</li>
       <li>台北车站→三重霸味薑母鴨：搭乘板南线2站至忠孝新生站，转乘中和新芦线（往迴龙方向）约5站至三重站或菜寮站，全程约25-30分钟，出站步行6-8分钟即达；地址：新北市三重区重阳路一段100号</li>
     </ul>
-
     <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
       <div class="box-title">贴心提示</div>
@@ -655,7 +636,6 @@
         <li>霸味薑母鴨全台总店不提供订位，且仅秋冬季节营业（约10月至隔年春天），建议出发前先查看其Facebook粉专确认当日是否营业。</li>
       </ul>
     </div>
-
     <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
       <div class="box-title">雨天备案</div>
@@ -665,12 +645,10 @@
       </ul>
     </div>
   </div>
-
   <!-- DAY 7 -->
   <h2 class="day-title" id="day7">Day 7｜10/31（六） 台北（返程日）</h2>
   <div class="day-block">
     <div class="day-theme">① 今日主题：行程全部安排在台北车站步行可达范围内，上午采购伴手礼，下午预留午休时间，晚上宁夏夜市收尾，直接前往桃机</div>
-
     <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
       <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
@@ -683,7 +661,6 @@
       <tr><td class="time">晚上8:30起</td><td>抵达桃园机场，逛免税店、晚餐、候机</td></tr>
       <tr><td class="time">凌晨00:15</td><td>TR875 起飞返回新加坡（11/1凌晨04:55抵达樟宜机场）</td></tr>
     </table>
-
     <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
       <li>台北车站→南门市场：捷运松山新店线2站直达，或步行约20分钟</li>
@@ -691,7 +668,6 @@
       <li>酒店→桃园机场：机场捷运就在酒店对面，直达车约35分钟，建议预留超过3小时，从容不迫</li>
       <li>今日全程行程均在台北车站步行可达范围内，不再安排跨区长途交通，方便随时折返酒店休息或提早前往机场</li>
     </ul>
-
     <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
       <div class="box-title">贴心提示</div>
@@ -702,7 +678,6 @@
         <li>若长辈或小朋友较累，下午可直接在酒店休息，不必勉强再外出，晚餐也可考虑直接在酒店周边解决。</li>
       </ul>
     </div>
-
     <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
       <div class="box-title">雨天备案</div>
@@ -712,10 +687,8 @@
       </ul>
     </div>
   </div>
-
   <!-- PACKING -->
   <h2 class="section-title" id="packing">四、打包与实用提醒</h2>
-
   <h3 class="sub-title">✅ 证件与财务</h3>
   <div class="packing-grid">
     <div class="packing-card">
@@ -731,13 +704,12 @@
       <h4>财务与通讯</h4>
       <ul class="plain-list">
         <li>新台币现金（部分小吃摊、市场不收信用卡）</li>
-        <li>悠游卡（机场即可购买，捷运/公车/部分商店皆可使用）</li>
+        <li>悠游卡（机场即可购买，捷运/公车/部分商店皆可使用；台铁短程也可直接刷卡进出站，比买票更方便）</li>
         <li>信用卡（南门市场、家乐福、连锁餐厅可刷卡）</li>
         <li>境外上网卡或WiFi分享器（提前在新加坡机场或线上购买）</li>
       </ul>
     </div>
   </div>
-
   <h3 class="sub-title">✅ 长辈与小朋友专用</h3>
   <div class="packing-grid">
     <div class="packing-card">
@@ -753,13 +725,12 @@
       <h4>小朋友用品</h4>
       <ul class="plain-list">
         <li>常备儿童药物（退烧药、肠胃药、防蚊液）</li>
-        <li>轻便推车（若梅花湖、传艺中心、动物园等长距离步行会用到）</li>
+        <li>轻便推车（若动物园、Day 4 观光工厂间的步行路段等长距离步行会用到）</li>
         <li>小朋友专用泡温泉玩具（Hotel PIN Jiaoxi 房内即有独立温泉池）</li>
         <li>安抚玩偶/习惯物（红眼航班及初到陌生环境时使用）</li>
       </ul>
     </div>
   </div>
-
   <h3 class="sub-title">✅ 衣物与其他</h3>
   <div class="packing-grid">
     <div class="packing-card">
@@ -781,38 +752,34 @@
       </ul>
     </div>
   </div>
-
   <h3 class="sub-title">✅ 保险与其他注意事项</h3>
   <div class="note-box">
     <div class="box-title">保险与其他</div>
     <ul>
       <li>建议购买涵盖班机延误/取消的旅游保险，尤其考虑到长辈同行及10月尾声偶有台风尾巴的可能性。</li>
       <li>回程 TR875 为凌晨00:15起飞的红眼航班，建议全家在10/31当天避免安排过于紧凑的行程，保留体力。</li>
-      <li>礁溪-台北之间的台铁对号座建议提前于官网/App订票（可提前28天），周末班次热门建议尽早锁定。</li>
+      <li>礁溪-台北之间的台铁对号座建议提前于官网/App订票（可提前28天），周末班次热门建议尽早锁定；礁溪↔宜兰、礁溪↔罗东这类短程移动无需事先订位，现场买票或刷悠游卡搭区间车即可。</li>
       <li>全程餐点已避开牛肉相关料理（如牛肉面、羊肉汤类可自行斟酌），以宜兰/台北在地猪肉、海鲜、面食为主。</li>
       <li>三重霸味薑母鴨仅秋冬季节营业，出发前建议先查看其Facebook粉专确认当日是否营业。</li>
       <li>动物园65岁以上长辈免费入园，6岁以下儿童免费，请随身携带证件以便查验。</li>
     </ul>
   </div>
-
   <!-- SUMMARY -->
   <h2 class="section-title" id="summary">五、行程核心原则回顾</h2>
   <div class="summary-box">
     <h3>📋 行程核心原则回顾</h3>
     <ul class="plain-list">
       <li><strong>松弛有度：</strong>每天上午1个大景点，下午1-2个轻松活动，确保长辈/小孩有充足休息时间。</li>
-      <li><strong>交通简单：</strong>全程依赖台铁＋捷运＋计程车，短程搭德士，不自驾、不换乘复杂周游券。</li>
+      <li><strong>交通简单：</strong>礁溪↔宜兰、礁溪↔罗东这类短程移动优先搭台铁往返（车程仅10-15分钟、班次密集），仅在末班车已过或时间不便衔接时才改搭计程车；全程不自驾、不换乘复杂周游券。</li>
       <li><strong>住宿集中：</strong>台北车站周边・Roaders Plus 行旅（3晚）＋礁溪・Hotel PIN Jiaoxi（3晚），全程仅换宿1次。</li>
       <li><strong>避坑到位：</strong>避开长时间排队网红店、避开陡峭纯爬山路线、避开文创园区/101/九份/十份/故宫/圆山、避开猫空缆车（10/26当周非试营运周一，缆车停驶保养）。</li>
       <li><strong>指定景点全达成：</strong>台北后站、京站、地下街、木栅动物园、临江街观光夜市、三重霸味薑母鴨、南门市场、宁夏夜市皆已排入行程，且 Day1、Day2、Day7 完全不重复。</li>
       <li><strong>红眼航班友善：</strong>最后一天全程集中于台北车站步行可达范围，下午预留午休时段，晚上直接从酒店对面搭机场捷运，不再折返市区。</li>
     </ul>
   </div>
-
   <div class="footer-note">
     台北・宜兰礁溪 旅行手册 ｜ 2026/10/25 – 2026/11/1
   </div>
-
 </div>
 </body>
 </html>
