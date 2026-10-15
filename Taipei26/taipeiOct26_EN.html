@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<html lang="zh-Hans"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taipei & Yilan/Jiaoxi Travel Handbook</title>
+<title>台北・宜兰礁溪 旅行手册</title>
 <style>
   :root {
     --navy: #2E5266;
@@ -125,10 +124,8 @@
   table.timeline tr:nth-child(even) td { background: var(--light-bg); }
   table.timeline tr:nth-child(odd) td { background: #ffffff; }
   table.timeline tr:first-child td { background: var(--navy); }
-
   ul.plain-list { margin: 8px 0 16px; padding-left: 22px; }
   ul.plain-list li { margin-bottom: 8px; }
-
   .tip-box, .rain-box, .note-box {
     border-radius: 6px;
     padding: 16px 18px;
@@ -151,7 +148,6 @@
   .note-box .box-title { color: var(--navy); font-weight: 700; margin-bottom: 8px; }
   .tip-box ul, .rain-box ul, .note-box ul { margin: 0; padding-left: 20px; }
   .tip-box li, .rain-box li, .note-box li { margin-bottom: 6px; }
-
   table.overview {
     width: 100%;
     border-collapse: collapse;
@@ -169,7 +165,6 @@
     border: 1px solid var(--border);
   }
   table.overview tr:nth-child(even) td { background: var(--light-bg); }
-
   .hotel-card {
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -193,7 +188,6 @@
     margin-right: 6px;
     margin-bottom: 4px;
   }
-
   .packing-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -215,7 +209,6 @@
     border-bottom: 2px solid var(--light-bg);
     padding-bottom: 6px;
   }
-
   .summary-box {
     border: 1px solid #F0DDB8;
     background: var(--gold-bg);
@@ -227,7 +220,6 @@
     color: var(--gold);
     margin-top: 0;
   }
-
   .footer-note {
     text-align: center;
     color: #888;
@@ -236,7 +228,6 @@
     padding-top: 20px;
     border-top: 1px solid var(--border);
   }
-
   .toc {
     background: var(--light-bg);
     border-radius: 8px;
@@ -248,571 +239,1199 @@
   @media (max-width: 640px) { .toc ul { columns: 1; } }
   .toc a { color: var(--navy); text-decoration: none; }
   .toc a:hover { text-decoration: underline; }
-
   .star { color: var(--gold); }
-</style>
+
+    /* ---- language toggle ---- */
+    .lang-block { display: none; }
+    body:not(.lang-en) #zh { display: block; }
+    body.lang-en #en { display: block; }
+    .lang-switch {
+      position: fixed; top: 12px; right: 12px; z-index: 1000;
+      display: flex; background: #fff; border: 1px solid var(--navy);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+      font-family: inherit;
+    }
+    .lang-switch button {
+      border: 0; background: #fff; color: var(--navy);
+      padding: 7px 16px; font-size: 0.9em; font-weight: 700;
+      cursor: pointer; font-family: inherit; line-height: 1.2;
+    }
+    .lang-switch button + button { border-left: 1px solid var(--navy); }
+    .lang-switch button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+    .lang-switch button:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+    @media print { .lang-switch { display: none; } }
+  </style>
 </head>
 <body>
+<div class="lang-switch" role="group" aria-label="Language / 语言">
+  <button type="button" data-lang="zh" aria-pressed="true">华文</button>
+  <button type="button" data-lang="en" aria-pressed="false">EN</button>
+</div>
 <div class="container">
-
+<div class="lang-block" id="zh" lang="zh-Hans">
   <!-- COVER -->
   <div class="cover">
-    <h1>Taipei & Yilan/Jiaoxi Travel Handbook</h1>
-    <p>25 Oct 2026 (Sun) – 1 Nov 2026 (Sun) ｜ 7 Days 6 Nights</p>
-    <p>Travelers: 1 five-year-old child + 3 seniors + a couple (6 people total)</p>
+    <h1>台北・宜兰礁溪 旅行手册</h1>
+    <p>2026/10/25（日） – 2026/11/1（日） ｜ 7天6夜</p>
+    <p>成员：5个大人 + 1个小朋友（共6人）</p>
     <div class="badge-row">
-      <span class="badge">🏨 Taipei: Roaders Plus Hotel (Main Station)</span>
-      <span class="badge">♨️ Jiaoxi: Hotel PIN Jiaoxi</span>
-      <span class="badge">🚄 TRA train + MRT + taxi throughout, no self-driving</span>
-      <span class="badge">✈️ Outbound TR898 · Return TR875 (Scoot)</span>
+      <span class="badge">🏨 台北：日野苑 Hinoen／新驛旅店台北車站三館</span>
+      <span class="badge">♨️ 礁溪：Hotel PIN Jiaoxi</span>
+      <span class="badge">🚄 全程台铁＋捷运＋计程车，不自驾</span>
+      <span class="badge">✈️ 去程 TR898・回程 TR875（Scoot）</span>
     </div>
   </div>
-
   <!-- TOC -->
   <div class="toc">
-    <h3>Table of Contents</h3>
+    <h3>目录</h3>
     <ul>
-      <li><a href="#flights">Flight Information</a></li>
-      <li><a href="#overview">Itinerary Overview</a></li>
-      <li><a href="#hotels">Accommodation</a></li>
-      <li><a href="#day1">Day 1｜Taipei (Arrival)</a></li>
-      <li><a href="#day2">Day 2｜Taipei (Zoo & Linjiang St. Night Market)</a></li>
-      <li><a href="#day3">Day 3｜Taipei → Jiaoxi</a></li>
-      <li><a href="#day4">Day 4｜Yilan (NCFTA & Dongshan River)</a></li>
-      <li><a href="#day5">Day 5｜Yilan (Meihua Lake & Luodong Night Market)</a></li>
-      <li><a href="#day6">Day 6｜Jiaoxi → Taipei (Ginger Duck Hot Pot)</a></li>
-      <li><a href="#day7">Day 7｜Taipei (Nanmen Market, Ningxia Night Market & Departure)</a></li>
-      <li><a href="#packing">Packing & Practical Tips</a></li>
-      <li><a href="#summary">Core Itinerary Principles Recap</a></li>
+      <li><a href="#flights">航班信息</a></li>
+      <li><a href="#overview">行程总览</a></li>
+      <li><a href="#hotels">住宿安排</a></li>
+      <li><a href="#day1">Day 1｜台北（抵达）</a></li>
+      <li><a href="#day2">Day 2｜台北（动物园・临江街夜市）</a></li>
+      <li><a href="#day3">Day 3｜台北→礁溪</a></li>
+      <li><a href="#day4">Day 4｜龙潭湖・宜兰市（观光工厂・东门夜市）</a></li>
+      <li><a href="#day5">Day 5｜五结・罗东（虎牌米粉・溪和水产・林业文化园区・罗东夜市）</a></li>
+      <li><a href="#day6">Day 6｜礁溪→台北（薑母鴨）</a></li>
+      <li><a href="#day7">Day 7｜台北（南门市场・宁夏夜市・返程）</a></li>
+      <li><a href="#packing">打包与实用提醒</a></li>
+      <li><a href="#summary">行程核心原则回顾</a></li>
     </ul>
   </div>
-
   <!-- FLIGHTS -->
-  <h2 class="section-title" id="flights">1. Flight Information</h2>
+  <h2 class="section-title" id="flights">一、航班信息</h2>
   <table class="overview">
-    <tr>
-      <th>Route</th><th>Date</th><th>Time</th><th>Flight</th><th>Notes</th>
+    <tbody><tr>
+      <th>航段</th><th>日期</th><th>时间</th><th>航班</th><th>备注</th>
     </tr>
     <tr>
       <td>SIN → TPE</td>
-      <td>25 Oct (Sun)</td>
-      <td>00:55 – 05:30 (4h 35m flight)</td>
+      <td>10/25（日）</td>
+      <td>00:55 – 05:30（飞行4小时35分）</td>
       <td>TR898</td>
-      <td>Scoot, Changi T1 → Taoyuan T1, early morning arrival</td>
+      <td>Scoot 酷航，樟宜机场T1 → 桃园机场T1，清晨抵达</td>
     </tr>
     <tr>
       <td>TPE → SIN</td>
-      <td>1 Nov (Sun)</td>
-      <td>00:15 – 04:55 (4h 40m flight)</td>
+      <td>11/1（日）</td>
+      <td>00:15 – 04:55（飞行4小时40分）</td>
       <td>TR875</td>
-      <td>Scoot, Taoyuan T1 → Changi T1, red-eye flight</td>
+      <td>Scoot 酷航，桃园机场T1 → 樟宜机场T1，红眼航班</td>
     </tr>
-  </table>
-
+  </tbody></table>
   <div class="hotel-card">
-    <h4>🧳 Booking & Baggage Information</h4>
-    <p><strong>Booking Reference:</strong> BG1V4U</p>
-    <p><strong>Passengers:</strong> 6</p>
-    <p><strong>Baggage Allowance:</strong> 20kg checked baggage per person</p>
-    <p><strong>Outbound Seats (SIN→TPE, TR898):</strong> 21H, 21J, 21K, 22H, 22J, 22K (6 seats)</p>
-    <p><strong>Return Seats (TPE→SIN, TR875):</strong> 19H, 19J, 19K, 20H, 20J, 20K (6 seats)</p>
+    <h4>🧳 订位与行李资讯</h4>
+        <p><strong>乘客人数：</strong>6人</p>
+    <p><strong>行李额度：</strong>每人可托运 20kg</p>
+    <p><strong>去程座位（SIN→TPE，TR898）：</strong>21H、21J、21K、22H、22J、22K（共6席）</p>
+    <p><strong>回程座位（TPE→SIN，TR875）：</strong>19H、19J、19K、20H、20J、20K（共6席）</p>
   </div>
-
   <div class="note-box">
-    <div class="box-title">🚄 Taipei ↔ Jiaoxi Transport Alternatives</div>
+    <div class="box-title">🚄 台北↔礁溪 交通</div>
     <ul>
-      <li>Besides the TRA Tze-Chiang express train, travel between Taipei Main Station and Jiaoxi Station can also be done via the <strong>Puyuma Express train</strong> or the <strong>Kamalan Bus (coach)</strong>. Both options take a similar amount of time — choose based on schedule and seat availability. For reserved-seat trains, it's recommended to book in advance via the TRA website/app.</li>
+      <li><strong>去程（10/27 二）：</strong>台北 → 礁溪，<strong>普悠玛号 420 次</strong>，11:35 – 12:43。</li>
+      <li><strong>回程（10/30 五）：</strong>礁溪 → 台北，<strong>EMU3000 213 次</strong>，11:47 – 13:03。</li>
     </ul>
   </div>
-
   <div class="note-box">
-    <div class="box-title">✈️ Flight Reminders</div>
+    <div class="box-title">✈️ 航班提醒</div>
     <ul>
-      <li>The outbound flight departs at the early hour of 00:55 (red-eye). It's advisable to rest a while at Changi Airport's lounge areas beforehand; upon arrival at Taoyuan Airport, the itinerary is arranged so luggage can be dropped off first, without rushing to check in.</li>
-      <li>The return flight TR875 departs at 00:15 (technically 1 Nov, after staying up late on the night of 31 Oct). For international flights, arrive 3 hours early for check-in — the family should plan for plenty of rest on the afternoon of Day 7 to conserve energy.</li>
-      <li>Complete online check-in via the Scoot website/app before departure, and confirm the checked baggage allowance (20kg per person, especially if bringing back a lot of souvenirs).</li>
-      <li>Web check-in for booking reference BG1V4U opens a set number of hours before departure — keep an eye out for Scoot's check-in notification email as the trip approaches.</li>
+      <li>去程为凌晨0:55起飞的红眼航班，建议提前在新加坡机场休息区稍作休整，抵达桃园机场后行程已安排先寄放行李、不急着办理入住。</li>
+      <li>回程 TR875 于凌晨00:15起飞（11/1，实际为10/31当晚熬夜候机），建议国际线提前3小时办理登机手续，全家可于Day7下午安排充分休息，保留体力。</li>
+      <li>建议出发前在Scoot官网/App完成网络值机。</li>
+      <li>网络值机通常在出发前一段时间开放，建议出发前留意Scoot的值机通知邮件。</li>
     </ul>
   </div>
-
   <!-- OVERVIEW -->
-  <h2 class="section-title" id="overview">2. Itinerary Overview</h2>
+  <h2 class="section-title" id="overview">二、行程总览</h2>
   <table class="overview">
-    <tr>
-      <th>Day</th><th>Date</th><th>Location</th><th>Theme</th><th>Accommodation</th>
+    <tbody><tr>
+      <th>天数</th><th>日期</th><th>地点</th><th>主题</th><th>住宿</th>
     </tr>
     <tr>
-      <td>Day 1</td><td>25 Oct (Sun)</td><td>Taipei</td>
-      <td>Early morning arrival + Rear Station area + Q Square lunch + Taipei Underground Mall</td><td>Roaders Plus Hotel (Main Station)</td>
+      <td>Day 1</td><td>10/25（日）</td><td>台北</td>
+      <td>清晨抵达＋麦当劳早餐＋郵政博物館臺北館＋午餐＋西门町/后站商圈＋万家福桂林店石二鍋晚餐</td><td>Hinoen Hotel 日野苑</td>
     </tr>
     <tr>
-      <td>Day 2</td><td>26 Oct (Mon)</td><td>Taipei</td>
-      <td>Taipei Zoo + Linjiang St. Tourist Night Market (Tonghua Night Market)</td><td>Roaders Plus Hotel (Main Station)</td>
+      <td>Day 2</td><td>10/26（一）</td><td>台北</td>
+      <td>木栅动物园＋临江街观光夜市（通化夜市）</td><td>Hinoen Hotel 日野苑</td>
     </tr>
     <tr>
-      <td>Day 3</td><td>27 Oct (Tue)</td><td>Taipei → Jiaoxi</td>
-      <td>Train south + Jimmy SPA Park + first hot spring experience</td><td>Jiaoxi</td>
+      <td>Day 3</td><td>10/27（二）</td><td>台北→礁溪</td>
+      <td>火车南下＋几米公园＋温泉初体验</td><td>Hotel PIN Jiaoxi（品文旅礁溪）</td>
     </tr>
     <tr>
-      <td>Day 4</td><td>28 Oct (Wed)</td><td>Yilan</td>
-      <td>National Center for Traditional Arts + Dongshan River</td><td>Jiaoxi</td>
+      <td>Day 4</td><td>10/28（三）</td><td>礁溪龙潭湖・宜兰市</td>
+      <td>潭酵天地＋龙潭客栈＋龙潭庙口臭豆腐＋橘之乡＋亚典菓子工场＋东门观光夜市</td><td>Hotel PIN Jiaoxi（品文旅礁溪）</td>
     </tr>
     <tr>
-      <td>Day 5</td><td>29 Oct (Thu)</td><td>Yilan</td>
-      <td>Meihua Lake + Luodong Night Market</td><td>Jiaoxi</td>
+      <td>Day 5</td><td>10/29（四）</td><td>五结・罗东</td>
+      <td>虎牌米粉观光工厂＋溪和水产观光工厂＋罗东林业文化园区＋罗东观光夜市</td><td>Hotel PIN Jiaoxi（品文旅礁溪）</td>
     </tr>
     <tr>
-      <td>Day 6</td><td>30 Oct (Fri)</td><td>Jiaoxi → Taipei</td>
-      <td>Train north + Rear Station area + Sanchong Bawei Ginger Duck dinner</td><td>Roaders Plus Hotel (Main Station)</td>
+      <td>Day 6</td><td>10/30（五）</td><td>礁溪→台北</td>
+      <td>火车北返＋后站商圈＋三重霸味薑母鴨晚餐</td><td>CityInn Hotel Taipei Station Branch III 新驛旅店台北車站三館</td>
     </tr>
     <tr>
-      <td>Day 7</td><td>31 Oct (Sat) – 1 Nov (Sun)</td><td>Taipei</td>
-      <td>Nanmen Market + afternoon rest + Ningxia Night Market + late-night flight home</td><td>None (departing that night)</td>
+      <td>Day 7</td><td>10/31（六）－11/1（日）</td><td>台北</td>
+      <td>南门市场＋午休＋宁夏夜市＋深夜飞返</td><td>无（当晚返程）</td>
     </tr>
-  </table>
+  </tbody></table>
   <div class="note-box">
-    <div class="box-title">📌 Accommodation Allocation</div>
-    <p style="margin:0;">Taipei Main Station area – Roaders Plus Hotel (Days 1-2, 6-7): 3 nights total; Jiaoxi – Hotel PIN Jiaoxi (Days 3-5): 3 nights total. Only one hotel change for the entire trip, meeting the requirement of "not switching hotels frequently."</p>
+    <div class="box-title">📌 住宿分配</div>
+    <p style="margin:0;">台北・Hinoen Hotel 日野苑（10/25、10/26）共 2 晚；礁溪・Hotel PIN Jiaoxi（10/27–10/29）共 3 晚；台北・CityInn Hotel Taipei Station Branch III 新驛旅店台北車站三館（10/30）共 1 晚。10/31 当晚搭乘红眼航班返程，无需住宿。</p>
   </div>
 
   <!-- HOTELS -->
-  <h2 class="section-title" id="hotels">3. Accommodation</h2>
+  <h2 class="section-title" id="hotels">三、住宿安排</h2>
 
   <div class="hotel-card">
-    <h4>🏨 Taipei Main Station Area (Nights 1, 2, 6, 7)</h4>
-    <p><strong>Roaders Plus Hotel Taipei Main Station</strong></p>
-    <p>Address: No. 80, Sec. 1, Zhongxiao W. Rd., Zhongzheng Dist., Taipei City | About a 5-minute walk from the Z8/Z6 exits of the Taipei Main Station underground mall, no need to cross any roads — the airport MRT entrance is directly across from the hotel.</p>
+    <h4>🏨 台北・日野苑（第 1、2 晚：10/25、10/26）</h4>
+    <p><strong>Hinoen Hotel 日野苑</strong></p>
+    <p>地址：台北市中正区重庆南路一段18号｜从台北车站地下街 Z10 出口出来后沿重庆南路步行约 1 分钟（无需过马路）。注意 Z10 出口仅有楼梯，带大件行李或推婴儿车建议改走 Z4 出口（有电梯）；从机场捷运台北车站出站，亦可由 5 号出口搭电梯上地面再步行前往，约 10 分钟。</p>
     <div>
-      <span class="tag">Kids' play room</span>
-      <span class="tag">24-hour snack bar</span>
-      <span class="tag">Big-screen movie screenings</span>
-      <span class="tag">Rating 8.4</span>
+      <span class="tag">24小时前台</span>
+      <span class="tag">免费行李寄存</span>
+      <span class="tag">免费自助洗衣</span>
+    </div>
+  </div>
+  <div class="hotel-card">
+    <h4>🏨 台北・新驛旅店（第 6 晚：10/30）</h4>
+    <p><strong>CityInn Hotel Taipei Station Branch III 新驛旅店台北车站三馆</strong></p>
+    <p>地址：台北市大同区长安西路77号｜位于台北车站后站一带，从台北车站地下街 Y7 出口步行约 5 分钟。</p>
+    <div>
+      <span class="tag">24小时前台</span>
+      <span class="tag">免费自助洗衣</span>
+      <span class="tag">大厅免费零食咖啡</span>
     </div>
   </div>
 
   <div class="hotel-card">
-    <h4>♨️ Jiaoxi (Nights 3, 4, 5)</h4>
-    <p><strong>Hotel PIN Jiaoxi</strong></p>
-    <p>Address: No. 2, Lane 21, Jiankang 2nd St., Jiaoxi Township, Yilan County | About 0.5km from Jiaoxi Train Station; the hotel offers a free shuttle (advance phone booking required a day ahead), or about a 5-minute taxi ride.</p>
+    <h4>♨️ 礁溪（第 3、4、5 晚）</h4>
+    <p><strong>Hotel PIN Jiaoxi（品文旅礁溪）</strong></p>
+    <p>地址：宜兰县礁溪乡健康二街21巷2号｜距礁溪火车站约0.5公里，酒店提供免费接驳车（需前一天电话预约），亦可计程车约5分钟抵达。</p>
     <div>
-      <span class="tag">In-room private hot spring tub</span>
-      <span class="tag">Outdoor hot spring SPA</span>
-      <span class="tag">Kids' pool/play room</span>
-      <span class="tag">Free afternoon tea + late-night snacks</span>
-      <span class="tag">Rating 8.7-8.9</span>
+      <span class="tag">每房独立温泉浴池</span>
+      <span class="tag">户外温泉SPA</span>
+      <span class="tag">儿童戏水池／游戏室</span>
+      <span class="tag">免费下午茶＋消夜</span>
+      <span class="tag">评价 8.7-8.9分</span>
     </div>
   </div>
 
   <div class="note-box">
-    <div class="box-title">⚠️ Reminder</div>
-    <p style="margin:0;">Jiaoxi and Yilan train stations are neighboring stops on the TRA line (Jiaoxi comes first, then Yilan). Travel time from Taipei to either station is roughly the same (about 60-80 minutes). However, attractions such as Jimmy SPA Park, the National Center for Traditional Arts, Meihua Lake, and Luodong Night Market are all in the Yilan/Luodong area, requiring an extra 15-30 minute taxi ride from Jiaoxi — travel times and estimated fares are detailed in each day's transport guide.</p>
+    <div class="box-title">⚠️ 提醒</div>
+    <p style="margin:0;">礁溪与宜兰火车站为台铁邻近两站（礁溪先到、宜兰在后），车程约10分钟，班次密集，白天时段皆可安心搭乘。但几米公园、橘之乡／亚典菓子工场、东门观光夜市、虎牌米粉／溪和水产观光工厂、罗东林业文化园区、罗东夜市等景点均在宜兰市／五结／罗东一带，从礁溪出发需额外的车程或步行，已在各日交通指南中详细注明，优先建议以台铁往返，仅在末班车已过或时间不合适时才改搭计程车。</p>
   </div>
 
   <!-- DAY 1 -->
-  <h2 class="day-title" id="day1">Day 1｜25 Oct (Sun) Taipei (Arrival Day)</h2>
+  <h2 class="day-title" id="day1">Day 1｜10/25（日） 台北（抵达日）</h2>
   <div class="day-block">
-    <div class="day-theme">① Today's Theme: Early-morning arrival after a red-eye flight — drop off luggage first, then get acquainted with the area around the hotel; no long-distance attractions scheduled</div>
-
-    <h3 class="sub-title">② Detailed Timeline</h3>
+    <div class="day-theme">① 今日主题：红眼航班清晨抵达，先寄放行李，麦当劳早餐垫肚子，逛完郵政博物館臺北館后视体力决定去西门町或原订的后站商圈行程，晚上就近在西门町万家福桂林店吃石二鍋收尾</div>
+    <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
-      <tr><th style="width:130px;">Time</th><th>Itinerary</th></tr>
-      <tr><td class="time">5:30 AM</td><td>Arrive at Taoyuan Airport, clear immigration, collect luggage; consider purchasing an EasyCard at the same time</td></tr>
-      <tr><td class="time">7:00 AM</td><td>Take the Airport MRT Express to Taipei Main Station, then walk to Roaders Plus Hotel to drop off luggage (too early for check-in)</td></tr>
-      <tr><td class="time">9:00-11:30 AM</td><td>Taipei Rear Station area — Huayin St., Taiyuan Rd., Chang'an W. Rd. area, for snacks, pharmacy items and daily necessities; all flat, walkable, no transport needed</td></tr>
-      <tr><td class="time">11:30 AM-1:00 PM</td><td>Lunch at Q Square (recommend Juan Tofu, Jingoal, or Japanese set meals) — indoor dining lets the seniors rest properly</td></tr>
-      <tr><td class="time">1:00-3:00 PM</td><td>Taipei Underground Mall — Zone Y (toys/models), Zone Z (souvenirs/apparel), Zone K (food court/rest area), fully indoors with air conditioning</td></tr>
-      <tr><td class="time">3:00 PM</td><td>Return to hotel to check in and rest a bit</td></tr>
-      <tr><td class="time">Evening</td><td>Simple dinner near the hotel, early to bed to adjust to the time difference</td></tr>
-    </table>
-
-    <h3 class="sub-title">③ Transport Guide</h3>
+      <tbody><tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">凌晨5:30</td><td>抵达桃园机场，入境、提领行李，建议同时购买悠游卡</td></tr>
+      <tr><td class="time">上午7:00</td><td>搭机场捷运直达车前往台北车站，步行至 Hinoen 日野苑寄放行李（尚未到 Check-in 时间）</td></tr>
+      <tr><td class="time">上午7:30-8:30</td><td>麦当劳早餐——酒店步行可达范围内即有分店（如台北车站站前店），室内座位多、有冷气，长辈小孩都能坐着好好休息，慢慢吃</td></tr>
+      <tr><td class="time">上午9:00-10:30</td><td>郵政博物館臺北館——忠孝西路一段114号2楼，从酒店步行约5-10分钟即达，免费参观，馆内有郵筒展示区、拍照打卡区、亲子益智区，规模不大但精致，半小时到1小时即可逛完，非常适合当作清晨的暖身行程</td></tr>
+      <tr><td class="time">上午10:30-11:30</td><td>弹性时段——若还有余力，可步行至对面的国立台湾博物馆铁道部园区顺游（同样室内、亲子友善）；若长辈开始疲惫，可直接提前往午餐地点移动</td></tr>
+      <tr><td class="time">中午12:00-13:30</td><td>午餐——推荐<strong>西门麵店</strong>（万华区内江街35号，24小时营业老字号，招牌销魂猪脚饭、蛋包卤肉饭），从郵政博物館步行约15-20分钟，或搭捷运板南线1站至西门站再步行约5分钟</td></tr>
+      <tr><td class="time">下午2:00-4:30</td><td>视体力弹性安排——<strong>选项A：西门町</strong>（西门红楼、西门町商圈，逛街拍照，年轻氛围浓厚）；<strong>选项B：维持原定计划</strong>回到台北后站商圈（华阴街、太原路、长安西路），采购零食、药妆、日用品，步调更悠闲、更适合长辈</td></tr>
+      <tr><td class="time">下午4:30</td><td>返回酒店办理入住手续，稍作休息（约1小时）</td></tr>
+      <tr><td class="time">晚上6:00-7:30</td><td><strong>万家福桂林店（原家樂福桂林店）石二鍋晚餐</strong>——万华区桂林路1号4楼，24小时营业量贩店内的石头小火锅，环境整洁、无负担，价格亲民（每人约NT$250），很适合亲子与长辈共餐；从酒店搭捷运板南线1站至西门站，再步行约10分钟即达（桂林路与西门町商圈相邻）</td></tr>
+      <tr><td class="time">晚上7:30起</td><td>搭乘公车返回酒店（桂林路一带有多线公车可达台北车站方向，建议以即时公车App查询当下最快班次），或视疲惫程度改搭计程车／捷运，早点休息调整时差</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>Taoyuan Airport → Taipei Main Station: Airport MRT Express ~35 min, regular train ~50 min</li>
-      <li>Taipei Main Station → Rear Station area: ~5-minute walk from the exit</li>
-      <li>Rear Station area → Q Square: ~5-8 minute walk</li>
-      <li>Q Square → Taipei Underground Mall: connected directly via underground passage, no need to exit the station</li>
+      <li>桃园机场→台北车站：机场捷运直达车约35分钟，普通车约50分钟</li>
+      <li>酒店→郵政博物館臺北館：步行约5-10分钟（沿忠孝西路方向经地下街即达）</li>
+      <li>郵政博物館→西门麵店（内江街35号）：步行约15-20分钟，或搭捷运板南线1站至西门站再步行约5分钟</li>
+      <li>西门麵店→西门町商圈：步行1-2分钟即达（几乎是同一区域）</li>
+      <li>酒店→万家福桂林店（桂林路1号）：搭捷运板南线1站至西门站，再步行约10分钟；或计程车约10分钟</li>
+      <li>万家福桂林店→酒店：桂林路一带有多线公车（如经忠孝西路、中华路方向的路线）可返回台北车站周边，建议出发前用「大台北公车」App或Bus+查询即时班次与站牌；若不想等公车，也可步行至西门站搭捷运板南线1站，或直接叫计程车（车程约10分钟）</li>
+      <li>若选择维持原计划前往后站商圈：西门站→台北车站步行约需10-15分钟，或搭捷运板南线1站</li>
     </ul>
-
-    <h3 class="sub-title">④ Family & Senior-Friendly Tips</h3>
+    <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
-      <div class="box-title">Helpful Tips</div>
+      <div class="box-title">贴心提示</div>
       <ul>
-        <li>Everyone will be tired after the early-morning landing, so Day 1 is deliberately kept within walking distance of the hotel, making it easy to head back and rest anytime.</li>
-        <li>Luggage can be left at the front desk first, with room keys collected after check-in — no need to drag luggage around while shopping.</li>
-        <li>The Underground Mall and Q Square are both indoor, air-conditioned environments — ideal for adjusting to the time difference and avoiding the sun.</li>
+        <li>清晨落地后大家会较疲惫，麦当劳早餐＋郵政博物館都在酒店步行可达范围内，方便随时折返休息，不会因为找路而消耗体力。</li>
+        <li>行李可先寄放酒店前台，待办理入住手续后再领取房卡，无需拖着行李逛街。</li>
+        <li><strong>特别提醒：</strong>原计划的「鄭記豬腳飯」（延平南路22号）已于2025年4月2日正式歇业结束营业（经营72年的老店，因老板退休及缺工吹熄灯号），目前已确认无法前往。已改为口碑与菜色皆相近、同样主打猪脚饭／卤肉饭的「西门麵店」，24小时营业、就在西门町内，交通更方便，且不用担心扑空。</li>
+        <li>郵政博物館臺北館为免费景点、规模精巧，不会太累；如果小朋友对郵筒、拍照打卡区特别感兴趣，可以多停留一会儿。</li>
+        <li>下午西门町 vs 后站商圈：西门町较热闹、适合拍照和年轻氛围，但人潮较多、步行距离较长；后站商圈步调更悠闲、适合采购日用品，长辈会更轻松。建议依当天大家的精神状态临场决定。</li>
+        <li>万家福桂林店4楼美食街的石二鍋是先炒后煮的石头火锅，环境宽敞明亮、结账动线单纯，很适合带长辈和小朋友的家庭聚餐，用餐后也可以顺便逛逛1-3楼的零食、伴手礼区（24小时营业，逛到多晚都不担心打烊）。</li>
+        <li>桂林路周边公车班次会依时段变化，建议实际出发前用手机App确认离晚餐地点最近的站牌与即时到站时间，避免久候；若当晚较晚或大家已经很累，直接搭计程车或捷运回酒店也是稳妥的选择。</li>
       </ul>
     </div>
-
-    <h3 class="sub-title">⑤ Rainy Day Alternative</h3>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
-      <div class="box-title">Rain Contingency</div>
+      <div class="box-title">雨天备案</div>
       <ul>
-        <li>Today's itinerary already focuses on indoor malls and the underground mall, so it's barely affected by weather — no special adjustments needed.</li>
+        <li><strong>10/25 预报有雨，建议调整如下（周日，博物馆皆开放）：</strong></li>
+        <li>上午：麦当劳早餐＋郵政博物館臺北館照常（室内）；10:30-11:30 弹性时段改为<strong>国立台湾博物馆 铁道部园区</strong>（大同区延平北路一段2号，09:30-17:00，有「蒸汽梦工厂」儿童展，小朋友可边玩边学）。</li>
+        <li>中午：西门麵店改为搭捷运板南线1站至西门站，出站后步行1-2分钟，避免长距离步行淋雨；或直接在台北车站地下街／京站 Q Square 用餐。</li>
+        <li>下午：取消西门町户外逛街，改为<strong>国立台湾博物馆（本馆）</strong>——从日野苑步行约10分钟，室内展馆，有大型恐龙与动物标本，适合小朋友；参观约2小时，之后回酒店办理入住休息。</li>
+        <li>晚上：万家福桂林店石二鍋改搭计程车（约10分钟）前往；若雨势很大或大家较累，直接改在台北车站地下街／京站 Q Square用餐即可。</li>
       </ul>
     </div>
   </div>
-
-  <!-- DAY 2 -->
-  <h2 class="day-title" id="day2">Day 2｜26 Oct (Mon) Taipei</h2>
+  <!-- DAY 2 (更新: 木栅动物园＋临江街观光夜市) -->
+  <h2 class="day-title" id="day2">Day 2｜10/26（一） 台北</h2>
   <div class="day-block">
-    <div class="day-theme">① Today's Theme: Taipei Zoo family day + Linjiang St. Tourist Night Market (Tonghua Night Market) for local food in the evening</div>
-
-    <h3 class="sub-title">② Detailed Timeline</h3>
+    <div class="day-theme">① 今日主题：木栅动物园亲子日＋临江街观光夜市（通化夜市）在地美食之夜</div>
+    <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
-      <tr><th style="width:130px;">Time</th><th>Itinerary</th></tr>
-      <tr><td class="time">9:00 AM</td><td>Take the MRT Wenhu Line to Taipei Zoo Station, ~1-minute walk from Exit 1 into the park</td></tr>
-      <tr><td class="time">9:00 AM-12:30 PM</td><td>Taipei Zoo — Giant Panda House, Penguin House, Koala House (indoor, air-conditioned, weather-proof); make use of the free park shuttle train (NT$5/ride) to reach the Bird Park area. Seniors 65+ enter free, children under 6 enter free</td></tr>
-      <tr><td class="time">Noon</td><td>Lunch at the zoo's food court (wide selection, including kids' meals)</td></tr>
-      <tr><td class="time">1:30-4:00 PM</td><td>Continue leisurely touring the zoo, or leave early to rest at the hotel — flexible depending on the seniors' energy levels</td></tr>
-      <tr><td class="time">4:30 PM</td><td>Take the Wenhu Line, transfer to the Tamsui-Xinyi Line (red line) to Xinyi Anhe Station, ~25-30 min total</td></tr>
-      <tr><td class="time">5:30-7:30 PM</td><td>Linjiang St. Tourist Night Market (Tonghua Night Market) — ~5-minute walk from Exit 3; recommend Liang Ji Braised Foods, Yupinyuan Ice & Fire Tang Yuan, and Legendary Sweet Potato Balls (Michelin Bib Gourmand picks)</td></tr>
-      <tr><td class="time">From 7:30 PM</td><td>Take the red line back to the Taipei Main Station hotel, early to bed</td></tr>
-    </table>
-
-    <h3 class="sub-title">③ Transport Guide</h3>
+      <tbody><tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午8:45</td><td>从台北车站搭捷运板南线至忠孝复兴站，转文湖线（棕线）至动物园站（全程约40分钟），1号出口步行约1分钟入园</td></tr>
+      <tr><td class="time">上午9:30-12:30</td><td>台北市立动物园——大猫熊馆、企鹅馆、无尾熊馆（室内空调，不受天气影响），善用园区游园列车代步上鸟园站（票价以现场公告为准），65岁以上长辈免费入园，6岁以下儿童免费</td></tr>
+      <tr><td class="time">中午</td><td>动物园内美食街午餐（选择多样，含儿童餐）</td></tr>
+      <tr><td class="time">下午1:30-4:00</td><td>继续园区悠闲参观，或提早离园回酒店午休，视长辈体力弹性安排</td></tr>
+      <tr><td class="time">下午4:30</td><td>搭文湖线至大安站转乘淡水信义线（红线）至信义安和站，全程约30-35分钟</td></tr>
+      <tr><td class="time">傍晚5:30-7:30</td><td>临江街观光夜市（通化夜市）——3号出口步行约5分钟；推荐梁记卤味、御品元冰火汤圆、传奇地瓜球等人气店家</td></tr>
+      <tr><td class="time">晚上7:30起</td><td>搭红线返回台北车站酒店，早点休息</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>Taipei Main Station → Zoo Station: direct on the MRT Wenhu Line (brown line), ~30-35 min, no transfer needed</li>
-      <li>Zoo Station → Xinyi Anhe Station: transfer from Wenhu Line to Tamsui-Xinyi Line (red line), ~25-30 min</li>
-      <li>Xinyi Anhe Station → Linjiang St. Tourist Night Market: ~5-minute walk from Exit 3</li>
-      <li>Linjiang St. Tourist Night Market → Taipei Main Station: direct red line, ~15-20 min</li>
+      <li>台北车站→动物园站：捷运板南线（蓝线）至忠孝复兴站，转文湖线（棕线）至动物园站，全程约40分钟（需转乘1次）</li>
+      <li>动物园站→信义安和站：文湖线至大安站，转乘淡水信义线（红线）至信义安和站，约30-35分钟</li>
+      <li>信义安和站→临江街观光夜市：3号出口步行约5分钟即达</li>
+      <li>临江街观光夜市→台北车站：搭红线直达约15-20分钟</li>
     </ul>
-
-    <h3 class="sub-title">④ Family & Senior-Friendly Tips</h3>
+    <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
-      <div class="box-title">Helpful Tips</div>
+      <div class="box-title">贴心提示</div>
       <ul>
-        <li>The zoo is quite large (165 hectares) — make use of the free park shuttle train to "ride up, then stroll back down," so seniors don't need to climb any hills.</li>
-        <li>Seniors 65+ enter free with ID, children under 6 enter free — remember to bring identification for verification.</li>
-        <li>The Giant Panda House, Penguin House, and Koala House are all indoor, air-conditioned exhibits — plan for more time indoors if it's hot or raining that day.</li>
-        <li>Stalls at Linjiang St. Tourist Night Market are concentrated along a roughly 300-meter main strip, unlike Shilin Night Market which requires much more walking — great for seniors. Choose milder options like pan-fried buns and braised foods, avoiding overly spicy stalls.</li>
-        <li>The night market stays open late, but the main stalls are busiest from 18:00-21:00 — recommend arriving before 19:00 and leaving around 20:30 to avoid returning to the hotel too late.</li>
+        <li>动物园园区较大（165公顷），建议善用园区游园列车「先搭车上山、再散步下山」，长辈完全不需要爬坡。</li>
+        <li>65岁以上长辈凭证件免费入园，6岁以下儿童免费，记得随身携带证件。</li>
+        <li>大猫熊馆、企鹅馆、无尾熊馆均为室内空调展馆，若当天较热或下雨，可安排更多时间在室内展馆参观休息。</li>
+        <li>临江街观光夜市摊位集中在约300公尺主轴线，不像士林夜市需要走很远，适合长辈；可挑选口味温和的生煎包、卤味，避开过于辛辣的摊位。</li>
+        <li>夜市营业至深夜，但主力摊位18:00-21:00最热闹，建议17:30左右入场、19:30前后离开，避免人潮高峰与太晚返回酒店。</li>
       </ul>
     </div>
-
-    <h3 class="sub-title">⑤ Rainy Day Alternative</h3>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
-      <div class="box-title">Rain Contingency</div>
+      <div class="box-title">雨天备案</div>
       <ul>
-        <li>The zoo's Giant Panda House, Penguin House, and Koala House are all indoor exhibits — the whole visit can be shifted indoors on a rainy day with minimal impact.</li>
-        <li>Linjiang St. Tourist Night Market stalls are mostly semi-covered, so light rain has little effect; bring an umbrella. If it rains heavily, consider dining at a nearby department store in the Xinyi shopping district instead.</li>
+        <li><strong>10/26 预报有雨，建议备案如下。注意：10/26 为周一，台湾博物馆、铁道部园区、天文馆等多数博物馆休馆，因此雨天备案不选博物馆。</strong></li>
+        <li><strong>方案A（小雨／阵雨）：</strong>照常去动物园，但只走室内馆（大猫熊馆、企鹅馆、无尾熊馆），善用免费游园列车，备好雨衣；14:00 前后提早离园回酒店午休，傍晚视雨势再决定是否去临江街夜市。</li>
+        <li><strong>方案B（雨势较大，取消动物园）：</strong>09:30 酒店出发，搭淡水信义线（红线）至信义商圈；上午 10:00-12:30 室内亲子游乐（如信义商圈的 ATT 4 FUN 骑士堡，适合1-8岁，出发前请确认当日营业时间），长辈可在商场咖啡厅休息；中午商场美食街用餐；下午回酒店午休。</li>
+        <li><strong>晚餐：</strong>临江街观光夜市多为半开放式棚顶摊位，小雨可撑伞前往；雨势较大则直接在信义商圈百货公司用餐，早点搭红线返回酒店。</li>
       </ul>
     </div>
   </div>
-
   <!-- DAY 3 -->
-  <h2 class="day-title" id="day3">Day 3｜27 Oct (Tue) Taipei → Jiaoxi</h2>
+  <h2 class="day-title" id="day3">Day 3｜10/27（二） 台北→礁溪</h2>
   <div class="day-block">
-    <div class="day-theme">① Today's Theme: Train south to Jiaoxi, the most relaxed photo-op attraction in the afternoon, and first hot spring experience in the evening</div>
-
-    <h3 class="sub-title">② Detailed Timeline</h3>
+    <div class="day-theme">① 今日主题：搭火车南下礁溪，下午安排最轻松的拍照打卡景点，晚上温泉初体验——礁溪与宜兰之间同样以台铁往返，不需要计程车</div>
+    <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
-      <tr><th style="width:130px;">Time</th><th>Itinerary</th></tr>
-      <tr><td class="time">9-10 AM</td><td>Check out of the Taipei hotel, head to Taipei Main Station</td></tr>
-      <tr><td class="time">10 AM-Noon</td><td>Take the TRA train to Jiaoxi (~60-80 min journey)</td></tr>
-      <tr><td class="time">Noon</td><td>Arrive at Jiaoxi Train Station, take Hotel PIN Jiaoxi's free shuttle (or ~5-minute taxi) to check in; lunch in the Jiaoxi area (recommend Sanxing Scallion Pancakes, Yilan Cake, Pork with Sweet Potato Starch and other local snacks, avoiding beef dishes)</td></tr>
-      <tr><td class="time">2-4 PM</td><td>Jimmy SPA Park — ~15-20 minute taxi ride from Jiaoxi, on the south side of Yilan Train Station; installation art for photos, flat terrain, no climbing needed</td></tr>
-      <tr><td class="time">Evening</td><td>Taxi back to Jiaoxi (~15-20 min); eat around the Jiaoxi area (many hot spring eateries and souvenir shops within walking distance), then soak in the hotel's hot spring to relax, early to bed</td></tr>
-    </table>
-
-    <h3 class="sub-title">③ Transport Guide</h3>
+      <tbody><tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午9:30-10:30</td><td>Hinoen 日野苑退房，步行前往台北车站（约6-10分钟），提早进站候车</td></tr>
+      <tr><td class="time">上午11:35-下午12:43</td><td>搭台铁<strong>普悠玛号 420 次</strong>由台北前往礁溪（车程约1小时8分钟）</td></tr>
+      <tr><td class="time">中午12:43起</td><td>抵达礁溪火车站，搭乘 Hotel PIN Jiaoxi 的免费接驳车（或计程车约5分钟）寄放行李／入住；午餐于礁溪街区用餐（推荐三星葱饼、宜兰糕渣、卜肉等在地小吃）</td></tr>
+      <tr><td class="time">下午2:15-2:30</td><td>礁溪车站搭台铁前往宜兰车站（1站，车程约10分钟）</td></tr>
+      <tr><td class="time">下午2:30-4:30</td><td>几米公园——就在宜兰火车站南侧，出站步行1-2分钟即达，装置艺术拍照打卡，园区平坦、无需爬坡</td></tr>
+      <tr><td class="time">傍晚4:30-4:45</td><td>步行回宜兰车站，搭台铁返回礁溪车站（约10分钟）</td></tr>
+      <tr><td class="time">晚上</td><td>礁溪街区觅食（多家温泉美食、伴手礼店步行可达），回酒店泡汤放松、早点休息</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>Taipei Main Station → Jiaoxi Station: TRA Tze-Chiang Express/Puyuma Express/Taroko Express ~60-80 min, fare ~NT$277 (regular local trains are ~NT$179 but take longer — reserved-seat express trains are recommended for comfort)</li>
-      <li>There's no HSR to Jiaoxi — only the TRA train or the Kamalan Bus (boarding at Banqiao Station/Taipei Bus Station/City Hall Bus Station, ~80-110 min journey, fare NT$140-150)</li>
-      <li>Jiaoxi Station → Hotel PIN Jiaoxi: free hotel shuttle (book a day ahead by phone), or ~5-minute taxi ride</li>
-      <li>Jiaoxi → Yilan City (Jimmy SPA Park, etc.): ~15-20 minute taxi, fare ~NT$250-300</li>
-      <li>Book TRA tickets in advance via the website/app (up to 28 days ahead) to secure reserved seats, especially for weekday travel</li>
+      <li>台北车站→礁溪车站：已订<strong>普悠玛号 420 次，11:35 发车、12:43 抵达</strong>；酒店步行至台北车站约6-10分钟，建议 11:15 前抵达月台</li>
+      <li>礁溪车站→Hotel PIN Jiaoxi：酒店提供免费接驳车（需前一天电话预约），或计程车约5分钟即达</li>
+      <li>礁溪车站↔宜兰车站（几米公园）：优先搭台铁往返，仅1站、车程约10分钟，班次密集（日间大致每20-40分钟一班），且几米公园就在宜兰站旁，比叫计程车更省心省钱；仅当时段太晚已过末班车，或返程时间不方便衔接车次时，才改搭计程车（约15-20分钟）</li>
+      <li>礁溪↔宜兰、礁溪↔罗东等短程区间车无需订位，可随到随搭</li>
     </ul>
-
-    <h3 class="sub-title">④ Family & Senior-Friendly Tips</h3>
+    <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
-      <div class="box-title">Helpful Tips</div>
+      <div class="box-title">贴心提示</div>
       <ul>
-        <li>Reserved-seat TRA trains have luggage storage areas — book online in advance and choose aisle seats to make it easier for seniors to move around.</li>
-        <li>Jimmy SPA Park is free and requires little standing — a great way to ease into Yilan. If the seniors are tired, they can also stay at the Jiaoxi hotel to soak in the hot spring and head out for food later in the evening.</li>
-        <li>Every room at Hotel PIN Jiaoxi comes with its own hot spring tub, so guests can soak right away to ease the fatigue of the journey; the lobby also offers complimentary welcome snacks from the afternoon onward — a nice place to rest too.</li>
+        <li>车票已订妥，上车前请确认车厢与座位号；台铁对号列车设有行李放置区，方便放大件行李。</li>
+        <li>几米公园无门票、无需久站，是抵达宜兰后暖身的最佳选择；若长辈较累，也可直接留在礁溪酒店泡汤休息，晚上再出门觅食。</li>
+        <li>Hotel PIN Jiaoxi 每间客房均附温泉浴池，抵达当天即可入房泡汤舒缓长途舟车劳顿；下午起大厅提供免费迎宾点心，也是不错的休息选择。</li>
       </ul>
     </div>
-
-    <h3 class="sub-title">⑤ Rainy Day Alternative</h3>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
-      <div class="box-title">Rain Contingency</div>
+      <div class="box-title">雨天备案</div>
       <ul>
-        <li>Some installations at Jimmy SPA Park have covered walkways, so light rain has little impact. If it rains heavily, consider the Yilan Distillery (indoor, tastings and tours available) or the Formosa Chuanqi Sugar Refinery (indoor DIY experience), or simply stay at the hotel for hot springs and the play room, both unaffected by weather.</li>
+        <li>几米公园部分装置有遮蔽廊道，小雨影响不大；若雨势较大可改为宜兰酒厂（室内，可试饮、参观），或直接留在酒店室内泡汤、游戏室，不受天气影响。</li>
       </ul>
     </div>
   </div>
-
   <!-- DAY 4 -->
-  <h2 class="day-title" id="day4">Day 4｜28 Oct (Wed) Yilan</h2>
+  <h2 class="day-title" id="day4">Day 4｜10/28（三） 礁溪龙潭湖・宜兰市</h2>
   <div class="day-block">
-    <div class="day-theme">① Today's Theme: National Center for Traditional Arts + Dongshan River Water Park — flat and level throughout, wheelchair/stroller accessible, ideal for three generations traveling together</div>
-
-    <h3 class="sub-title">② Detailed Timeline</h3>
+    <div class="day-theme">① 今日主题：龙潭湖畔到宜兰市梅洲二路的「串联式步行」观光工厂之旅——潭酵天地、龙潭客栈、龙潭庙口传统臭豆腐、橘之乡、亚典菓子工场沿途相接，皆可步行往来，晚上转往东门观光夜市（当天为周三，礁溪观光夜市仅周五六日营业不开市，故改推荐每日营业的宜兰市东门观光夜市）</div>
+    <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
-      <tr><th style="width:130px;">Time</th><th>Itinerary</th></tr>
-      <tr><td class="time">9:30 AM-12:30 PM</td><td>National Center for Traditional Arts (NCFTA) — traditional architecture district, DIY craft experiences, puppet show performances; entire area has flat pathways with free wheelchair rentals available, effortless for seniors</td></tr>
-      <tr><td class="time">Noon</td><td>Lunch at the NCFTA's food street (wide selection, including kids' meals)</td></tr>
-      <tr><td class="time">2-4 PM</td><td>Dongshan River Water Park — adjacent to NCFTA, for strolling and enjoying the waterside scenery, no extra transport transfer needed, relaxed pace</td></tr>
-      <tr><td class="time">Evening</td><td>Taxi back to Jiaoxi (~30-35 min); dinner in the Jiaoxi area (recommend Zhenghao Fresh Meat Xiao Long Bao, Yilan Pork with Sweet Potato Starch, etc.), soak in the hotel's hot spring to rest</td></tr>
-    </table>
-
-    <h3 class="sub-title">③ Transport Guide</h3>
+      <tbody><tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午10:00-12:30</td><td>潭酵天地观光工厂——礁溪乡漳福路25号，紧邻龙潭湖，免门票，两三层楼高的旋转溜滑梯、醋醋小火车、巴萨米克醋免费试饮，透明化酿醋产线可参观</td></tr>
+      <tr><td class="time">中午12:30-2:00</td><td>龙潭客栈午餐——招牌烤鸡全只（需提前2小时电话预订：0952-223-649）、塔香蛤蜊、南方澳小卷都很推荐，价位亲民；用餐前后可顺游龙潭湖环湖步道稍作散步</td></tr>
+      <tr><td class="time">下午2:00-2:30</td><td>步行至龙潭庙口传统臭豆腐（三皇路56号，约15-20分钟，沿途为乡间道路，可慢慢散步）</td></tr>
+      <tr><td class="time">下午2:30-3:00</td><td>龙潭庙口传统臭豆腐——礁溪在地50年老店，外酥内软、配料丰富，当作下午茶点心（周一公休，本行程周三照常营业）</td></tr>
+      <tr><td class="time">下午3:00-3:20</td><td>龙潭庙口臭豆腐→橘之乡：步行约15-20分钟（约1.1公里）</td></tr>
+        <tr><td class="time">下午3:20-4:20</td><td>橘之乡蜜饯形象馆——免门票，巨人桌椅拍照、免费金枣茶试饮、金橘蜜饯DIY</td></tr>
+      <tr><td class="time">下午4:30-5:15</td><td>亚典菓子工场——可参观德国年轮蛋糕烘焙区、现场试吃＋研磨咖啡招待</td></tr>
+      <tr><td class="time">傍晚5:15-5:45</td><td>亚典菓子工场→宜兰车站：计程车约15分钟（含叫车等候）（东门观光夜市就在车站附近，步行可达）</td></tr>
+      <tr><td class="time">傍晚5:45-8:00</td><td>东门观光夜市晚餐——宜兰市聖后街东港陆桥下，从宜兰车站步行可达；夜市每日17:00-00:00营业，推荐彭记葱油饼、30年老店龙凤腿、天桥下麻辣臭豆腐、善美三色布丁豆花等</td></tr>
+      <tr><td class="time">晚上8:00起</td><td>步行约10分钟返回宜兰车站，搭台铁1站至礁溪车站（车程约10分钟），再步行5-10分钟回酒店泡汤休息</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>Jiaoxi → NCFTA: recommend calling a taxi directly (~30-35 min, fare ~NT$450-500) — quicker and more convenient than shuttle buses</li>
-      <li>NCFTA → Dongshan River Water Park: reachable by foot or the park's shuttle, the two are very close to each other</li>
+      <li>礁溪酒店→潭酵天地观光工厂：计程车约20分钟</li>
+      <li>潭酵天地→龙潭客栈：同在漳福路上，步行约5分钟（25号→89号，沿路即达）</li>
+      <li>龙潭客栈→龙潭庙口传统臭豆腐（三皇路56号）：步行约15-20分钟（约1.2公里）</li>
+      <li>龙潭庙口传统臭豆腐→橘之乡蜜饯形象馆（宜兰市梅洲二路33号）：步行约15-20分钟（约1.1公里）</li>
+      <li>橘之乡→亚典菓子工场：同在梅洲二路，33号→122号，步行约10分钟内即达</li>
+      <li>亚典菓子工场→宜兰车站：计程车约15分钟，东门观光夜市就在车站附近，步行可达，晚餐后直接由车站搭车返程</li>
+      <li>东门观光夜市→礁溪酒店：夜市步行约10分钟至宜兰车站，搭台铁至礁溪车站（约10分钟），出站步行5-10分钟即达酒店，比叫计程车更省心</li>
+      <li>提醒：礁溪观光夜市固定仅于每周五、六、日营业，10/28（三）当天没有营业，因此本日晚市改安排在宜兰市、每日营业的东门观光夜市</li>
     </ul>
-
-    <h3 class="sub-title">④ Family & Senior-Friendly Tips</h3>
+    <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
-      <div class="box-title">Helpful Tips</div>
+      <div class="box-title">贴心提示</div>
       <ul>
-        <li>NCFTA has plenty of rest areas and handrails in the restrooms — widely regarded as one of Yilan's most senior-friendly attractions.</li>
-        <li>Enter at 9:30 AM to avoid holiday crowds and finish the main sightseeing before noon, leaving the afternoon for a relaxed stroll at the water park.</li>
+        <li>今天下午是「串联式步行」路线，龙潭客栈→龙潭庙口臭豆腐→橘之乡→亚典菓子工场全程约3公里，虽然沿途景点相接、不需要频繁叫车，但累计走路量不小，建议携带轻便推车、帽子与水，并把节奏放慢，随时留意长辈与小朋友的体力状况。</li>
+        <li>若中途走累了，任何一段都可以改叫计程车（三皇路、梅洲二路一带路边招车不算方便，建议请店家协助叫车或使用叫车App）。</li>
+        <li>龙潭客栈座位不多、平日晚间6点打烊，若想吃招牌烤鸡全只务必提前2小时以上电话预订，人少也可只订半只。</li>
+        <li>龙潭庙口传统臭豆腐营业至19:00（周一公休，本行程安排在周三造访无虞）。</li>
+        <li>潭酵天地、橘之乡、亚典菓子工场三处皆为免门票的观光工厂，且大部分展区为室内或有遮蔽走廊，是很好的中途歇脚点。</li>
+        <li>东门观光夜市规模比罗东夜市小、动线简单，带长辈小孩走起来压力较小，每日17:00-24:00营业不受星期几影响。</li>
       </ul>
     </div>
-
-    <h3 class="sub-title">⑤ Rainy Day Alternative</h3>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
-      <div class="box-title">Rain Contingency</div>
+      <div class="box-title">雨天备案</div>
       <ul>
-        <li>Most of the NCFTA's buildings have covered walkways, so light rain has little impact on the visit.</li>
-        <li>If it rains heavily, switch the afternoon plan to iFun Anyoung World (an indoor family attraction with AR interactive exhibits, entirely indoors).</li>
+        <li>今天下午安排了较多户外步行路段（龙潭客栈↔龙潭庙口臭豆腐↔橘之乡），若遇雨天，建议直接把这几段步行改为计程车接驳，几个观光工厂本身则是绝佳雨天备案，几乎全馆室内或有遮雨走廊。</li>
+        <li>龙潭客栈、龙潭庙口臭豆腐皆为室内／半室内用餐环境，雨天造访无碍。</li>
+        <li>东门观光夜市位于东港陆桥桥下，部分摊位有遮蔽，小雨影响不大；若雨势较大可考虑改为附近的宜兰酒厂展售中心或蘭阳博物馆室内参观后再折返酒店。</li>
       </ul>
     </div>
   </div>
-
   <!-- DAY 5 -->
-  <h2 class="day-title" id="day5">Day 5｜29 Oct (Thu) Yilan</h2>
+  <h2 class="day-title" id="day5">Day 5｜10/29（四） 五结・罗东</h2>
   <div class="day-block">
-    <div class="day-theme">① Today's Theme: Meihua Lake + Luodong Night Market — Yilan's most senior-friendly lakeside stroll, followed by local food in the evening</div>
-
-    <h3 class="sub-title">② Detailed Timeline</h3>
+    <div class="day-theme">① 今日主题：五结利泽工业区观光工厂之旅（虎牌米粉・溪和水产，两馆相邻可步行往来）——下午原本空白的时段填入罗东林业文化园区，免门票、平坦好走、亲子友善，晚上步行即可抵达罗东观光夜市收尾</div>
+    <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
-      <tr><th style="width:130px;">Time</th><th>Itinerary</th></tr>
-      <tr><td class="time">9:30-11:30 AM</td><td>Meihua Lake Scenic Area — a ~4km lakeside path, flat with pavilions and benches along the way; stroll, cycle, or rent an electric boat to tour the lake. Widely regarded as one of the most senior-friendly attractions in Yilan</td></tr>
-      <tr><td class="time">Noon</td><td>Lunch near Meihua Lake or back in the city</td></tr>
-      <tr><td class="time">2-4 PM</td><td>A relaxed activity — Longtan Lake Park (also flat and free of charge) or head straight back to the hotel for a nap, flexible depending on the seniors' energy levels</td></tr>
-      <tr><td class="time">5-6 PM</td><td>Luodong Night Market — arrive early to avoid the 18:30-20:30 crowd peak; recommend Dragon Phoenix Legs, Bao Xin Fen Yuan (tapioca balls), and Pork with Sweet Potato Starch, avoiding stalls with long queues</td></tr>
-      <tr><td class="time">From 7:30 PM</td><td>Taxi back to Jiaoxi (~20-25 min), soak in the hotel's hot spring to rest</td></tr>
-    </table>
-
-    <h3 class="sub-title">③ Transport Guide</h3>
+      <tbody><tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午8:45-9:15</td><td>礁溪车站搭台铁前往罗东车站（车程约20-25分钟，含候车），出站后叫计程车</td></tr>
+      <tr><td class="time">上午9:30-12:30</td><td>虎牌米粉那个年代观光工厂——五结乡利兴三路5号，罗东车站搭计程车约15分钟即达，重现1970年代复古街景，可免费吃到饱炒米粉、体验彩绘碗米粉／电锅炒米粉DIY，全票NT$200（含100元抵用券＋兑换券），营业09:00-16:30，免费停车场</td></tr>
+      <tr><td class="time">中午12:30-14:00</td><td>溪和水产观光工厂——门票NT$100可全额折抵消费，可参观水产漫画主题馆、DIY现烫海鲜／生米煮成熟饭／小卷压饼，也可直接在馆内田妈妈海膳厨房用餐当作午餐（周三固定公休，本行程安排在周四造访无虞）</td></tr>
+      <tr><td class="time">下午2:00-2:30</td><td>溪和水产→罗东：计程车约25-30分钟</td></tr>
+      <tr><td class="time">下午2:30-4:45</td><td><strong>罗东林业文化园区</strong>——中正北路118号，免门票、全年开放（约08:00-17:00），前身为太平山林场贮木池，园内竹林车站、贮木池环池步道、森林铁道蒸汽火车头全程平坦，推车/轮椅皆可通行，很适合作为下午的悠闲放松行程；园区内的日式木造宿舍群也有咖啡厅、文创小店可中途歇脚</td></tr>
+      <tr><td class="time">下午4:45-5:00</td><td>步行约10-15分钟至罗东观光夜市（沿途经过罗东火车站前站方向）</td></tr>
+      <tr><td class="time">晚上5:30-8:00</td><td>罗东观光夜市晚餐——建议提前到，避开18:30-20:30的人潮高峰，推荐阿灶伯当归羊肉汤、包心粉圆、糕渣卜肉等，避开需要长时间排队的摊位</td></tr>
+      <tr><td class="time">晚上8:00起</td><td>步行约10分钟至罗东车站，搭台铁返回礁溪车站（约20-25分钟），再步行5-10分钟回酒店泡汤休息</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>Jiaoxi → Meihua Lake: recommend calling a taxi directly, ~25-30 min, fare ~NT$400-450</li>
-      <li>Meihua Lake/Longtan Lake → Luodong Night Market: ~15-20 minute taxi; Luodong Night Market → Jiaoxi: ~20-25 min journey — check taxi-hailing options ahead of time or ask the hotel to help arrange one</li>
+      <li>礁溪车站→罗东车站：台铁约20-25分钟（酒店步行5-10分钟即达礁溪车站，建议 8:30 前后从酒店出发）</li>
+      <li>罗东车站→虎牌米粉观光工厂：计程车约15分钟</li>
+      <li>虎牌米粉→溪和水产观光工厂：同在利泽工业区利兴路上，两馆相邻，步行约5-10分钟即达，无需叫车</li>
+      <li>溪和水产→罗东林业文化园区：计程车约25-30分钟</li>
+      <li>罗东林业文化园区→罗东观光夜市：步行约10-15分钟（约700公尺-1公里），沿途经过罗东车站前站方向，是很顺路的动线</li>
+      <li>罗东观光夜市→礁溪酒店：夜市步行约10分钟至罗东车站，搭台铁返回礁溪车站（约20-25分钟），出站步行5-10分钟即达酒店，比叫计程车更省心</li>
     </ul>
-
-    <h3 class="sub-title">④ Family & Senior-Friendly Tips</h3>
+    <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
-      <div class="box-title">Helpful Tips</div>
+      <div class="box-title">贴心提示</div>
       <ul>
-        <li>Meihua Lake has little shade in summer/autumn — bring hats for sun protection and a folding chair for seniors to rest whenever needed.</li>
-        <li>Luodong Night Market can get crowded — go at an off-peak time and eat in a "spread out" style (everyone picks a different stall to reduce queueing).</li>
+        <li>虎牌米粉、溪和水产两馆都提供免费停车场，且皆有空调、能全馆室内参观，两馆相邻步行可达，很适合安排在同一个上午一次逛完，不必频繁叫车。</li>
+        <li>溪和水产观光工厂周三固定休馆，本行程安排在周四造访无虞；若临时调整行程日期，务必先确认当天是否开馆。</li>
+        <li>虎牌米粉的炒米粉吃到饱、溪和水产的DIY川烫海鲜都很适合当作午餐，两馆几乎可以把中午的用餐都解决，不必额外安排餐厅。</li>
+        <li>罗东林业文化园区完全免门票、全区平坦硬地，环池步道走一圈约20分钟，是对长辈和小朋友都很友善的景点，园区内偶有森林鐵道小火车展示行驶，小朋友通常会很兴奋；园区占地不小，若体力有限可只挑竹林车站＋贮木池环池步道这段经典路线，不必全区走完。</li>
+        <li>若长辈或小朋友体力有限，也可以缩短林业文化园区的停留时间，提早移动到罗东夜市周边找地方坐下来休息。</li>
       </ul>
     </div>
-
-    <h3 class="sub-title">⑤ Rainy Day Alternative</h3>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
-      <div class="box-title">Rain Contingency</div>
+      <div class="box-title">雨天备案</div>
       <ul>
-        <li>Most of the Meihua Lake path is uncovered — if it rains heavily, switch to the indoor Yilan Art Museum or the Zhongxing Cultural and Creative Park (indoor exhibitions + markets).</li>
-        <li>Luodong Night Market stalls are mostly semi-covered, so light rain has little impact; bring an umbrella.</li>
+        <li>虎牌米粉、溪和水产两个观光工厂皆为室内空间，是很理想的雨天备案，可以把停留时间拉长、减少户外行程。</li>
+        <li>罗东林业文化园区大部分为户外步道，若雨势较大，可缩短停留时间或改为园区内的室内展馆（森产馆、林铁馆等）参观，亦可直接改为在日式木造宿舍群的咖啡厅、文创小店内歇脚。</li>
+        <li>罗东夜市本身多为半开放式摊位，小雨影响不大，可携带雨伞前往。</li>
       </ul>
     </div>
   </div>
-
   <!-- DAY 6 -->
-  <h2 class="day-title" id="day6">Day 6｜30 Oct (Fri) Jiaoxi → Taipei</h2>
+  <h2 class="day-title" id="day6">Day 6｜10/30（五） 礁溪→台北</h2>
   <div class="day-block">
-    <div class="day-theme">① Today's Theme: Train back north, a relaxed stroll through old Taipei's back alleys in the afternoon, then head to Sanchong for a warming Ginger Duck Hot Pot dinner</div>
-
-    <h3 class="sub-title">② Detailed Timeline</h3>
+    <div class="day-theme">① 今日主题：火车北返，下午安排轻松的老台北巷弄漫步，傍晚前往三重品尝霸味薑母鴨进补</div>
+    <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
-      <tr><th style="width:130px;">Time</th><th>Itinerary</th></tr>
-      <tr><td class="time">9-10 AM</td><td>Check out of Hotel PIN Jiaoxi, take the hotel shuttle or a taxi (~5 min) to Jiaoxi Station</td></tr>
-      <tr><td class="time">10 AM-Noon</td><td>Take the TRA train back to Taipei (~60-80 min journey)</td></tr>
-      <tr><td class="time">Noon</td><td>Arrive at Taipei Main Station, check into the hotel, lunch nearby</td></tr>
-      <tr><td class="time">2-4 PM</td><td>Extra browsing in the Taipei Rear Station area — pick up any last snacks, pharmacy items, or stationery, at a relaxed and undemanding pace</td></tr>
-      <tr><td class="time">4:30-5 PM</td><td>Take the MRT to Sanchong (Taipei Main Station → Zhongxiao Xinsheng Station, transfer to the Zhonghe-Xinlu Line → Sanchong/Cailiao Station, ~25-30 min); leave early to avoid the evening dinner queue</td></tr>
-      <tr><td class="time">5:30-7 PM</td><td><strong>Sanchong Bawei Ginger Duck Hot Pot "Main Flagship Store"</strong> — the whole family shares the signature charcoal-fired ginger duck hot pot and the "Bawei Three Treasures" (meatballs, roll, and fresh tofu skin) for a warming meal; recommend arriving around 17:00 to avoid the 18:30-20:30 rush</td></tr>
-      <tr><td class="time">7:30-8:30 PM</td><td>Take the MRT back to the Taipei Main Station hotel, early to bed</td></tr>
-    </table>
-
-    <h3 class="sub-title">③ Transport Guide</h3>
+      <tbody><tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午10:00-11:15</td><td>Hotel PIN Jiaoxi 退房，搭酒店接驳车或计程车（约5分钟）前往礁溪车站，可顺路买些伴手礼</td></tr>
+      <tr><td class="time">上午11:47-下午1:03</td><td>搭台铁<strong>EMU3000 213 次</strong>返回台北（车程约1小时16分钟）</td></tr>
+      <tr><td class="time">下午1:03起</td><td>抵达台北车站，步行至新驛旅店台北車站三館（约5-10分钟）寄放行李（若房间已备妥可直接入住），附近用餐</td></tr>
+      <tr><td class="time">下午2:30-3:45</td><td>台北车站后站商圈补逛——查漏补缺，补买零食、药妆、文具，节奏悠闲不费体力</td></tr>
+      <tr><td class="time">下午3:45起</td><td>前往三重霸味薑母鴨——<strong>方案A（公车）</strong>：在台北车站（忠孝）站牌搭乘652或299路公车，两线皆行经新北大道中华路口一带，下车后步行约10-15分钟即达重阳路一段100号；<strong>方案B（捷运）</strong>：搭乘板南线2站至忠孝新生站，转乘中和新芦线（往迴龙方向）约7-8站至菜寮站或三重站，出站步行6-8分钟即达。全程约35-40分钟，提早出发避开晚间排队人潮</td></tr>
+      <tr><td class="time">傍晚5:00-7:00</td><td><strong>三重霸味薑母鴨『全台总店』</strong>——全家共享招牌炭火薑母鴨、霸味三宝（小丸子、鈴鈴卷、鮮豆皮）进补暖身，建议17:00左右提早入座，避开18:30-20:30排队高峰</td></tr>
+      <tr><td class="time">晚上7:30-8:30</td><td>搭原路线（公车或捷运）返回台北车站酒店，早点休息</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>Jiaoxi Station → Taipei Main Station: TRA reserved-seat train ~60-80 min</li>
-      <li>Once you arrive, the surrounding area is walkable — no extra transport needed</li>
-      <li>Taipei Main Station → Sanchong Bawei Ginger Duck Hot Pot: take the Bannan Line 2 stops to Zhongxiao Xinsheng Station, transfer to the Zhonghe-Xinlu Line (towards Huilong) for ~5 stops to Sanchong or Cailiao Station, ~25-30 min total, then a 6-8 min walk; Address: No. 100, Sec. 1, Chongyang Rd., Sanchong Dist., New Taipei City</li>
+      <li>礁溪车站→台北车站：已订<strong>EMU3000 213 次，11:47 发车、13:03 抵达</strong>（车票已订妥，请保存订票记录）</li>
+      <li>台北车站→新驛旅店三館：从地下街 Y7 出口步行约5分钟；抵达后步行即可探索后站周边商圈，无需额外交通</li>
+      <li>台北车站→三重霸味薑母鴨（公车选项）：在台北车站（忠孝）站牌搭乘<strong>652路</strong>（新莊-內湖）或<strong>299路</strong>（新莊-永春高中），两线皆行经新北大道中华路口一带，平日头末班车约05:00/05:30-22:30/23:25，班距约12-20分钟，下车后步行约10-15分钟即达重阳路一段100号；建议出发前用「大台北公车」App查询即时到站时间与最新站位，公车不需事先订位</li>
+      <li>台北车站→三重霸味薑母鴨（捷运选项）：搭乘板南线2站至忠孝新生站，转乘中和新芦线（往迴龙方向）约7-8站至菜寮站或三重站，全程约35-40分钟，出站步行6-8分钟即达；地址：新北市三重区重阳路一段100号</li>
     </ul>
-
-    <h3 class="sub-title">④ Family & Senior-Friendly Tips</h3>
+    <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
-      <div class="box-title">Helpful Tips</div>
+      <div class="box-title">贴心提示</div>
       <ul>
-        <li>Today is deliberately kept as a "transition and recovery" day, without too much scheduled, letting everyone recover from the string of outings in Yilan.</li>
-        <li>If seniors or the little one are tired, they can stay at the hotel to rest in the afternoon and head out to Sanchong in the evening instead.</li>
-        <li>Ginger duck hot pot broth is simmered with sesame oil and ginger — warming in nature, so seniors should eat in moderation and not overeat; children can opt for lighter sides (like cabbage or noodles) to avoid an upset stomach at night.</li>
-        <li>The Bawei Ginger Duck Hot Pot flagship store doesn't take reservations and only operates in autumn/winter (roughly October to the following spring) — check their Facebook page beforehand to confirm they're open that day.</li>
+        <li>这天以「过渡＋休整」为主，刻意不排太多行程，让大家从宜兰的连续外出中缓过来。</li>
+        <li>若长辈或小朋友较累，下午可直接留在酒店休息，傍晚再出发前往三重。</li>
+        <li>公车652/299两线都会经过台北车站（忠孝）站牌，若不想转乘捷运、想坐着直达三重方向，可以优先考虑公车选项；但公车下车后步行距离比捷运略长（约10-15分钟），建议视长辈体力选择公车或捷运，两者车程时间相近。</li>
+        <li>薑母鴨汤头以麻油、薑母炖煮，性质温补，建议长辈适量食用、不宜过饱，小朋友可挑选清淡配菜（如高丽菜、麵线）为主，避免夜间肠胃负担。</li>
+        <li>霸味薑母鴨全台总店不提供订位；已确认目前有营业（仅秋冬季节营业），出发当天仍建议先查看其Facebook粉专确认营业时间。</li>
       </ul>
     </div>
-
-    <h3 class="sub-title">⑤ Rainy Day Alternative</h3>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
-      <div class="box-title">Rain Contingency</div>
+      <div class="box-title">雨天备案</div>
       <ul>
-        <li>Taipei Main Station itself is a large indoor mall (underground mall + station hall) — shopping and dining within the station area is completely unaffected by rain.</li>
-        <li>Sanchong Bawei Ginger Duck Hot Pot is an indoor dining venue (three floors) — completely unaffected by rain, no itinerary adjustment needed.</li>
+        <li>台北车站本身就是大型室内商场（地下街＋车站大厅），雨天可直接在车站范围内购物用餐，完全不受影响。</li>
+        <li>三重霸味薑母鴨为室内用餐环境（共三层楼），雨天完全不受影响，行程无需调整；若雨势较大，建议改搭捷运方案，减少公车下车后的步行淋雨时间。</li>
       </ul>
     </div>
   </div>
-
   <!-- DAY 7 -->
-  <h2 class="day-title" id="day7">Day 7｜31 Oct (Sat) Taipei (Departure Day)</h2>
+  <h2 class="day-title" id="day7">Day 7｜10/31（六） 台北（返程日）</h2>
   <div class="day-block">
-    <div class="day-theme">① Today's Theme: The entire itinerary stays within walking distance of Taipei Main Station — souvenir shopping in the morning, afternoon rest reserved, wrapping up at Ningxia Night Market in the evening, then straight to the airport</div>
-
-    <h3 class="sub-title">② Detailed Timeline</h3>
+    <div class="day-theme">① 今日主题：行程全部安排在台北车站步行可达范围内，上午采购伴手礼，下午预留午休时间，晚上宁夏夜市收尾，直接前往桃机</div>
+    <h3 class="sub-title">② 具体时间线</h3>
     <table class="timeline">
-      <tr><th style="width:130px;">Time</th><th>Itinerary</th></tr>
-      <tr><td class="time">9:00 AM</td><td>Check out of the hotel, leave luggage at the front desk</td></tr>
-      <tr><td class="time">10:00 AM-1:30 PM</td><td><strong>Nanmen Market</strong> — the final shopping stop, browse at leisure while grabbing lunch; recommend pineapple cakes, nougat, jerky, Taiwanese tea, mullet roe, and dried scallop sauce as souvenirs; indoor and air-conditioned, easy on the seniors</td></tr>
-      <tr><td class="time">1:30-4:00 PM</td><td>Return to the hotel to rest/nap — conserving energy for the red-eye flight tonight; this rest period is more valuable than squeezing in another attraction</td></tr>
-      <tr><td class="time">5:30-7:00 PM</td><td><strong>Ningxia Night Market</strong> — ~10-15 minute walk from the hotel; the crowds haven't peaked yet at this time. Recommend Liu Yuzai Egg Yolk Taro Cake, Fang Jia Chicken Rice, Douhua Zhuang, and oyster omelet</td></tr>
-      <tr><td class="time">7:00-7:30 PM</td><td>Walk back to the hotel, collect stored luggage</td></tr>
-      <tr><td class="time">7:30-8:00 PM</td><td>Head to the Airport MRT (entrance directly across from the hotel); if there's shopping to declare, tax refunds can be processed at the same time</td></tr>
-      <tr><td class="time">From 8:30 PM</td><td>Arrive at Taoyuan Airport, browse duty-free, dinner, and wait for boarding</td></tr>
-      <tr><td class="time">12:15 AM</td><td>TR875 departs for Singapore (arriving Changi Airport at 04:55 AM on 1 Nov)</td></tr>
-    </table>
-
-    <h3 class="sub-title">③ Transport Guide</h3>
+      <tbody><tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午9:00</td><td>新驛旅店三館 Check-out，行李寄存于酒店前台</td></tr>
+      <tr><td class="time">上午10:00-13:30</td><td><strong>南门市场</strong>——本次最后采购站，慢慢逛，顺便解决午餐；推荐购买凤梨酥、牛轧糖、肉干、台湾茶、乌鱼子、干贝酱等伴手礼，室内有冷气，长辈不辛苦</td></tr>
+      <tr><td class="time">下午1:30-5:00</td><td>休息——酒店已退房，行李仍寄存在前台，可在酒店大厅、台北车站大厅或京站／地下街商场找座位休息、喝咖啡、简单用餐，保留体力应付当晚红眼航班，这段休息比再多排一个景点更有价值</td></tr>
+      <tr><td class="time">下午5:30-7:00</td><td><strong>宁夏夜市</strong>——从酒店步行约10-15分钟，此时段人潮尚未达高峰，推荐刘芋仔蛋黄芋饼、方家鸡肉饭、豆花庄、蚵仔煎</td></tr>
+      <tr><td class="time">晚上7:00-7:30</td><td>步行返回酒店，领取寄存行李</td></tr>
+      <tr><td class="time">晚上7:30-8:00</td><td>步行前往台北车站 A1 机场捷运站（约10分钟）</td></tr>
+      <tr><td class="time">晚上8:30起</td><td>抵达桃园机场，如有购物，在机场办理退税（请携带护照与购物发票，并预留充足时间），之后逛免税店、晚餐、候机</td></tr>
+      <tr><td class="time">凌晨00:15</td><td>TR875 起飞返回新加坡（11/1凌晨04:55抵达樟宜机场）</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ 交通指南</h3>
     <ul class="plain-list">
-      <li>Taipei Main Station → Nanmen Market: 2 stops direct on the MRT Songshan-Xindian Line, or ~20-minute walk</li>
-      <li>Hotel → Ningxia Night Market: ~10-15 minute walk, no transport needed</li>
-      <li>Hotel → Taoyuan Airport: the Airport MRT entrance is right across from the hotel, express train ~35 min — recommend allowing more than 3 hours for a relaxed pace</li>
-      <li>Today's entire itinerary stays within walking distance of Taipei Main Station, with no cross-district long-distance transport, making it easy to head back to the hotel to rest or leave early for the airport</li>
+      <li>台北车站→南门市场：搭捷运板南线1站至西门站，转松山新店线（绿线）1站至小南门站，步行约5分钟；或从台北车站步行约20分钟</li>
+      <li>酒店→宁夏夜市：步行约10-15分钟，无需搭车</li>
+      <li>酒店→桃园机场：步行至台北车站 A1 机场捷运站约10分钟，再搭直达车约35分钟，建议预留超过3小时，从容不迫</li>
+      <li>今日全程行程均在台北车站步行可达范围内，不再安排跨区长途交通，方便随时折返酒店休息或提早前往机场</li>
     </ul>
-
-    <h3 class="sub-title">④ Family & Senior-Friendly Tips</h3>
+    <h3 class="sub-title">④ 亲子/长辈贴心提示</h3>
     <div class="tip-box">
-      <div class="box-title">Helpful Tips</div>
+      <div class="box-title">贴心提示</div>
       <ul>
-        <li>The last day is deliberately kept within walking distance of Taipei Main Station, achievable without any transport at all — avoiding fatigue and ensuring seniors and the little one have enough energy for tonight's red-eye flight.</li>
-        <li>Since everyone will be staying up late to fly, keep the itinerary relaxed with room to spare — the afternoon rest period is especially important and shouldn't be cancelled at the last minute.</li>
-        <li>Pack large luggage items the night before, leaving only personal items to handle on the day, to reduce running around.</li>
-        <li>If seniors or the little one are tired, they can simply rest at the hotel in the afternoon without forcing another outing — dinner can also be handled right around the hotel if needed.</li>
+        <li>最后一天刻意安排在台北车站步行可达范围内，无需搭乘任何交通工具即可完成，避免舟车劳顿，让长辈和小朋友有充分体力应对当晚的红眼航班。</li>
+        <li>由于当晚要熬夜飞行，行程务必留有余裕，不要排得太满，下午的休息时段非常重要，不建议临时取消。</li>
+        <li>建议行李提前一晚整理好大件行李，当天只处理随身物品，减少奔波。</li>
+        <li>若长辈或小朋友较累，下午可留在酒店大厅、台北车站或商场内休息，不必勉强再外出，晚餐也可考虑直接在酒店周边解决。</li>
       </ul>
     </div>
-
-    <h3 class="sub-title">⑤ Rainy Day Alternative</h3>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
     <div class="rain-box">
-      <div class="box-title">Rain Contingency</div>
+      <div class="box-title">雨天备案</div>
       <ul>
-        <li>Nanmen Market is an indoor market, completely unaffected by weather.</li>
-        <li>Ningxia Night Market stalls are mostly semi-covered — if it rains heavily, switch to the Taipei Underground Mall or Q Square for dining and shopping, both also within walking distance of the hotel.</li>
+        <li>南门市场为室内市场，完全不受天气影响。</li>
+        <li>宁夏夜市多为半开放式摊位，若雨势较大可改为台北地下街或京站 Q Square 用餐购物，同样从酒店步行可达。</li>
       </ul>
     </div>
   </div>
-
   <!-- PACKING -->
-  <h2 class="section-title" id="packing">4. Packing & Practical Tips</h2>
-
-  <h3 class="sub-title">✅ Documents & Finances</h3>
+  <h2 class="section-title" id="packing">四、打包与实用提醒</h2>
+  <h3 class="sub-title">✅ 证件与财务</h3>
   <div class="packing-grid">
     <div class="packing-card">
-      <h4>Essential Documents</h4>
+      <h4>必备证件</h4>
       <ul class="plain-list">
-        <li>Passport (valid for 6+ months) with photo backup saved on phone</li>
-        <li>Digital copies of flight tickets/boarding passes</li>
-        <li>Hotel booking confirmations (both Chinese and English, to help taxi drivers verify addresses)</li>
+        <li>护照（效期6个月以上）及影本备份（拍照存手机）</li>
+        <li>机票／登机证电子存档</li>
+        <li>酒店订房确认单（中英文皆备，方便计程车司机核对地址）</li>
+        <li>旅游保险保单</li>
+      </ul>
+    </div>
+    <div class="packing-card">
+      <h4>财务与通讯</h4>
+      <ul class="plain-list">
+        <li>新台币现金（部分小吃摊、市场不收信用卡）</li>
+        <li>悠游卡（机场即可购买，捷运/公车/部分商店皆可使用；台铁短程也可直接刷卡进出站，比买票更方便）</li>
+        <li>信用卡（南门市场、家乐福、连锁餐厅可刷卡）</li>
+        <li>境外上网卡或WiFi分享器（提前在新加坡机场或线上购买）</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="sub-title">✅ 长辈与小朋友专用</h3>
+  <div class="packing-grid">
+    <div class="packing-card">
+      <h4>长辈用品</h4>
+      <ul class="plain-list">
+        <li>常备药物（血压药、肠胃药等，建议随身携带不托运）</li>
+        <li>舒适防滑走路鞋（本行程步道多，鞋子比行李箱更重要）</li>
+        <li>保暖外套（清晨抵达及温泉出汤时使用，10月台湾早晚偏凉）</li>
+        <li>老花眼镜／助听器备用电池</li>
+      </ul>
+    </div>
+    <div class="packing-card">
+      <h4>小朋友用品</h4>
+      <ul class="plain-list">
+        <li>常备儿童药物（退烧药、肠胃药、防蚊液）</li>
+        <li>轻便推车（若动物园、Day 4 观光工厂间的步行路段、Day 5 罗东林业文化园区等长距离步行会用到）</li>
+        <li>小朋友专用泡温泉玩具（Hotel PIN Jiaoxi 房内即有独立温泉池）</li>
+        <li>安抚玩偶/习惯物（红眼航班及初到陌生环境时使用）</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="sub-title">✅ 衣物与其他</h3>
+  <div class="packing-grid">
+    <div class="packing-card">
+      <h4>衣物</h4>
+      <ul class="plain-list">
+        <li>轻便雨衣/折叠伞（10月台北/宜兰均有降雨概率）</li>
+        <li>防滑防水鞋款（动物园步道、湖畔步道、林业文化园区环池步道会用到）</li>
+        <li>温泉专用泳装（Hotel PIN Jiaoxi 户外SPA区需着泳装）</li>
+        <li>一件保暖外套（早晚温差与冷气房使用）</li>
+      </ul>
+    </div>
+    <div class="packing-card">
+      <h4>其他</h4>
+      <ul class="plain-list">
+        <li>充电器/行动电源、转接头（台湾为110V，插座与新加坡不同）</li>
+        <li>随身小型环保袋（採购伴手礼、市场购物时使用）</li>
+        <li>湿纸巾、消毒液（夜市、市场用餐前后使用）</li>
+        <li>随身水壶（多数景点提供饮水机可补水）</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="sub-title">✅ 保险与其他注意事项</h3>
+  <div class="note-box">
+    <div class="box-title">保险与其他</div>
+    <ul>
+      <li>建议购买涵盖班机延误/取消的旅游保险，尤其考虑到长辈同行及10月尾声偶有台风尾巴的可能性。</li>
+      <li>回程 TR875 为凌晨00:15起飞的红眼航班，建议全家在10/31当天避免安排过于紧凑的行程，保留体力。</li>
+      <li>三重霸味薑母鴨仅秋冬季节营业，出发前建议先查看其Facebook粉专确认当日是否营业。</li>
+      <li>动物园65岁以上长辈免费入园，6岁以下儿童免费，请随身携带证件以便查验。</li>
+      <li>台北市/新北市公车不需事先订位，上车刷悠游卡或投币即可，下车前记得提前按铃；建议出发前下载「大台北公车」或「Bus+」App，可查询652、299等路线的即时到站时间与站牌位置。</li>
+    </ul>
+  </div>
+  <!-- SUMMARY -->
+  <h2 class="section-title" id="summary">五、行程核心原则回顾</h2>
+  <div class="summary-box">
+    <h3>📋 行程核心原则回顾</h3>
+    <ul class="plain-list">
+      <li><strong>松弛有度：</strong>多数日子上午1个大景点、下午1-2个轻松活动；Day 4、Day 5 景点较多（观光工厂多为免门票的室内空间），可视长辈与小朋友体力弹性删减。</li>
+      <li><strong>交通简单：</strong>礁溪↔宜兰、礁溪↔罗东这类短程移动优先搭台铁往返（车程约10-25分钟、班次密集），仅在末班车已过或时间不便衔接时才改搭计程车；台北市区内善用捷运与公车（如652/299路），全程不自驾、不换乘复杂周游券。</li>
+      <li><strong>住宿集中：</strong>台北车站周边・日野苑（10/25-26，2晚）＋礁溪・Hotel PIN Jiaoxi（10/27-29，3晚）＋台北车站后站・新驛旅店三館（10/30，1晚），全部位于台北车站与礁溪车站周边，换宿2次。</li>
+      <li><strong>避坑到位：</strong>避开长时间排队网红店、避开陡峭纯爬山路线、避开文创园区/101/九份/十份/故宫/圆山、猫空缆车（10/26 周一缆车例行停驶保养）</li>
+      <li><strong>指定景点全达成：</strong>台北后站、京站、地下街、郵政博物館臺北館、木栅动物园、临江街观光夜市、万家福桂林店石二鍋、三重霸味薑母鴨、南门市场、宁夏夜市、罗东林业文化园区皆已排入行程，且 Day1、Day2、Day7 完全不重复。</li>
+      <li><strong>红眼航班友善：</strong>最后一天全程集中于台北车站步行可达范围，下午预留午休时段，晚上步行至台北车站搭机场捷运，不再折返市区。</li>
+    </ul>
+  </div>
+  <div class="footer-note">
+    台北・宜兰礁溪 旅行手册 ｜ 2026/10/25 – 2026/11/1
+  </div>
+</div>
+<div class="lang-block" id="en" lang="en">
+  <!-- COVER -->
+  <div class="cover">
+    <h1>Taipei &amp; Yilan Jiaoxi Travel Guide</h1>
+    <p>Oct 25 (Sun) – Nov 1 (Sun), 2026 ｜ 7 days / 6 nights</p>
+    <p>Travellers: 5 adults + 1 child (6 people)</p>
+    <div class="badge-row">
+      <span class="badge">🏨 Taipei: Hinoen Hotel (日野苑) / CityInn Hotel Taipei Station Branch III (新驛旅店台北車站三館)</span>
+      <span class="badge">♨️ Jiaoxi: Hotel PIN Jiaoxi</span>
+      <span class="badge">🚄 Train + MRT + taxi throughout, no self-drive</span>
+      <span class="badge">✈️ Outbound TR898 · Return TR875 (Scoot)</span>
+    </div>
+  </div>
+  <!-- TOC -->
+  <div class="toc">
+    <h3>Contents</h3>
+    <ul>
+      <li><a href="#flights-en">Flight Information</a></li>
+      <li><a href="#overview-en">Itinerary Overview</a></li>
+      <li><a href="#hotels-en">Accommodation</a></li>
+      <li><a href="#day1-en">Day 1 | Taipei (Arrival)</a></li>
+      <li><a href="#day2-en">Day 2 | Taipei (Zoo · Linjiang St. Night Market)</a></li>
+      <li><a href="#day3-en">Day 3 | Taipei → Jiaoxi</a></li>
+      <li><a href="#day4-en">Day 4 | Longtan Lake · Yilan City (Factories · Dongmen Night Market)</a></li>
+      <li><a href="#day5-en">Day 5 | Wujie · Luodong (Tiger Rice Noodle · Xihe Seafood · Forestry Culture Park · Luodong Night Market)</a></li>
+      <li><a href="#day6-en">Day 6 | Jiaoxi → Taipei (Ginger Duck Hotpot)</a></li>
+      <li><a href="#day7-en">Day 7 | Taipei (Nanmen Market · Ningxia Night Market · Departure)</a></li>
+      <li><a href="#packing-en">Packing &amp; Practical Reminders</a></li>
+      <li><a href="#summary-en">Trip Principles Recap</a></li>
+    </ul>
+  </div>
+  <!-- FLIGHTS -->
+  <h2 class="section-title" id="flights-en">1. Flight Information</h2>
+  <table class="overview">
+    <tbody><tr>
+      <th>Sector</th><th>Date</th><th>Time</th><th>Flight</th><th>Notes</th>
+    </tr>
+    <tr>
+      <td>SIN → TPE</td>
+      <td>Oct 25 (Sun)</td>
+      <td>00:55 – 05:30 (flight time 4h 35m)</td>
+      <td>TR898</td>
+      <td>Scoot, Changi T1 → Taoyuan T1, early-morning arrival</td>
+    </tr>
+    <tr>
+      <td>TPE → SIN</td>
+      <td>Nov 1 (Sun)</td>
+      <td>00:15 – 04:55 (flight time 4h 40m)</td>
+      <td>TR875</td>
+      <td>Scoot, Taoyuan T1 → Changi T1, red-eye flight</td>
+    </tr>
+  </tbody></table>
+  <div class="hotel-card">
+    <h4>🧳 Seats &amp; Baggage</h4>
+    <p><strong>Passengers:</strong> 6</p>
+    <p><strong>Baggage allowance:</strong> 20 kg checked baggage per person</p>
+    <p><strong>Outbound seats (SIN→TPE, TR898):</strong> 21H, 21J, 21K, 22H, 22J, 22K (6 seats)</p>
+    <p><strong>Return seats (TPE→SIN, TR875):</strong> 19H, 19J, 19K, 20H, 20J, 20K (6 seats)</p>
+  </div>
+  <div class="note-box">
+    <div class="box-title">🚄 Taipei ↔ Jiaoxi Transport</div>
+    <ul>
+      <li><strong>Outbound (Oct 27, Tue):</strong> Taipei → Jiaoxi, <strong>Puyuma Express No. 420</strong>, 11:35 – 12:43.</li>
+      <li><strong>Return (Oct 30, Fri):</strong> Jiaoxi → Taipei, <strong>EMU3000 No. 213</strong>, 11:47 – 13:03.</li>
+    </ul>
+  </div>
+  <div class="note-box">
+    <div class="box-title">✈️ Flight Reminders</div>
+    <ul>
+      <li>The outbound flight is a red-eye departing at 00:55. Consider resting in the lounge/rest area at Singapore airport. After landing at Taoyuan, the plan is to drop off luggage first rather than rush to check in.</li>
+      <li>The return flight TR875 departs at 00:15 (on Nov 1, i.e. effectively waiting up late on the night of Oct 31). Check in at least 3 hours before departure for international flights, and have everyone rest well on the afternoon of Day 7 to save energy.</li>
+      <li>Complete online check-in on the Scoot website/app before departure.</li>
+      <li>Online check-in usually opens some time before departure, so watch for Scoot's check-in notification email.</li>
+    </ul>
+  </div>
+  <!-- OVERVIEW -->
+  <h2 class="section-title" id="overview-en">2. Itinerary Overview</h2>
+  <table class="overview">
+    <tbody><tr>
+      <th>Day</th><th>Date</th><th>Location</th><th>Theme</th><th>Stay</th>
+    </tr>
+    <tr>
+      <td>Day 1</td><td>Oct 25 (Sun)</td><td>Taipei</td>
+      <td>Early-morning arrival + McDonald's breakfast + Postal Museum Taipei (郵政博物館臺北館) + lunch + Ximending / Taipei Main Station back-exit area + dinner at Shi Er Guo hotpot, Carrefour Guilin store (萬家福桂林店石二鍋)</td><td>Hinoen Hotel (日野苑)</td>
+    </tr>
+    <tr>
+      <td>Day 2</td><td>Oct 26 (Mon)</td><td>Taipei</td>
+      <td>Taipei Zoo (Muzha) + Linjiang Street Tourist Night Market (Tonghua Night Market)</td><td>Hinoen Hotel (日野苑)</td>
+    </tr>
+    <tr>
+      <td>Day 3</td><td>Oct 27 (Tue)</td><td>Taipei → Jiaoxi</td>
+      <td>Train south + Jimmy Park + first hot-spring soak</td><td>Hotel PIN Jiaoxi (品文旅礁溪)</td>
+    </tr>
+    <tr>
+      <td>Day 4</td><td>Oct 28 (Wed)</td><td>Jiaoxi Longtan Lake · Yilan City</td>
+      <td>Tan Jiao Tiandi + Longtan Inn + Longtan Temple Stinky Tofu + Orange Village + Yadian Pastry Factory + Dongmen Tourist Night Market</td><td>Hotel PIN Jiaoxi (品文旅礁溪)</td>
+    </tr>
+    <tr>
+      <td>Day 5</td><td>Oct 29 (Thu)</td><td>Wujie · Luodong</td>
+      <td>Tiger Rice Noodle factory + Xihe Seafood factory + Luodong Forestry Culture Park + Luodong Tourist Night Market</td><td>Hotel PIN Jiaoxi (品文旅礁溪)</td>
+    </tr>
+    <tr>
+      <td>Day 6</td><td>Oct 30 (Fri)</td><td>Jiaoxi → Taipei</td>
+      <td>Train back north + Taipei Main Station back-exit area + dinner at Bawei Ginger Duck Hotpot in Sanchong (三重霸味薑母鴨)</td><td>CityInn Hotel Taipei Station Branch III (新驛旅店台北車站三館)</td>
+    </tr>
+    <tr>
+      <td>Day 7</td><td>Oct 31 (Sat) – Nov 1 (Sun)</td><td>Taipei</td>
+      <td>Nanmen Market + rest + Ningxia Night Market + late-night flight home</td><td>None (departing that night)</td>
+    </tr>
+  </tbody></table>
+  <div class="note-box">
+    <div class="box-title">📌 Accommodation Plan</div>
+    <p style="margin:0;">Taipei · Hinoen Hotel (Oct 25, 26) – 2 nights; Jiaoxi · Hotel PIN Jiaoxi (Oct 27–29) – 3 nights; Taipei · CityInn Hotel Taipei Station Branch III (Oct 30) – 1 night. On Oct 31 you take the red-eye flight home that night, so no accommodation is needed.</p>
+  </div>
+  <!-- HOTELS -->
+  <h2 class="section-title" id="hotels-en">3. Accommodation</h2>
+  <div class="hotel-card">
+    <h4>🏨 Taipei · Hinoen Hotel (Nights 1 &amp; 2: Oct 25, 26)</h4>
+    <p><strong>Hinoen Hotel 日野苑</strong></p>
+    <p>Address: No. 18, Sec. 1, Chongqing S. Rd., Zhongzheng District, Taipei (台北市中正區重慶南路一段18號) | From Exit Z10 of the Taipei Main Station underground mall, walk about 1 minute along Chongqing S. Rd. (no need to cross the road). Note that Exit Z10 has stairs only; if you have large luggage or a stroller, use Exit Z4 (has a lift) instead. From the Airport MRT Taipei Station, you can also take the lift from Exit 5 up to street level and walk about 10 minutes.</p>
+    <div>
+      <span class="tag">24-hour front desk</span>
+      <span class="tag">Free luggage storage</span>
+      <span class="tag">Free self-service laundry</span>
+    </div>
+  </div>
+  <div class="hotel-card">
+    <h4>🏨 Taipei · CityInn (Night 6: Oct 30)</h4>
+    <p><strong>CityInn Hotel Taipei Station Branch III 新驛旅店台北車站三館</strong></p>
+    <p>Address: No. 77, Chang'an W. Rd., Datong District, Taipei (台北市大同區長安西路77號) | Located in the back-exit area of Taipei Main Station, about 5 minutes on foot from Exit Y7 of the underground mall.</p>
+    <div>
+      <span class="tag">24-hour front desk</span>
+      <span class="tag">Free self-service laundry</span>
+      <span class="tag">Free snacks &amp; coffee in lobby</span>
+    </div>
+  </div>
+  <div class="hotel-card">
+    <h4>♨️ Jiaoxi (Nights 3, 4 &amp; 5)</h4>
+    <p><strong>Hotel PIN Jiaoxi 品文旅礁溪</strong></p>
+    <p>Address: No. 2, Ln. 21, Jiankang 2nd St., Jiaoxi Township, Yilan County (宜蘭縣礁溪鄉健康二街21巷2號) | About 0.5 km from Jiaoxi Railway Station. The hotel offers a free shuttle (reserve by phone the day before), or take a taxi, about 5 minutes.</p>
+    <div>
+      <span class="tag">Private hot-spring bath in every room</span>
+      <span class="tag">Outdoor hot-spring spa</span>
+      <span class="tag">Kids' splash pool / play room</span>
+      <span class="tag">Free afternoon tea + late-night snack</span>
+      <span class="tag">Rated 8.7–8.9</span>
+    </div>
+  </div>
+  <div class="note-box">
+    <div class="box-title">⚠️ Reminder</div>
+    <p style="margin:0;">Jiaoxi and Yilan are neighbouring TRA stations (Jiaoxi first, then Yilan), about 10 minutes apart with frequent trains, so daytime travel is easy. However, attractions such as Jimmy Park, Orange Village / Yadian Pastry Factory, Dongmen Night Market, Tiger Rice Noodle / Xihe Seafood factories, Luodong Forestry Culture Park and Luodong Night Market are all in Yilan City / Wujie / Luodong, so you need extra travel or walking from Jiaoxi. Details are given in each day's transport guide. Taking the TRA is preferred; switch to a taxi only if the last train has gone or the timing does not fit.</p>
+  </div>
+  <!-- DAY 1 -->
+  <h2 class="day-title" id="day1-en">Day 1 | Oct 25 (Sun) Taipei (Arrival Day)</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Arrive on the red-eye in the early morning, drop off luggage, fill up with a McDonald's breakfast, visit the Postal Museum Taipei, then decide by energy level whether to go to Ximending or the originally planned Taipei Main Station back-exit area. End the day with Shi Er Guo hotpot at the Carrefour Guilin store near Ximending.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tbody><tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">5:30 AM</td><td>Arrive at Taoyuan Airport, clear immigration, collect luggage. Buy an EasyCard at the same time.</td></tr>
+      <tr><td class="time">7:00 AM</td><td>Take the Airport MRT express to Taipei Main Station, then walk to Hinoen Hotel (日野苑) to leave luggage (check-in time not yet reached).</td></tr>
+      <tr><td class="time">7:30–8:30 AM</td><td>McDonald's breakfast – there is a branch within walking distance of the hotel (e.g. the Taipei Station front store), with plenty of air-conditioned indoor seating so seniors and kids can sit down and eat slowly.</td></tr>
+      <tr><td class="time">9:00–10:30 AM</td><td>Postal Museum Taipei (郵政博物館臺北館) – 2F, No. 114, Sec. 1, Zhongxiao W. Rd. (忠孝西路一段114號2樓), about 5–10 minutes' walk from the hotel. Free admission, with a mailbox display area, photo spots and a kids' puzzle area. Small but well done, 30 minutes to 1 hour is enough – a great warm-up for the morning.</td></tr>
+      <tr><td class="time">10:30–11:30 AM</td><td>Flexible slot – if you still have energy, walk across to the National Taiwan Museum Railway Department Park (also indoors and kid-friendly). If the seniors start to tire, head to lunch early.</td></tr>
+      <tr><td class="time">12:00–1:30 PM</td><td>Lunch – recommended: <strong>Ximen Noodle Shop (西門麵店)</strong> (No. 35, Neijiang St., Wanhua District (萬華區內江街35號); long-established 24-hour eatery, signature pork knuckle rice and braised pork rice with egg). From the Postal Museum it is about 15–20 minutes on foot, or take the Bannan Line 1 stop to Ximen Station and walk about 5 minutes.</td></tr>
+      <tr><td class="time">2:00–4:30 PM</td><td>Flexible, depending on energy – <strong>Option A: Ximending</strong> (Red House Theater, the Ximending shopping area, strolling and photos, lively young atmosphere); <strong>Option B: stick to the original plan</strong> and return to the Taipei Station back-exit area (Huayin St., Taiyuan Rd., Chang'an W. Rd.) to buy snacks, drugstore items and daily goods at a more relaxed pace, better for seniors.</td></tr>
+      <tr><td class="time">4:30 PM</td><td>Return to the hotel to check in and rest (about 1 hour).</td></tr>
+      <tr><td class="time">6:00–7:30 PM</td><td><strong>Dinner at Shi Er Guo hotpot, Carrefour Guilin store (萬家福桂林店 – formerly Carrefour Guilin)</strong> – 4F, No. 1, Guilin Rd., Wanhua District (萬華區桂林路1號4樓). Individual stone hotpots inside a 24-hour hypermarket, clean and light on the stomach, affordable (about NT$250 per person), well suited to families with seniors and kids. From the hotel, take the Bannan Line 1 stop to Ximen Station, then walk about 10 minutes (Guilin Rd. is next to the Ximending area).</td></tr>
+      <tr><td class="time">From 7:30 PM</td><td>Take a bus back to the hotel (several bus lines near Guilin Rd. go towards Taipei Main Station; check a real-time bus app for the fastest option), or switch to a taxi / MRT depending on how tired everyone is. Go to bed early to adjust to the time difference.</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Taoyuan Airport → Taipei Main Station: Airport MRT express about 35 minutes, commuter train about 50 minutes.</li>
+      <li>Hotel → Postal Museum Taipei: about 5–10 minutes on foot (along Zhongxiao W. Rd. via the underground mall).</li>
+      <li>Postal Museum → Ximen Noodle Shop (No. 35, Neijiang St.): about 15–20 minutes on foot, or Bannan Line 1 stop to Ximen Station then about 5 minutes on foot.</li>
+      <li>Ximen Noodle Shop → Ximending area: 1–2 minutes on foot (practically the same area).</li>
+      <li>Hotel → Carrefour Guilin store (No. 1, Guilin Rd.): Bannan Line 1 stop to Ximen Station, then about 10 minutes on foot; or a taxi, about 10 minutes.</li>
+      <li>Carrefour Guilin store → hotel: several bus lines near Guilin Rd. (e.g. routes along Zhongxiao W. Rd. and Zhonghua Rd.) return to the Taipei Station area. Check real-time arrivals and stops with the "Taipei Bus" app or Bus+ before leaving. If you don't want to wait for a bus, walk to Ximen Station and take the Bannan Line 1 stop, or hail a taxi (about 10 minutes).</li>
+      <li>If you stay with the original plan and go to the back-exit area: Ximen Station → Taipei Main Station is about 10–15 minutes on foot, or the Bannan Line 1 stop.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids &amp; Seniors</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>Everyone will be tired after the early-morning landing. The McDonald's breakfast and the Postal Museum are both within walking distance of the hotel, so you can head back to rest at any time without wasting energy finding the way.</li>
+        <li>Leave luggage at the hotel front desk first and collect the room key after check-in, so no one has to drag luggage while sightseeing.</li>
+        <li><strong>Important:</strong> The originally planned "Zheng Ji Pork Knuckle Rice" (鄭記豬腳飯, No. 22, Yanping S. Rd.) permanently closed on April 2, 2025 (a 72-year-old shop, closed due to the owner's retirement and staff shortages), so it can no longer be visited. It has been replaced with "Ximen Noodle Shop", which is similar in reputation and menu (pork knuckle rice / braised pork rice), open 24 hours and right in Ximending – more convenient, with no risk of a wasted trip.</li>
+        <li>The Postal Museum Taipei is free and compact, so it won't be tiring. If the child is especially interested in the mailboxes and photo spots, stay a little longer.</li>
+        <li>Ximending vs. back-exit area in the afternoon: Ximending is livelier and good for photos and a youthful vibe, but more crowded with longer walks; the back-exit area is more relaxed and good for buying daily goods, easier for seniors. Decide on the day depending on everyone's energy.</li>
+        <li>The Shi Er Guo on the 4F food court of the Carrefour Guilin store is a stir-fry-then-simmer stone hotpot in a spacious, bright setting with simple payment flow, ideal for families with seniors and kids. After dinner you can browse the snacks and souvenir areas on floors 1–3 (open 24 hours, so no worry about closing time).</li>
+        <li>Bus frequency around Guilin Rd. varies by time of day. Before leaving, use a phone app to check the nearest stop and real-time arrivals to avoid long waits. If it's late or everyone is exhausted, a taxi or MRT back to the hotel is a safe choice.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li><strong>Rain is forecast for Oct 25. Suggested adjustments (Sunday – museums are open):</strong></li>
+        <li>Morning: McDonald's breakfast + Postal Museum Taipei as planned (indoors); change the 10:30–11:30 flexible slot to the <strong>National Taiwan Museum Railway Department Park</strong> (No. 2, Sec. 1, Yanping N. Rd., Datong District (大同區延平北路一段2號), 9:30–17:00, with the "Steam Dream Factory" kids' exhibition where children can play and learn).</li>
+        <li>Noon: For Ximen Noodle Shop, take the Bannan Line 1 stop to Ximen Station and walk 1–2 minutes from the exit to avoid long walks in the rain; or eat in the Taipei Main Station underground mall / Q Square.</li>
+        <li>Afternoon: Cancel the outdoor Ximending stroll and visit the <strong>National Taiwan Museum (main building)</strong> instead – about 10 minutes' walk from Hinoen, indoor halls with large dinosaur and animal specimens, good for kids; about 2 hours, then return to the hotel to check in and rest.</li>
+        <li>Evening: Take a taxi (about 10 minutes) to Shi Er Guo at the Carrefour Guilin store; if the rain is heavy or everyone is tired, simply eat in the Taipei Main Station underground mall / Q Square.</li>
+      </ul>
+    </div>
+  </div>
+  <!-- DAY 2 -->
+  <h2 class="day-title" id="day2-en">Day 2 | Oct 26 (Mon) Taipei</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Family day at Taipei Zoo (Muzha) + a local-food evening at Linjiang Street Tourist Night Market (Tonghua Night Market)</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tbody><tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">8:45 AM</td><td>From Taipei Main Station take the Bannan Line to Zhongxiao Fuxing Station, transfer to the Wenhu Line (Brown) to Taipei Zoo Station (about 40 minutes in total). Exit 1 is about 1 minute on foot from the zoo entrance.</td></tr>
+      <tr><td class="time">9:30 AM–12:30 PM</td><td>Taipei Zoo – Giant Panda House, Penguin House, Koala House (indoor and air-conditioned, unaffected by weather). Use the zoo's tram to get up to the Bird World station (fares per on-site notice). Seniors aged 65+ enter free, and children under 6 enter free.</td></tr>
+      <tr><td class="time">Noon</td><td>Lunch at the zoo's food court (many choices, including kids' meals).</td></tr>
+      <tr><td class="time">1:30–4:00 PM</td><td>Continue a relaxed visit, or leave early and return to the hotel for a nap, depending on the seniors' energy.</td></tr>
+      <tr><td class="time">4:30 PM</td><td>Take the Wenhu Line to Daan Station, transfer to the Tamsui–Xinyi Line (Red) to Xinyi Anhe Station, about 30–35 minutes in total.</td></tr>
+      <tr><td class="time">5:30–7:30 PM</td><td>Linjiang Street Tourist Night Market (Tonghua Night Market) – about 5 minutes on foot from Exit 3. Recommended popular stalls include Liang Ji braised snacks (梁記滷味), Yu Pin Yuan fire-and-ice tangyuan (御品元冰火湯圓) and Legendary Sweet Potato Balls (傳奇地瓜球).</td></tr>
+      <tr><td class="time">From 7:30 PM</td><td>Take the Red Line back to the hotel at Taipei Main Station and get to bed early.</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Taipei Main Station → Taipei Zoo Station: Bannan Line (Blue) to Zhongxiao Fuxing Station, transfer to the Wenhu Line (Brown) to Taipei Zoo Station, about 40 minutes in total (1 transfer).</li>
+      <li>Taipei Zoo Station → Xinyi Anhe Station: Wenhu Line to Daan Station, transfer to the Tamsui–Xinyi Line (Red) to Xinyi Anhe Station, about 30–35 minutes.</li>
+      <li>Xinyi Anhe Station → Linjiang Street Tourist Night Market: about 5 minutes on foot from Exit 3.</li>
+      <li>Linjiang Street Tourist Night Market → Taipei Main Station: Red Line direct, about 15–20 minutes.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids &amp; Seniors</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>The zoo is large (165 hectares). Use the zoo's tram – "ride up first, then stroll downhill" – so seniors don't have to climb any slopes.</li>
+        <li>Seniors aged 65+ and children under 6 enter free; remember to carry ID.</li>
+        <li>The Giant Panda House, Penguin House and Koala House are indoor, air-conditioned halls. If it is hot or rainy, spend more time in the indoor halls.</li>
+        <li>The Linjiang Street night market stalls are concentrated along a main axis of about 300 metres, unlike Shilin Night Market where you walk far, so it suits seniors. Pick mild-flavoured pan-fried buns and braised snacks and avoid overly spicy stalls.</li>
+        <li>The night market is open until late, but the main stalls are busiest from 18:00–21:00. Arrive around 17:30 and leave around 19:30 to avoid the peak crowds and a very late return to the hotel.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li><strong>Rain is forecast for Oct 26. Suggested backup below. Note: Oct 26 is a Monday, and most museums (National Taiwan Museum, Railway Department Park, Taipei Astronomical Museum, etc.) are closed, so the rain plan does not use museums.</strong></li>
+        <li><strong>Plan A (light rain / showers):</strong> Visit the zoo as planned but only the indoor halls (Giant Panda House, Penguin House, Koala House), use the zoo's tram, and bring raincoats; leave around 14:00 to nap at the hotel, then decide in the evening whether to go to Linjiang Street Night Market depending on the rain.</li>
+        <li><strong>Plan B (heavy rain, cancel the zoo):</strong> Leave the hotel at 9:30 and take the Tamsui–Xinyi Line (Red) to the Xinyi commercial district. From 10:00–12:30 enjoy indoor kids' play (e.g. ATT 4 FUN's Knight's Castle, suitable for ages 1–8; check opening hours before going) while the seniors rest in a mall café. Eat lunch at the mall food court, then return to the hotel in the afternoon.</li>
+        <li><strong>Dinner:</strong> Linjiang Street Night Market is mostly covered, semi-open stalls, so in light rain you can go with umbrellas. In heavy rain, eat at a department store in the Xinyi district and take the Red Line back to the hotel early.</li>
+      </ul>
+    </div>
+  </div>
+  <!-- DAY 3 -->
+  <h2 class="day-title" id="day3-en">Day 3 | Oct 27 (Tue) Taipei → Jiaoxi</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Take the train south to Jiaoxi, then an easy photo-friendly sight in the afternoon and your first hot-spring soak in the evening – travel between Jiaoxi and Yilan is also by TRA, no taxi needed</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tbody><tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">9:30–10:30 AM</td><td>Check out of Hinoen Hotel (日野苑) and walk to Taipei Main Station (about 6–10 minutes). Go through the gates early and wait for the train.</td></tr>
+      <tr><td class="time">11:35 AM – 12:43 PM</td><td>Take TRA <strong>Puyuma Express No. 420</strong> from Taipei to Jiaoxi (about 1 hour 8 minutes).</td></tr>
+      <tr><td class="time">From 12:43 PM</td><td>Arrive at Jiaoxi Railway Station and take Hotel PIN Jiaoxi's free shuttle (or a taxi, about 5 minutes) to drop off luggage / check in. Have lunch in the Jiaoxi town area (recommended local snacks: Sanxing scallion pancakes (三星蔥餅), Yilan gaozha (宜蘭糕渣, a fried local specialty), bo-bak fried pork rolls (卜肉), etc.).</td></tr>
+      <tr><td class="time">2:15–2:30 PM</td><td>Take the TRA from Jiaoxi Station to Yilan Station (1 stop, about 10 minutes).</td></tr>
+      <tr><td class="time">2:30–4:30 PM</td><td>Jimmy Park (幾米公園) – just south of Yilan Railway Station, 1–2 minutes' walk from the exit. Art installations for photos, flat park with no slopes.</td></tr>
+      <tr><td class="time">4:30–4:45 PM</td><td>Walk back to Yilan Station and take the TRA back to Jiaoxi Station (about 10 minutes).</td></tr>
+      <tr><td class="time">Evening</td><td>Dinner in the Jiaoxi town area (many hot-spring-town eateries and souvenir shops within walking distance), then back to the hotel to soak and relax, and an early night.</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Taipei Main Station → Jiaoxi Station: <strong>Puyuma Express No. 420 is booked, departing 11:35 and arriving 12:43</strong>. The hotel is about 6–10 minutes' walk from Taipei Main Station; aim to be on the platform by 11:15.</li>
+      <li>Jiaoxi Station → Hotel PIN Jiaoxi: the hotel offers a free shuttle (reserve by phone the day before), or a taxi takes about 5 minutes.</li>
+      <li>Jiaoxi Station ↔ Yilan Station (Jimmy Park): take the TRA both ways – just 1 stop, about 10 minutes, with frequent daytime trains (roughly every 20–40 minutes), and Jimmy Park is right next to Yilan Station, which is easier and cheaper than a taxi. Switch to a taxi (about 15–20 minutes) only if the last train has gone or the return does not connect well with a train.</li>
+      <li>Short hops such as Jiaoxi ↔ Yilan and Jiaoxi ↔ Luodong on local trains need no reservation – just show up and board.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids &amp; Seniors</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>Tickets are booked; before boarding, check your carriage and seat numbers. TRA reserved-seat trains have luggage racks for large bags.</li>
+        <li>Jimmy Park has no admission fee and does not require standing for long – it is the best warm-up after arriving in Yilan. If the seniors are tired, they can also simply stay and soak at the Jiaoxi hotel and go out for dinner later.</li>
+        <li>Every room at Hotel PIN Jiaoxi has a hot-spring bath, so you can soak right after arriving to relieve the journey fatigue. From the afternoon the lobby serves free welcome snacks, which is also a nice place to rest.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Some Jimmy Park installations have covered walkways, so light rain is fine. If rain is heavy, switch to the Yilan Distillery (indoors, with tasting and tours), or simply stay at the hotel for indoor soaking and the play room, unaffected by weather.</li>
+      </ul>
+    </div>
+  </div>
+  <!-- DAY 4 -->
+  <h2 class="day-title" id="day4-en">Day 4 | Oct 28 (Wed) Jiaoxi Longtan Lake · Yilan City</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: A "chained walking" tour of tourist factories from Longtan Lake to Meizhou 2nd Rd. in Yilan City – Tan Jiao Tiandi, Longtan Inn, Longtan Temple Stinky Tofu, Orange Village and Yadian Pastry Factory are linked along the way and walkable. In the evening head to Dongmen Tourist Night Market (Wednesday: Jiaoxi Tourist Night Market only opens Fri–Sun, so the daily-open Dongmen Tourist Night Market in Yilan City is recommended instead).</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tbody><tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">10:00 AM–12:30 PM</td><td>Tan Jiao Tiandi tourist factory (潭酵天地) – No. 25, Zhangfu Rd., Jiaoxi (礁溪鄉漳福路25號), next to Longtan Lake. Free admission; a two-to-three-storey spiral slide, a vinegar mini-train, free balsamic vinegar tasting, and a transparent vinegar production line to view.</td></tr>
+      <tr><td class="time">12:30–2:00 PM</td><td>Lunch at Longtan Inn (龍潭客棧) – the signature whole roast chicken (order by phone at least 2 hours ahead: 0952-223-649), basil clams and Nanfang'ao squid are all recommended, at friendly prices. Before or after the meal you can stroll the Longtan Lake trail.</td></tr>
+      <tr><td class="time">2:00–2:30 PM</td><td>Walk to Longtan Temple Stinky Tofu (No. 56, Sanhuang Rd. (三皇路56號), about 15–20 minutes along a country road; take your time).</td></tr>
+      <tr><td class="time">2:30–3:00 PM</td><td>Longtan Temple Traditional Stinky Tofu (龍潭廟口傳統臭豆腐) – a 50-year-old local shop, crispy outside and soft inside with generous toppings, as an afternoon snack (closed Mondays; open as normal on Wednesday).</td></tr>
+      <tr><td class="time">3:00–3:20 PM</td><td>Stinky Tofu → Orange Village: about 15–20 minutes on foot (about 1.1 km).</td></tr>
+      <tr><td class="time">3:20–4:20 PM</td><td>Orange Village Candied Fruit Museum (橘之鄉蜜餞形象館) – free admission, giant table and chairs for photos, free kumquat tea tasting, kumquat preserve DIY.</td></tr>
+      <tr><td class="time">4:30–5:15 PM</td><td>Yadian Pastry Factory (亞典菓子工場) – view the German Baumkuchen baking area, with on-site tasting and freshly ground coffee provided.</td></tr>
+      <tr><td class="time">5:15–5:45 PM</td><td>Yadian Pastry Factory → Yilan Station: about 15 minutes by taxi (including waiting for the car). Dongmen Tourist Night Market is near the station and walkable.</td></tr>
+      <tr><td class="time">5:45–8:00 PM</td><td>Dinner at Dongmen Tourist Night Market – under the Donggang Overpass on Shenghou St., Yilan City (宜蘭市聖後街東港陸橋下), walkable from Yilan Station. The market is open daily 17:00–00:00. Recommended: Peng Ji scallion pancakes, the 30-year-old Dragon-Phoenix Drumsticks, spicy stinky tofu under the overpass, and Shanmei three-colour pudding tofu pudding (善美三色布丁豆花).</td></tr>
+      <tr><td class="time">From 8:00 PM</td><td>Walk about 10 minutes back to Yilan Station, take the TRA 1 stop to Jiaoxi Station (about 10 minutes), then walk 5–10 minutes back to the hotel to soak and rest.</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Jiaoxi hotel → Tan Jiao Tiandi tourist factory: taxi, about 20 minutes.</li>
+      <li>Tan Jiao Tiandi → Longtan Inn: both on Zhangfu Rd., about 5 minutes on foot (No. 25 → No. 89, straight along the road).</li>
+      <li>Longtan Inn → Longtan Temple Stinky Tofu (No. 56, Sanhuang Rd.): about 15–20 minutes on foot (about 1.2 km).</li>
+      <li>Longtan Temple Stinky Tofu → Orange Village Candied Fruit Museum (No. 33, Meizhou 2nd Rd., Yilan City (宜蘭市梅洲二路33號)): about 15–20 minutes on foot (about 1.1 km).</li>
+      <li>Orange Village → Yadian Pastry Factory: both on Meizhou 2nd Rd., No. 33 → No. 122, within about 10 minutes on foot.</li>
+      <li>Yadian Pastry Factory → Yilan Station: about 15 minutes by taxi. Dongmen Tourist Night Market is near the station and walkable, and after dinner you can take the train back directly from the station.</li>
+      <li>Dongmen Tourist Night Market → Jiaoxi hotel: about 10 minutes on foot to Yilan Station, TRA to Jiaoxi Station (about 10 minutes), then 5–10 minutes on foot to the hotel – easier than a taxi.</li>
+      <li>Reminder: Jiaoxi Tourist Night Market only opens Fri, Sat and Sun, so it is closed on Wed, Oct 28. Tonight's market is therefore the daily-open Dongmen Tourist Night Market in Yilan City.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids &amp; Seniors</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>This afternoon is a "chained walking" route: Longtan Inn → Longtan Temple Stinky Tofu → Orange Village → Yadian Pastry Factory is about 3 km in total. The sights follow one another so you don't need to call cars often, but the accumulated walking is not small. Bring a light stroller, hats and water, take it slowly, and keep an eye on the seniors' and the child's energy.</li>
+        <li>If anyone gets tired, any leg can be switched to a taxi (flagging a taxi on the roadside along Sanhuang Rd. and Meizhou 2nd Rd. is not easy – ask the shop to call one or use a ride-hailing app).</li>
+        <li>Longtan Inn has limited seating and closes at 6 PM on weekday evenings. To have the signature whole roast chicken, call at least 2 hours ahead; for a small group you can order just half.</li>
+        <li>Longtan Temple Stinky Tofu is open until 19:00 (closed Mondays; visiting on Wednesday is fine).</li>
+        <li>Tan Jiao Tiandi, Orange Village and Yadian Pastry Factory are all free-admission tourist factories, and most exhibits are indoors or have covered walkways, making good rest stops.</li>
+        <li>Dongmen Tourist Night Market is smaller than Luodong Night Market with a simple layout, less stressful for seniors and kids, and open daily 17:00–24:00 regardless of the day of the week.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>The afternoon has several outdoor walking sections (Longtan Inn ↔ Longtan Temple Stinky Tofu ↔ Orange Village). If it rains, switch these walks to taxis. The tourist factories themselves are excellent rain-day options, as they are almost entirely indoors or have covered walkways.</li>
+        <li>Longtan Inn and Longtan Temple Stinky Tofu are indoor / semi-indoor dining, so rain is no problem.</li>
+        <li>Dongmen Tourist Night Market sits under the Donggang Overpass and some stalls are covered, so light rain has little effect. If it rains heavily, consider visiting the nearby Yilan Distillery shop or the Lanyang Museum indoors before heading back to the hotel.</li>
+      </ul>
+    </div>
+  </div>
+  <!-- DAY 5 -->
+  <h2 class="day-title" id="day5-en">Day 5 | Oct 29 (Thu) Wujie · Luodong</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: A tourist-factory trip in the Wujie Lize Industrial Zone (Tiger Rice Noodle · Xihe Seafood – two neighbouring sites you can walk between). The previously empty afternoon now has Luodong Forestry Culture Park – free, flat and kid-friendly – and in the evening you can walk to Luodong Tourist Night Market to finish.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tbody><tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">8:45–9:15 AM</td><td>Take the TRA from Jiaoxi Station to Luodong Station (about 20–25 minutes including waiting), then hail a taxi outside the station.</td></tr>
+      <tr><td class="time">9:30 AM–12:30 PM</td><td>Tiger Rice Noodle "That Era" tourist factory (虎牌米粉那個年代觀光工廠) – No. 5, Lixing 3rd Rd., Wujie Township (五結鄉利興三路5號), about 15 minutes by taxi from Luodong Station. Recreates a 1970s retro street scene, with free all-you-can-eat fried rice noodles and DIY painted-bowl noodles / rice-cooker fried noodles. Full ticket NT$200 (includes a NT$100 voucher + redemption coupon), open 09:00–16:30, free parking.</td></tr>
+      <tr><td class="time">12:30–2:00 PM</td><td>Xihe Seafood tourist factory (溪和水產觀光工廠) – NT$100 admission is fully redeemable against spending. See the seafood comic theme hall and do DIY blanched seafood / "turn rice into cooked rice" / squid pressed cakes, or have lunch at the on-site Tian Mama Seafood Kitchen (closed every Wednesday; visiting on Thursday is fine).</td></tr>
+      <tr><td class="time">2:00–2:30 PM</td><td>Xihe Seafood → Luodong: about 25–30 minutes by taxi.</td></tr>
+      <tr><td class="time">2:30–4:45 PM</td><td><strong>Luodong Forestry Culture Park (羅東林業文化園區)</strong> – No. 118, Zhongzheng N. Rd. (中正北路118號), free admission, open year-round (about 08:00–17:00). Former Taiping Mountain log pond, with a bamboo station, a flat loop trail around the log pond and a steam locomotive from the forest railway; accessible for strollers and wheelchairs, ideal for a leisurely afternoon. The Japanese-style wooden dormitory cluster in the park also has a café and small shops for a rest stop.</td></tr>
+      <tr><td class="time">4:45–5:00 PM</td><td>Walk about 10–15 minutes to Luodong Tourist Night Market (passing the front side of Luodong Railway Station).</td></tr>
+      <tr><td class="time">5:30–8:00 PM</td><td>Dinner at Luodong Tourist Night Market – arrive early to avoid the 18:30–20:30 crowd peak. Recommended: Azao Bo angelica lamb soup (阿灶伯當歸羊肉湯), stuffed tapioca balls, gaozha (糕渣) and bo-bak (卜肉). Skip stalls that need long queues.</td></tr>
+      <tr><td class="time">From 8:00 PM</td><td>Walk about 10 minutes to Luodong Station, take the TRA back to Jiaoxi Station (about 20–25 minutes), then walk 5–10 minutes back to the hotel to soak and rest.</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Jiaoxi Station → Luodong Station: TRA about 20–25 minutes (the hotel is 5–10 minutes' walk from Jiaoxi Station; set out from the hotel around 8:30).</li>
+      <li>Luodong Station → Tiger Rice Noodle tourist factory: taxi, about 15 minutes.</li>
+      <li>Tiger Rice Noodle → Xihe Seafood tourist factory: both on Lixing Rd. in the Lize Industrial Zone and next to each other, about 5–10 minutes on foot, no taxi needed.</li>
+      <li>Xihe Seafood → Luodong Forestry Culture Park: taxi, about 25–30 minutes.</li>
+      <li>Luodong Forestry Culture Park → Luodong Tourist Night Market: about 10–15 minutes on foot (about 700 m–1 km), passing the front side of Luodong Station – a very convenient route.</li>
+      <li>Luodong Tourist Night Market → Jiaoxi hotel: about 10 minutes on foot to Luodong Station, TRA back to Jiaoxi Station (about 20–25 minutes), then 5–10 minutes on foot to the hotel – easier than a taxi.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids &amp; Seniors</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>Both Tiger Rice Noodle and Xihe Seafood offer free parking, are air-conditioned and fully indoors, and are next to each other within walking distance, so they are ideal to do in one morning without calling cars frequently.</li>
+        <li>Xihe Seafood tourist factory is closed every Wednesday and this plan visits on Thursday, which is fine. If you change the date, check first that it is open that day.</li>
+        <li>Tiger Rice Noodle's all-you-can-eat fried rice noodles and Xihe Seafood's DIY blanched seafood both make a good lunch, so the two sites can cover the midday meal without needing a separate restaurant.</li>
+        <li>Luodong Forestry Culture Park is free, with flat hard ground throughout. The loop around the log pond takes about 20 minutes and is friendly for seniors and kids; the forest railway occasionally runs a small train display, which kids usually love. The park is large, so if energy is limited just pick the classic route of the bamboo station + the log pond loop rather than the whole park.</li>
+        <li>If the seniors or the child have limited energy, shorten the stay at the Forestry Culture Park and move early to the area around Luodong Night Market to find a place to sit and rest.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Tiger Rice Noodle and Xihe Seafood are both indoor spaces, ideal for a rainy day – you can stay longer and cut back on outdoor time.</li>
+        <li>Luodong Forestry Culture Park is mostly outdoor trails. If the rain is heavy, shorten the stay or switch to the indoor exhibition halls in the park (Forest Products Hall, Forest Railway Hall, etc.), or simply rest at the café or small shops in the Japanese-style wooden dormitory cluster.</li>
+        <li>Luodong Night Market is mostly semi-open stalls, so light rain has little effect – bring an umbrella.</li>
+      </ul>
+    </div>
+  </div>
+  <!-- DAY 6 -->
+  <h2 class="day-title" id="day6-en">Day 6 | Oct 30 (Fri) Jiaoxi → Taipei</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Train back north, an easy stroll through old Taipei lanes in the afternoon, then to Sanchong in the evening for Bawei ginger duck hotpot to warm up</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tbody><tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">10:00–11:15 AM</td><td>Check out of Hotel PIN Jiaoxi and take the hotel shuttle or a taxi (about 5 minutes) to Jiaoxi Station. You can buy some souvenirs on the way.</td></tr>
+      <tr><td class="time">11:47 AM – 1:03 PM</td><td>Take TRA <strong>EMU3000 No. 213</strong> back to Taipei (about 1 hour 16 minutes).</td></tr>
+      <tr><td class="time">From 1:03 PM</td><td>Arrive at Taipei Main Station and walk to CityInn Hotel Taipei Station Branch III (新驛旅店台北車站三館) (about 5–10 minutes) to leave luggage (or check in directly if the room is ready). Have lunch nearby.</td></tr>
+      <tr><td class="time">2:30–3:45 PM</td><td>Back-exit area of Taipei Main Station – pick up any last items such as snacks, drugstore goods and stationery, at a relaxed pace that does not tire anyone.</td></tr>
+      <tr><td class="time">From 3:45 PM</td><td>Head to Bawei Ginger Duck Hotpot in Sanchong – <strong>Option A (bus):</strong> take Bus 652 or 299 from the Taipei Station (Zhongxiao) stop. Both pass the Xinbei Blvd. / Zhonghua Rd. intersection area; after getting off, walk about 10–15 minutes to No. 100, Sec. 1, Chongyang Rd. (重陽路一段100號). <strong>Option B (MRT):</strong> take the Bannan Line 2 stops to Zhongxiao Xinsheng Station, transfer to the Zhonghe–Xinlu Line (towards Huilong) for about 7–8 stops to Cailiao or Sanchong Station, then walk 6–8 minutes from the exit. About 35–40 minutes in total; leave early to avoid the evening queue.</td></tr>
+      <tr><td class="time">5:00–7:00 PM</td><td><strong>Bawei Ginger Duck Hotpot, "Taiwan Flagship Store" (三重霸味薑母鴨『全台總店』)</strong> – share the signature charcoal-fired ginger duck and the Bawei Three Treasures (small meatballs, ling-ling rolls, fresh tofu skin) to warm up. Be seated around 17:00 to avoid the 18:30–20:30 queue peak.</td></tr>
+      <tr><td class="time">7:30–8:30 PM</td><td>Return to the Taipei Main Station hotel by the same route (bus or MRT) and get to bed early.</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Jiaoxi Station → Taipei Main Station: <strong>EMU3000 No. 213 is booked, departing 11:47 and arriving 13:03</strong> (tickets are booked; please keep the booking record).</li>
+      <li>Taipei Main Station → CityInn Branch III: about 5 minutes on foot from Exit Y7 of the underground mall. On arrival you can walk around the back-exit shopping area with no extra transport.</li>
+      <li>Taipei Main Station → Bawei Ginger Duck Hotpot in Sanchong (bus option): take <strong>Bus 652</strong> (Xinzhuang – Neihu) or <strong>Bus 299</strong> (Xinzhuang – Yongchun High School) from the Taipei Station (Zhongxiao) stop. Both pass the Xinbei Blvd. / Zhonghua Rd. intersection area. Weekday first/last buses run about 05:00/05:30 – 22:30/23:25, every 12–20 minutes. After getting off, walk about 10–15 minutes to No. 100, Sec. 1, Chongyang Rd. Check real-time arrivals and the latest stop locations with the "Taipei Bus" app before leaving; buses need no reservation.</li>
+      <li>Taipei Main Station → Bawei Ginger Duck Hotpot in Sanchong (MRT option): take the Bannan Line 2 stops to Zhongxiao Xinsheng Station, transfer to the Zhonghe–Xinlu Line (towards Huilong) for about 7–8 stops to Cailiao or Sanchong Station, about 35–40 minutes in total, then walk 6–8 minutes from the exit. Address: No. 100, Sec. 1, Chongyang Rd., Sanchong District, New Taipei City (新北市三重區重陽路一段100號).</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids &amp; Seniors</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>This day is mainly "transition + recovery". It is deliberately not packed, so everyone can recover from the continuous outings in Yilan.</li>
+        <li>If the seniors or the child are tired, stay at the hotel in the afternoon and set out for Sanchong in the evening.</li>
+        <li>Both Bus 652 and 299 pass the Taipei Station (Zhongxiao) stop. If you don't want to transfer on the MRT and prefer a seat straight towards Sanchong, consider the bus option; however, the walk after getting off the bus is slightly longer than with the MRT (about 10–15 minutes). Choose bus or MRT depending on the seniors' energy – the travel times are similar.</li>
+        <li>The ginger duck broth is stewed with sesame oil and old ginger and is warming in nature. Seniors should eat moderately and not overeat; for the child, choose mild side dishes (e.g. cabbage, noodles) to avoid a heavy stomach at night.</li>
+        <li>The Bawei Ginger Duck Taiwan Flagship Store does not take reservations. It has been confirmed to be open now (it only operates in autumn and winter). It is still advisable to check its Facebook page for opening hours on the day.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Taipei Main Station itself is a large indoor mall (underground mall + station hall), so on a rainy day you can shop and eat within the station area, unaffected.</li>
+        <li>Bawei Ginger Duck Hotpot is indoor dining (three floors), so rain is no problem and the itinerary needs no change. If the rain is heavy, choose the MRT option to reduce the walk in the rain after getting off the bus.</li>
+      </ul>
+    </div>
+  </div>
+  <!-- DAY 7 -->
+  <h2 class="day-title" id="day7-en">Day 7 | Oct 31 (Sat) Taipei (Departure Day)</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Everything is planned within walking distance of Taipei Main Station – buy souvenirs in the morning, leave time for a rest in the afternoon, finish with Ningxia Night Market in the evening, then go straight to Taoyuan Airport</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tbody><tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">9:00 AM</td><td>Check out of CityInn Branch III; luggage is stored at the hotel front desk.</td></tr>
+      <tr><td class="time">10:00 AM–1:30 PM</td><td><strong>Nanmen Market (南門市場)</strong> – the last shopping stop of the trip. Take your time and have lunch there. Recommended souvenirs: pineapple cakes, nougat, dried meat jerky, Taiwanese tea, mullet roe, dried scallop sauce, etc. Indoors and air-conditioned, so it isn't tiring for the seniors.</td></tr>
+      <tr><td class="time">1:30–5:00 PM</td><td>Rest – the hotel room has been checked out and luggage is still at the front desk, so find a seat to rest, have coffee or a light meal in the hotel lobby, the Taipei Main Station hall, or the Q Square / underground mall shops. Save energy for the red-eye flight tonight; this rest is worth more than squeezing in another sight.</td></tr>
+      <tr><td class="time">5:30–7:00 PM</td><td><strong>Ningxia Night Market (寧夏夜市)</strong> – about 10–15 minutes on foot from the hotel, and the crowds are not yet at their peak at this hour. Recommended: Liu Yuzai egg-yolk taro cakes, Fang Family chicken rice, Doufu Zhuang (豆花莊) tofu pudding, oyster omelette.</td></tr>
+      <tr><td class="time">7:00–7:30 PM</td><td>Walk back to the hotel and collect the stored luggage.</td></tr>
+      <tr><td class="time">7:30–8:00 PM</td><td>Walk to the A1 Airport MRT station at Taipei Main Station (about 10 minutes).</td></tr>
+      <tr><td class="time">From 8:30 PM</td><td>Arrive at Taoyuan Airport. If you have made purchases, claim the tax refund at the airport (bring your passport and purchase receipts, and allow plenty of time). Then browse the duty-free shops, have dinner and wait for boarding.</td></tr>
+      <tr><td class="time">00:15 AM</td><td>TR875 departs for Singapore (arrives at Changi at 04:55 AM on Nov 1).</td></tr>
+    </tbody></table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Taipei Main Station → Nanmen Market: take the Bannan Line 1 stop to Ximen Station, transfer to the Songshan–Xindian Line (Green) 1 stop to Xiaonanmen Station, then walk about 5 minutes; or walk about 20 minutes from Taipei Main Station.</li>
+      <li>Hotel → Ningxia Night Market: about 10–15 minutes on foot, no ride needed.</li>
+      <li>Hotel → Taoyuan Airport: walk about 10 minutes to the A1 Airport MRT station at Taipei Main Station, then take the express train about 35 minutes. Allow more than 3 hours in total to stay relaxed.</li>
+      <li>Today's whole itinerary is within walking distance of Taipei Main Station, with no long cross-district transport, so you can return to the hotel to rest or head to the airport early at any time.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids &amp; Seniors</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>The last day is deliberately kept within walking distance of Taipei Main Station and can be done without any long transport, avoiding travel fatigue so the seniors and the child have enough energy for tonight's red-eye flight.</li>
+        <li>Because of the late-night flight, leave some slack and don't pack the schedule too tightly. The afternoon rest is very important and it is not recommended to cancel it at short notice.</li>
+        <li>Pack the large luggage the night before, so on the day you only handle carry-on items, reducing running around.</li>
+        <li>If the seniors or the child are tired, they can rest in the hotel lobby, Taipei Main Station or the shopping malls in the afternoon without forcing another outing, and dinner can also be had near the hotel.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Nanmen Market is an indoor market, completely unaffected by weather.</li>
+        <li>Ningxia Night Market is mostly semi-open stalls. If the rain is heavy, switch to the Taipei underground mall or Q Square for dining and shopping, also within walking distance of the hotel.</li>
+      </ul>
+    </div>
+  </div>
+  <!-- PACKING -->
+  <h2 class="section-title" id="packing-en">4. Packing &amp; Practical Reminders</h2>
+  <h3 class="sub-title">✅ Documents &amp; Finance</h3>
+  <div class="packing-grid">
+    <div class="packing-card">
+      <h4>Essential documents</h4>
+      <ul class="plain-list">
+        <li>Passport (valid for 6+ months) and a backup copy (photo on your phone)</li>
+        <li>Electronic copies of flight tickets / boarding passes</li>
+        <li>Hotel booking confirmations (in both Chinese and English, so taxi drivers can check the address)</li>
         <li>Travel insurance policy</li>
       </ul>
     </div>
     <div class="packing-card">
-      <h4>Finance & Communication</h4>
+      <h4>Money &amp; connectivity</h4>
       <ul class="plain-list">
-        <li>NT dollar cash (some food stalls and markets don't accept credit cards)</li>
-        <li>EasyCard (available at the airport, usable on MRT/buses/some shops)</li>
-        <li>Credit card (usable at Nanmen Market, Carrefour, and chain restaurants)</li>
-        <li>International SIM card or WiFi hotspot device (purchase beforehand at Changi Airport or online)</li>
+        <li>New Taiwan dollar cash (some small stalls and markets don't accept credit cards)</li>
+        <li>EasyCard (buy at the airport; works on MRT / buses / some shops; you can also tap in and out for short TRA trips, more convenient than buying tickets)</li>
+        <li>Credit card (Nanmen Market, Carrefour and chain restaurants accept cards)</li>
+        <li>Overseas data SIM or Wi-Fi router (buy in advance at Singapore airport or online)</li>
       </ul>
     </div>
   </div>
-
-  <h3 class="sub-title">✅ For Seniors & Children</h3>
+  <h3 class="sub-title">✅ For Seniors &amp; the Child</h3>
   <div class="packing-grid">
     <div class="packing-card">
-      <h4>Senior Essentials</h4>
+      <h4>Senior essentials</h4>
       <ul class="plain-list">
-        <li>Regular medications (blood pressure, digestive, etc. — recommend carrying in carry-on, not checked)</li>
-        <li>Comfortable, non-slip walking shoes (this itinerary involves a lot of walking — shoes matter more than luggage)</li>
-        <li>A warm jacket (for the early arrival and after hot spring soaks — October mornings/evenings in Taiwan can be cool)</li>
-        <li>Reading glasses/spare hearing aid batteries</li>
+        <li>Regular medication (blood pressure, stomach medicine, etc.; carry in hand luggage rather than checking in)</li>
+        <li>Comfortable non-slip walking shoes (many trails on this trip; shoes matter more than the suitcase)</li>
+        <li>A warm jacket (for early-morning arrival and after soaking; Taiwan's October mornings and evenings are cool)</li>
+        <li>Reading glasses / spare hearing-aid batteries</li>
       </ul>
     </div>
     <div class="packing-card">
-      <h4>Children's Essentials</h4>
+      <h4>Child essentials</h4>
       <ul class="plain-list">
-        <li>Regular children's medication (fever reducer, digestive medicine, mosquito repellent)</li>
-        <li>Lightweight stroller (useful for the longer walks at Meihua Lake, NCFTA, the zoo, etc.)</li>
-        <li>Hot spring bath toys for kids (Hotel PIN Jiaoxi rooms already have private hot spring tubs)</li>
-        <li>A comfort toy/familiar item (useful during the red-eye flight and in unfamiliar surroundings)</li>
+        <li>Regular children's medication (fever reducer, stomach medicine, mosquito repellent)</li>
+        <li>A light stroller (for long walks such as the zoo, the walking sections between the Day 4 tourist factories, and Luodong Forestry Culture Park on Day 5)</li>
+        <li>Hot-spring bath toys for the child (Hotel PIN Jiaoxi rooms have a private hot-spring bath)</li>
+        <li>A comfort toy / familiar item (for the red-eye flight and the first hours in unfamiliar surroundings)</li>
       </ul>
     </div>
   </div>
-
-  <h3 class="sub-title">✅ Clothing & Other Items</h3>
+  <h3 class="sub-title">✅ Clothing &amp; Other</h3>
   <div class="packing-grid">
     <div class="packing-card">
       <h4>Clothing</h4>
       <ul class="plain-list">
-        <li>Light raincoat/folding umbrella (rain is possible in both Taipei and Yilan in October)</li>
-        <li>Non-slip, waterproof shoes (needed for zoo paths and lakeside walkways)</li>
-        <li>Swimwear for the hot springs (required for the outdoor SPA area at Hotel PIN Jiaoxi)</li>
-        <li>One warm jacket (for morning/evening temperature swings and air-conditioned rooms)</li>
+        <li>Light raincoat / folding umbrella (rain is possible in both Taipei and Yilan in October)</li>
+        <li>Non-slip, waterproof footwear (zoo paths, lakeside trails, the Forestry Culture Park log-pond trail)</li>
+        <li>Swimwear for the hot springs (the outdoor spa at Hotel PIN Jiaoxi requires swimwear)</li>
+        <li>One warm jacket (for the early/late temperature difference and air-conditioned rooms)</li>
       </ul>
     </div>
     <div class="packing-card">
-      <h4>Other Items</h4>
+      <h4>Other</h4>
       <ul class="plain-list">
-        <li>Charger/power bank, plug adapter (Taiwan uses 110V, different sockets from Singapore)</li>
-        <li>A small reusable bag (for souvenir and market shopping)</li>
-        <li>Wet wipes and hand sanitizer (before/after eating at night markets and markets)</li>
-        <li>A reusable water bottle (most attractions provide water fountains for refills)</li>
+        <li>Chargers / power bank, plug adapters (Taiwan uses 110V, and the sockets differ from Singapore's)</li>
+        <li>A small reusable bag (for souvenirs and market shopping)</li>
+        <li>Wet wipes and sanitiser (before and after eating at night markets and markets)</li>
+        <li>A water bottle (most attractions have water dispensers to refill)</li>
       </ul>
     </div>
   </div>
-
-  <h3 class="sub-title">✅ Insurance & Other Notes</h3>
+  <h3 class="sub-title">✅ Insurance &amp; Other Notes</h3>
   <div class="note-box">
-    <div class="box-title">Insurance & Other Notes</div>
+    <div class="box-title">Insurance &amp; other</div>
     <ul>
-      <li>Recommend purchasing travel insurance that covers flight delays/cancellations, especially given the seniors traveling along and the possibility of a lingering typhoon in late October.</li>
-      <li>The return flight TR875 departs at 00:15 (a red-eye flight) — the family should avoid packing 31 Oct too tightly, to conserve energy.</li>
-      <li>For TRA reserved seats between Jiaoxi and Taipei, book in advance via the website/app (up to 28 days ahead) — weekend trains are popular, so lock them in early.</li>
-      <li>All meals throughout the trip avoid beef-based dishes (e.g., beef noodles, mutton soup are optional if desired), focusing on local Yilan/Taipei pork, seafood, and noodle dishes instead.</li>
-      <li>Sanchong Bawei Ginger Duck Hot Pot only operates in autumn/winter — check their Facebook page beforehand to confirm they're open that day.</li>
-      <li>Seniors 65+ enter the zoo free, children under 6 enter free — bring identification for verification.</li>
+      <li>Consider travel insurance that covers flight delays/cancellations, especially with seniors travelling and the chance of lingering typhoon weather in late October.</li>
+      <li>The return flight TR875 is a red-eye departing at 00:15, so avoid an overly tight schedule on Oct 31 and save everyone's energy.</li>
+      <li>Bawei Ginger Duck Hotpot in Sanchong only operates in autumn and winter, so check its Facebook page for opening on the day before you go.</li>
+      <li>Seniors aged 65+ enter the zoo free, and children under 6 enter free; carry ID for checking.</li>
+      <li>Taipei / New Taipei buses need no reservation – tap your EasyCard or pay cash on boarding, and press the bell early before getting off. Download the "Taipei Bus" or "Bus+" app before leaving to check real-time arrivals and stop locations for routes such as 652 and 299.</li>
     </ul>
   </div>
-
   <!-- SUMMARY -->
-  <h2 class="section-title" id="summary">5. Core Itinerary Principles Recap</h2>
+  <h2 class="section-title" id="summary-en">5. Trip Principles Recap</h2>
   <div class="summary-box">
-    <h3>📋 Core Itinerary Principles Recap</h3>
+    <h3>📋 Trip Principles Recap</h3>
     <ul class="plain-list">
-      <li><strong>Balanced pacing:</strong> One major attraction each morning, 1-2 relaxed activities each afternoon, ensuring seniors/child have plenty of rest time.</li>
-      <li><strong>Simple transport:</strong> Rely entirely on TRA trains + MRT + taxis for short distances — no self-driving, no complicated transit passes.</li>
-      <li><strong>Concentrated accommodation:</strong> Taipei Main Station area – Roaders Plus Hotel (3 nights) + Jiaoxi – Hotel PIN Jiaoxi (3 nights), only one hotel change for the entire trip.</li>
-      <li><strong>Pitfalls avoided:</strong> Skips long-queue trendy spots, steep pure-hiking routes, cultural/creative parks/Taipei 101/Jiufen/Shifen/National Palace Museum/Yuanshan, and the Maokong Gondola (closed for maintenance the Monday of the week of 26 Oct, not a trial-run day).</li>
-      <li><strong>All requested attractions included:</strong> Taipei Rear Station, Q Square, Underground Mall, Taipei Zoo, Linjiang St. Tourist Night Market, Sanchong Bawei Ginger Duck Hot Pot, Nanmen Market, and Ningxia Night Market are all incorporated, with Day 1, Day 2, and Day 7 having zero overlap.</li>
-      <li><strong>Red-eye-flight friendly:</strong> The final day stays entirely within walking distance of Taipei Main Station, with an afternoon nap reserved and a direct trip on the Airport MRT right across from the hotel in the evening — no need to head back into the city.</li>
+      <li><strong>Relaxed pacing:</strong> Most days have 1 major sight in the morning and 1–2 easy activities in the afternoon. Day 4 and Day 5 have more stops (the tourist factories are mostly free indoor spaces), so cut flexibly depending on the energy of the seniors and the child.</li>
+      <li><strong>Simple transport:</strong> For short hops such as Jiaoxi ↔ Yilan and Jiaoxi ↔ Luodong, take the TRA first (about 10–25 minutes, frequent trains), and switch to a taxi only when the last train has gone or the timing doesn't connect. In Taipei, make good use of the MRT and buses (e.g. routes 652/299). No self-driving, no complicated multi-city passes.</li>
+      <li><strong>Concentrated lodging:</strong> Taipei Main Station area · Hinoen (Oct 25–26, 2 nights) + Jiaoxi · Hotel PIN Jiaoxi (Oct 27–29, 3 nights) + Taipei Station back-exit · CityInn Branch III (Oct 30, 1 night). All near Taipei Main Station and Jiaoxi Station, with 2 hotel changes.</li>
+      <li><strong>Pitfalls avoided:</strong> Avoid long-queue influencer shops, steep pure-climbing routes, creative parks / Taipei 101 / Jiufen / Shifen / National Palace Museum / Yuanshan, and the Maokong Gondola (closed for routine maintenance on Monday Oct 26).</li>
+      <li><strong>All requested sights included:</strong> Taipei back-exit area, Q Square, the underground mall, Postal Museum Taipei, Taipei Zoo, Linjiang Street Tourist Night Market, Shi Er Guo at Carrefour Guilin, Bawei Ginger Duck Hotpot in Sanchong, Nanmen Market, Ningxia Night Market and Luodong Forestry Culture Park are all scheduled, with no repetition across Day 1, Day 2 and Day 7.</li>
+      <li><strong>Red-eye friendly:</strong> The last day stays within walking distance of Taipei Main Station, with an afternoon rest, and in the evening you walk to Taipei Main Station for the Airport MRT, with no return to the city.</li>
     </ul>
   </div>
-
   <div class="footer-note">
-    Taipei & Yilan/Jiaoxi Travel Handbook ｜ 25 Oct 2026 – 1 Nov 2026
+    Taipei &amp; Yilan Jiaoxi Travel Guide ｜ Oct 25 – Nov 1, 2026
   </div>
-
 </div>
-</body>
-</html>
+</div>
+
+<script>
+(function () {
+  var TITLES = { zh: "台北・宜兰礁溪 旅行手册", en: "Taipei & Yilan Jiaoxi Travel Guide" };
+  var btns = document.querySelectorAll('.lang-switch button');
+  function headings(id) { return document.querySelectorAll('#' + id + ' h2'); }
+  function currentIndex(cur) {
+    var hs = headings(cur), idx = -1;
+    for (var i = 0; i < hs.length; i++) {
+      if (hs[i].getBoundingClientRect().top <= 80) idx = i;
+    }
+    return idx;
+  }
+  function apply(lang) {
+    document.body.classList.toggle('lang-en', lang === 'en');
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hans';
+    document.title = TITLES[lang];
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
+  }
+  function setLang(lang) {
+    var cur = document.body.classList.contains('lang-en') ? 'en' : 'zh';
+    if (cur === lang) return;
+    var idx = currentIndex(cur);
+    apply(lang);
+    var hs = headings(lang);
+    if (idx >= 0 && hs[idx]) { hs[idx].scrollIntoView(); } else { window.scrollTo(0, 0); }
+    try { localStorage.setItem('tpe-lang', lang); } catch (e) {}
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
+  var saved = null;
+  try { saved = localStorage.getItem('tpe-lang'); } catch (e) {}
+  var q = /[?&]lang=(en|zh)/.exec(location.search);
+  apply(q ? q[1] : (saved === 'en' ? 'en' : 'zh'));
+})();
+</script>
+</body></html>
