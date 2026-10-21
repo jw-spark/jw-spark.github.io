@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Center – AAISM Flashcards</title>
+<style>
+:root{
+  --navy:#1f2a5c; --navy-2:#2b3977; --bg:#f5f5f5; --card:#fff; --line:#e3e3e3;
+  --text:#333; --muted:#666; --ok:#2e9e5b; --bad:#d64545; --warn:#e8a317;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Segoe UI","Open Sans",Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.35}
+.wrap{max-width:1500px;margin:0 auto;padding:18px 18px 40px}
+.gc-title{font-size:18px;font-weight:700;margin:0 0 12px;color:#333}
+.tabbar{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);margin-bottom:22px;gap:12px;flex-wrap:wrap}
+#tabs{display:flex;flex-wrap:wrap}
+#tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:9px 16px 9px;font:inherit;font-size:13px;color:#333;cursor:pointer;margin-bottom:-1px;white-space:nowrap}
+#tabs button:hover{background:#ececec}
+#tabs button.active{color:var(--navy);font-weight:700;border-bottom-color:var(--navy)}
+#portal{color:var(--navy);font-size:15px;text-decoration:underline;padding-bottom:8px}
+
+/* Dashboard */
+.dash{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 18px;max-width:1420px}
+.panel{background:var(--card);border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.panel>.ph{padding:14px 15px;font-weight:700;font-size:15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.panel>.pb{padding:14px 15px;position:relative}
+.drow{display:flex;align-items:center;gap:16px}
+.drow .txt{flex:1;font-size:15px;line-height:1.45}
+.ico{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.ico svg{width:24px;height:24px}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:4px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer}
+.btn:hover{background:var(--navy-2)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.ghost:hover{background:#eef0fa}
+.btn.big{padding:10px 22px;font-size:15px}
+.btn:disabled{opacity:.5;cursor:default}
+.dash-foot{margin-top:22px;color:var(--muted);font-size:12px}
+.dash-foot a{color:var(--navy);cursor:pointer;text-decoration:underline}
+
+/* Game page */
+.gpage{max-width:1100px}
+.hud{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.pill{background:#eef0fa;border-radius:20px;padding:5px 14px;font-size:13px;color:#333;display:flex;gap:8px;align-items:center}
+.pill b{color:var(--navy);font-size:15px}
+.stage{min-height:360px}
+.intro{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.intro .ico{width:64px;height:64px}
+.intro .ico svg{width:40px;height:40px}
+.intro h3{margin:0 0 6px;font-size:18px}
+.intro ul{margin:8px 0 14px 18px;padding:0;color:#444}
+.intro li{margin:3px 0}
+.overlay{position:absolute;inset:0;background:rgba(255,255,255,.93);display:flex;align-items:center;justify-content:center;z-index:20;border-radius:0 0 6px 6px}
+.overlay .box{text-align:center;padding:24px;max-width:460px}
+.overlay h2{margin:0 0 6px;font-size:24px;color:var(--navy)}
+.overlay .big{font-size:46px;font-weight:700;color:var(--navy);margin:6px 0}
+.overlay .tag{display:inline-block;background:var(--warn);color:#fff;border-radius:12px;padding:2px 10px;font-size:12px;margin-bottom:6px}
+.overlay .row{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.overlay.modal{position:absolute;background:rgba(20,25,60,.55)}
+.overlay.modal .box{background:#fff;border-radius:8px;max-width:640px;width:92%;text-align:left;box-shadow:0 6px 30px rgba(0,0,0,.3)}
+
+.promptbox{background:#f3f5ff;border:1px solid #d9def5;border-radius:6px;padding:14px 16px;margin-bottom:14px;font-size:16px}
+.promptbox small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.bar{height:6px;background:#e5e7f2;border-radius:3px;overflow:hidden;margin-bottom:12px}
+.bar>i{display:block;height:100%;background:var(--navy);width:100%;transition:width .25s linear}
+.bar.low>i{background:var(--bad)}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.opt{background:#fff;border:1px solid #cdd2ea;border-radius:6px;padding:12px 14px;font:inherit;font-size:15px;text-align:left;cursor:pointer;min-height:48px;color:#222}
+.opt:hover:not(:disabled){border-color:var(--navy);background:#f7f8ff}
+.opt.ok{background:#dff5e7;border-color:var(--ok)}
+.opt.bad{background:#fbe0e0;border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.fb{min-height:24px;margin-top:10px;font-weight:600}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:6px}
+
+/* hunter I grid */
+.hgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tcard{background:#fff;border:2px solid #c5d94e;border-radius:8px;padding:10px 8px;min-height:68px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;color:#2c3a10;display:flex;align-items:center;justify-content:center;text-align:center}
+.tcard:hover:not(:disabled){background:#f6fbd9}
+.tcard.ok{background:#bfeccc;border-color:var(--ok)}
+.tcard.bad{background:#f7cfcf;border-color:var(--bad);animation:shake .3s}
+.tcard:disabled{opacity:.45;cursor:default}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* hunter II arena */
+.arena{position:relative;height:380px;border-radius:8px;overflow:hidden;border:1px solid #cfd8a0;
+  background:radial-gradient(circle at 50% 50%,#f3f8d4 0 12%,#e9f2b5 12% 24%,#f3f8d4 24% 36%,#e9f2b5 36% 48%,#f3f8d4 48% 100%)}
+.fcard{position:absolute;width:150px;min-height:52px;padding:6px 8px;background:#fff;border:2px solid #3b8f4a;border-radius:8px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;text-align:center;cursor:crosshair;user-select:none;box-shadow:0 2px 5px rgba(0,0,0,.18);color:#173d1d;touch-action:manipulation}
+.fcard.ok{background:#bfeccc}
+.fcard.bad{background:#f7cfcf;border-color:var(--bad)}
+
+/* coupler */
+.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mcard{height:104px;border-radius:8px;border:2px solid #e2a3b8;background:#fbe3ec;font:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;font-size:12.5px;color:#222;position:relative}
+.mcard .back{font-size:34px;color:#e2577f}
+.mcard.up{background:#fff}
+.mcard.up.t{border-color:#3a6fb5;font-weight:700;font-size:15px;color:#1c3f73}
+.mcard.up.d{border-color:#a65ec2}
+.mcard.done{background:#dff5e7;border-color:var(--ok);cursor:default}
+.mcard.miss{background:#fbe0e0;border-color:var(--bad)}
+
+/* sweeper */
+.sw-wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.sgrid{display:grid;grid-template-columns:repeat(9,40px);gap:3px;background:#ddd;padding:3px;border-radius:6px;user-select:none}
+.sc{width:40px;height:40px;border:0;border-radius:4px;background:#8793c9;font:inherit;font-weight:700;font-size:16px;cursor:pointer;color:#fff;padding:0}
+.sc:hover:not(.open){background:#98a3d6}
+.sc.open{background:#f4f4f4;cursor:default;color:#333}
+.sc.mine{background:#f9d4d4}
+.sc.def{background:#dff5e7}
+.sc.n1{color:#1a5fd1}.sc.n2{color:#2a8a3c}.sc.n3{color:#d03030}.sc.n4{color:#4a2a9a}.sc.n5{color:#a04010}.sc.n6{color:#0a8a8a}
+.sw-side{flex:1;min-width:230px;color:#444}
+.sw-side p{margin:0 0 10px}
+.toggle.on{background:var(--warn);color:#fff;border-color:var(--warn)}
+
+/* elimination */
+.skull{font-size:22px}
+
+/* crossword */
+.cw{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.cwgrid{border-collapse:collapse;flex:none}
+.cwgrid td{width:34px;height:34px;padding:0;position:relative}
+.cwgrid td.l{background:#fff;border:1px solid #444}
+.cwgrid td.l.hl{background:#efe5f7}
+.cwgrid td.l.act{background:#d9c1ec}
+.cwgrid .n{position:absolute;top:0;left:2px;font-size:9px;color:#555;pointer-events:none;line-height:1.1}
+.cwgrid input{width:100%;height:100%;border:0;background:transparent;text-align:center;font:inherit;font-weight:700;font-size:17px;text-transform:uppercase;padding:6px 0 0;caret-color:transparent;cursor:pointer;outline:none;color:#222}
+.cwgrid td.l.okc{background:#dff5e7}
+.cwgrid td.l.badc{background:#fbe0e0}
+.cwgrid td.l.hint input{color:#6a2f96}
+.cwclues{flex:1;min-width:260px;max-height:520px;overflow:auto}
+.cwclues h4{margin:0 0 6px;font-size:14px;color:var(--navy)}
+.cwclues ol{margin:0 0 14px;padding:0;list-style:none}
+.cwclues li{padding:5px 8px;border-radius:4px;cursor:pointer;font-size:13px}
+.cwclues li:hover{background:#f3eefa}
+.cwclues li.act{background:#d9c1ec}
+.cwclues li.solved{color:var(--ok)}
+.cwclues li b{margin-right:6px;color:var(--navy)}
+.cwbtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+@media (max-width:900px){
+  .dash{grid-template-columns:1fr}
+  .opts{grid-template-columns:1fr}
+  .hgrid,.cgrid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="gc-title">Game Center</h1>
+  <div class="tabbar">
+    <nav id="tabs"></nav>
+    <a id="portal" href="#">Go to User Portal</a>
+  </div>
+  <main id="main"></main>
+</div>
+
+<script>
+/* =========================================================
+   CONFIG
+   ========================================================= */
+const USER_PORTAL_URL = 'index.html#portal'; // back to the main page's User Portal
+const STORE_KEY = 'aaismGameCenter.v1'; // localStorage key for high scores
+
+/* =========================================================
+   CARD DATABASE (from AAISM Flashcard.txt)
+   ========================================================= */
+const CARDS_RAW = [{"n": 1, "term": "Accuracy", "defs": ["The fraction of predictions that a classification model predicted correctly. In multiclass classification, accuracy is defined as correct predictions divided by total number of examples. In binary classification, accuracy is defined as true positives plus true negatives divided by total number of examples."]}, {"n": 2, "term": "Active learning", "defs": ["A training approach in which the algorithm chooses some of the data from which it learns. Active learning is particularly valuable when labeled examples are scarce or expensive to obtain. Instead of blindly seeking a diverse range of labeled examples, an active learning algorithm selectively seeks the specific range of examples that it needs for learning."]}, {"n": 3, "term": "AI designer", "defs": ["A professional who creates and implements artificial intelligence solutions"]}, {"n": 4, "term": "AI observability", "defs": ["The practice of monitoring and analyzing models to ensure they are reliable, effective, and correct"]}, {"n": 5, "term": "Algorithm", "defs": ["A finite set of well-defined, unambiguous rules for the solution of a problem in a finite number of steps. It is a sequence of operational actions that lead to a desired goal and is the basic building block of a program."]}, {"n": 6, "term": "Artificial intelligence", "defs": ["An advanced computer system that can simulate human capabilities, such as analysis, based on a predetermined set of rules"]}, {"n": 7, "term": "Artificial general intelligence", "defs": ["A type of AI characterized by its ability to undertake any intellectual task a human can perform, mimicking human sensory perception, fine motor skills, problem solving, navigation, natural language understanding, creativity, and social-emotion engagement"]}, {"n": 8, "term": "Artificial narrow intelligence", "defs": ["A form of AI that is limited to a specific domain or area of knowledge and simulates human cognition"]}, {"n": 9, "term": "Average precision", "defs": ["A metric for summarizing the performance of a ranked sequence of results. Average precision is calculated by taking the average of the precision values for each relevant result in a ranked list (each result in the ranked list where the recall increases relative to the previous result)."]}, {"n": 10, "term": "Backpropagation", "defs": ["An algorithm for iteratively adjusting the weights used in a neural network system. Backpropagation is often used to implement gradient descent."]}, {"n": 11, "term": "Bayes’ theorem", "defs": ["An equation for calculating the probability that something is true if something potentially related to it is true. If P(A) means “the probability that A is true” and P(A|B) means “the probability that A is true if B is true,” then Bayes’ Theorem tells us that P(A|B) = (P(B|A)P(A)) / P(B)."]}, {"n": 12, "term": "Bayesian network", "defs": ["Graphs that compactly represent the relationship between random variables for a given problem. These graphs aid reasoning or decision making in the face of uncertainty. These networks are usually represented as graphs in which the link between any two nodes is assigned a value representing the probabilistic relationship between those nodes."]}, {"n": 13, "term": "Bias", "defs": ["In machine learning (ML), systemic errors or distortions either in algorithms, data, or models that lead to prejudiced results"]}, {"n": 14, "term": "Boosting", "defs": ["A machine learning technique that iteratively combines a set of simple and not very accurate classifiers (referred to as “weak” classifiers) into a classifier with high accuracy (a “strong” classifier) by upweighting the examples the model is currently misclassifying"]}, {"n": 15, "term": "Calibration layer", "defs": ["A post-prediction adjustment typically used to account for prediction bias. The adjusted predictions and probabilities should match the distribution of an observed set of labels."]}, {"n": 16, "term": "Checkpoint", "defs": ["Data that captures the state of the variables of a model at a particular time. Checkpoints enable exporting model weights and performing training across multiple sessions. Checkpoints also enable training to continue past errors (e.g., job preemption)."]}, {"n": 17, "term": "Chi-square test", "defs": ["An analysis technique used to estimate whether two variables in a cross-tabulation are correlated. A chi-square distribution varies from normal distribution based on the “degrees of freedom” used to calculate it."]}, {"n": 18, "term": "Classification", "defs": ["The identification of two or more categories in which an item belongs"]}, {"n": 19, "term": "Clustering", "defs": ["An algorithm for dividing data instances into groups—not a predetermined set of groups, but groups identified by the execution of the algorithm because of similarities found among the instances. The center of each cluster is known as the “centroid.”"]}, {"n": 20, "term": "Coefficient", "defs": ["A number or algebraic symbol prefixed as a multiplier to a variable or unknown quantity (e.g., x in x(y + z), 6 in 6ab)"]}, {"n": 21, "term": "Confidence interval", "defs": ["A range specified for an estimate to indicate margin of error, combined with a probability that a value will fall in that range"]}, {"n": 22, "term": "Continuous feature", "defs": ["A floating-point feature with an infinite range of possible values; contrasts with discrete feature"]}, {"n": 23, "term": "Continuous variable", "defs": ["A variable whose value can be any of an infinite number of values, typically within a particular range"]}, {"n": 24, "term": "Convenience sampling", "defs": ["The use of a dataset that is not gathered scientifically in order to run quick experiments. Later on, it is essential to switch to a scientifically gathered dataset."]}, {"n": 25, "term": "Convergence", "defs": ["A state reached during training in which training loss and validation loss change very little or not at all with each iteration after a certain number of iterations"]}, {"n": 26, "term": "Correlation", "defs": ["The degree of relative correspondence between two sets of data. The correlation coefficient is a measure of how closely the two datasets correlate."]}, {"n": 27, "term": "Covariant", "defs": ["A measure of the relationship between two variables whose values are observed at the same time. Whereas variance measures how a single variable deviates from its mean, covariance measures how two variables vary in tandem from their means."]}, {"n": 28, "term": "Cross-validation", "defs": ["A mechanism for estimating how well a model will generalize to new data by testing the model against one or more nonoverlapping data subsets that are withheld from the training set"]}, {"n": 29, "term": "Data", "defs": ["Representations of facts, concepts or instructions in a manner suitable for communication, interpretation or processing by humans or by automated means. In the simplest terms, data consists of pieces of information. (ISACA)", "Qualitative or quantitative-based information that can be recorded, communicated and analyzed (CMMI)"]}, {"n": 30, "term": "Data analysis", "defs": ["Obtaining an understanding of data by considering samples, measurement, and visualization. Data analysis can be particularly useful when a dataset is first received, before the first model is built; it is crucial for understanding experiments and debugging problems with the system."]}, {"n": 31, "term": "Data augmentation", "defs": ["Artificially boosting the range and number of training examples by transforming existing examples to create additional examples"]}, {"n": 32, "term": "Data mining", "defs": ["The use of computers to analyze large datasets to look for patterns that assist people in making business decisions"]}, {"n": 33, "term": "Data science", "defs": ["A new branch of science used to extract knowledge and insights from large and complex datasets. Data science work often requires knowledge of both statistics and software engineering."]}, {"n": 34, "term": "Data structure", "defs": ["A particular arrangement of data units, such as an array or a tree"]}, {"n": 35, "term": "Data wrangling", "defs": ["The conversion of data, often through the use of scripting languages, to make data easier to manage"]}, {"n": 36, "term": "Data frame", "defs": ["A popular data type for representing datasets in pandas. A data frame is analogous to a table. Each column of the data frame has a name (a header), and each row is identified by a number."]}, {"n": 37, "term": "Decision boundary", "defs": ["The separator between classes learned by a model in a binary class or in multiclass classification problems"]}, {"n": 38, "term": "Decision trees", "defs": ["A tree structure to represent a number of possible decision paths and an outcome for each path"]}, {"n": 39, "term": "Deep learning", "defs": ["A multilevel algorithm that gradually identifies things at higher levels of abstraction (e.g., image classification)"]}, {"n": 40, "term": "Deep model", "defs": ["A type of neural network containing multiple hidden layers"]}, {"n": 41, "term": "Dependent variable", "defs": ["In artificial intelligence (AI), the outcome predicted by a model, which is influenced by other independent variables"]}, {"n": 42, "term": "Dimension reduction", "defs": ["A technique to extract one or more dimensions that capture as much of the variation in the data as possible"]}, {"n": 43, "term": "Dimensionality", "defs": ["In statistics, how many attributes a dataset has"]}, {"n": 44, "term": "Discrete variable", "defs": ["A variable whose potential value must be one of a specific number of values; also known as discrete feature."]}, {"n": 45, "term": "Discriminative model", "defs": ["A model that predicts labels from a set of one or more features. A discriminative model defines the conditional probability of an output based on features and weights."]}, {"n": 46, "term": "Downsampling", "defs": ["Reducing the amount of information in a feature to train a model more efficiently"]}, {"n": 47, "term": "Dynamic model", "defs": ["A model that is trained online in a continuously updating fashion—that is, data continuously entering the model"]}, {"n": 48, "term": "False negative", "defs": ["An example in which the model mistakenly predicted the negative class"]}, {"n": 49, "term": "False positive", "defs": ["An example in which the model mistakenly predicted the positive class"]}, {"n": 50, "term": "Feature", "defs": ["The machine-learning expression for a piece of measurable information about something. For example, if researchers store the age, annual income, and weight of a set of people, they are storing three features about them."]}, {"n": 51, "term": "Feature cross", "defs": ["A synthetic feature formed by crossing (i.e., taking a Cartesian product of) individual binary features obtained from categorical data or from continuous features via bucketing. Feature crosses help represent nonlinear relationships."]}, {"n": 52, "term": "Federated learning", "defs": ["A distributed machine learning approach that trains machine learning models using decentralized examples residing on devices such as smartphones"]}, {"n": 53, "term": "Feedforward neural network", "defs": ["A neural network without cyclic or recursive connections. For example, traditional deep neural networks are feedforward neural networks."]}, {"n": 54, "term": "Few-shot learning", "defs": ["A machine learning approach, often used for object classification, designed to learn effective classifiers from a small number of training examples"]}, {"n": 55, "term": "Garbage in, garbage out", "defs": ["The concept of data that is nonsensical, or flawed, especially as it relates to the computational sciences"]}, {"n": 56, "term": "Generalization", "defs": ["The ability of a model to make correct predictions on new, previously unseen data, as opposed to the data used to train the model"]}, {"n": 57, "term": "Generative artificial intelligence", "defs": ["A branch of artificial intelligence (AI) that uses models to learn underlying patterns and relationships within data in order to create new and diverse content, such as images, text, audio, or code"]}, {"n": 58, "term": "Gradient boosting", "defs": ["A machine learning technique for regression and classification problems that produces a prediction model in the form of an ensemble of weak prediction models, typically decision trees. It builds the model in a stage-wise fashion, like other boosting methods, and generalizes them by allowing the optimization of an arbitrary differentiable loss function."]}, {"n": 59, "term": "Hallucination", "defs": ["In the context of AI, a model’s generation of inaccurate or misleading information that is not grounded in the input data or reality"]}, {"n": 60, "term": "Hidden layer", "defs": ["A synthetic layer in a neural network between the input layer (the features) and the output layer (the prediction). Hidden layers typically contain an activation function (e.g., ReLU) for training. A deep neural network contains more than one hidden layer."]}, {"n": 61, "term": "Human in the Loop (HITL)", "defs": ["A design approach in which humans are empowered to supervise, validate, or override automated or semi-automated systems or processes in order to achieve responsible outcomes."]}, {"n": 62, "term": "Hyperparameter", "defs": ["A parameter that specifies the details of the learning process"]}, {"n": 63, "term": "Inference", "defs": ["The process of making predictions by applying the trained model to unlabeled examples in machine learning"]}, {"n": 64, "term": "K-means clustering", "defs": ["A data-mining algorithm to cluster, classify or group N objects based on their attributes or features into K number of groups (so-called clusters)"]}, {"n": 65, "term": "K-nearest neighbors", "defs": ["A machine learning algorithm that classifies things based on their similarity to nearby neighbors. The algorithm execution is refined by picking the number of neighbors to examine (k) and some notion of distance to indicate how near the neighbors are."]}, {"n": 66, "term": "Keras", "defs": ["A popular Python machine learning API"]}, {"n": 67, "term": "Label", "defs": ["In supervised learning, the answer or result portion of an example"]}, {"n": 68, "term": "Latent variable", "defs": ["A variable that is not directly observed but rather inferred (through a mathematical model) from other variables that are observed (directly measured)"]}, {"n": 69, "term": "Linear regression", "defs": ["A mathematical technique to look for a linear relationship when starting with a set of data points that do not line up nicely. A linear relationship is one in which the relationship between two varying amounts, such as price and sales, can be expressed with an equation that can be represented as a straight line on a graph."]}, {"n": 70, "term": "Logistic regression", "defs": ["A model similar to linear regression but with potential results delivered as a specific set of categories, instead of being continuous"]}, {"n": 71, "term": "Machine learning", "defs": ["A program or system that builds (i.e., trains) a predictive model from input data"]}, {"n": 72, "term": "Machine learning model", "defs": ["The model artifact created by the machine learning training process. The process of training a machine learning model involves providing a machine learning model algorithm (that is, the learning algorithm) with training data."]}, {"n": 73, "term": "Model", "defs": ["A method to describe a given set of components and how those components relate to each other to describe the main workings of an object, system, or concept", "In machine learning (ML), the outcome of a training process. A trained model can automatically process data that was not used for its training to perform a specific set of tasks."]}, {"n": 74, "term": "Model card", "defs": ["Files that accompany AI models and provide concise information about the model details (e.g., architecture, training dataset), performance metrics, and even use case limitations"]}, {"n": 75, "term": "N-gram", "defs": ["The analysis of sequences of “n” items (typically, words in natural language) to look for patterns. The value of “n” can be anything. An n-gram is used to construct statistical models of documents (e.g., when automatically classifying them) and to find positive or negative terms associated with a product name."]}, {"n": 76, "term": "Naive Bayes classifier", "defs": ["A collection of classification algorithms based on Bayes’ Theorem. It is a family of algorithms that share a common principle that every feature being classified is independent of the value of any other feature."]}, {"n": 77, "term": "Neural network", "defs": ["Networks, inspired by the structure of the human brain, that learn by processing data through three layers (input, hidden, and output). They can be trained to match any input to various outputs, including binary ones, making them versatile tools in deep learning (DL) for tasks like image recognition."]}, {"n": 78, "term": "Neuron", "defs": ["A neural network node that typically takes in multiple input values and generates one output value"]}, {"n": 79, "term": "Node (neural network)", "defs": ["A neuron in a hidden layer"]}, {"n": 80, "term": "Noise", "defs": ["Data transmission or dataset disturbances, such as static, that cause messages to be misinterpreted by the receiver"]}, {"n": 81, "term": "Normal distribution", "defs": ["A probability distribution that, when graphed, is a symmetrical bell curve with the mean value at the center. The standard deviation value affects the height and width of the graph. Also known as “Gaussian distribution.”"]}, {"n": 82, "term": "Normalization", "defs": ["The elimination of redundant data", "The process of converting an actual range of values into a standard range of values, typically -1 to +1 or 0 to 1"]}, {"n": 83, "term": "Null hypothesis", "defs": ["If the proposed model for a dataset indicates that the value of “x” affects the value of “y,” then the null hypothesis—i.e., the model compared against the proposed model to check whether “x” really is affecting “y”—will find that the observations are all based on chance and there is no effect. The smaller the P-value computed from the sample data, the stronger the evidence is against the null hypothesis."]}, {"n": 84, "term": "Observation", "defs": ["The receipt of messages through electronic, sensory, or vibrational signals, or through the human senses"]}, {"n": 85, "term": "Offline inference", "defs": ["The process of generating a group of predictions, storing those predictions, and then retrieving them on demand"]}, {"n": 86, "term": "One-shot learning", "defs": ["A machine learning approach often used for object classification that is designed to learn effective classifiers from a single training example"]}, {"n": 87, "term": "Outlier", "defs": ["Extreme values that might be errors in measurement and recording or accurate reports of rare events"]}, {"n": 88, "term": "Overfitting", "defs": ["A model of training data that takes too many of data quirks and outliers into account and thus is overly complicated and has limited ability to find patterns in test data"]}, {"n": 89, "term": "P value", "defs": ["The probability, under the assumption of no effect or no difference (the null hypothesis), of obtaining a result equal to or more extreme than what was actually observed"]}, {"n": 90, "term": "Pandas", "defs": ["A Python library for data manipulation that is popular with data scientists"]}, {"n": 91, "term": "Perceptron", "defs": ["A neural network that approximates a single neuron with n binary inputs. It computes a weighted sum of its inputs and fires if that weighted sum is zero or greater."]}, {"n": 92, "term": "Perplexity", "defs": ["One measure of how well a model is accomplishing its task"]}, {"n": 93, "term": "Predictive analytics", "defs": ["The analysis of data to predict future events, typically to aid in business planning. Predictive analytics incorporates predictive modeling and other techniques. Machine learning may be considered a set of algorithms to help implement predictive analytics."]}, {"n": 94, "term": "Predictive modeling", "defs": ["The development of statistical models to predict future events"]}, {"n": 95, "term": "Preprocessing", "defs": ["Procedures and techniques for cleaning, transforming, and formatting data to enhance its quality and suitability for analysis and modeling"]}, {"n": 96, "term": "Principal component analysis", "defs": ["An algorithm that looks at the direction with the most variance and then determines that it is the first principal component. This is very similar to how regression works in that it determines the best direction to map data."]}, {"n": 97, "term": "Random forest", "defs": ["An ensemble approach to finding the decision tree that best fits the training data by creating many decision trees and then determining the average one. The random part of the term refers to building each of the decision trees from a random selection of features; the forest refers to the set of decision trees."]}, {"n": 98, "term": "Recurrent neural network", "defs": ["A neural network that is intentionally run multiple times, with parts of each run feeding into the next run"]}, {"n": 99, "term": "Regression model", "defs": ["A type of model that outputs continuous (typically floating-point) values"]}, {"n": 100, "term": "Reinforcement learning", "defs": ["A class of machine learning algorithms in which the process is not given specific goals to meet but, as it makes decisions, is instead given indications of whether it is doing well or not"]}, {"n": 101, "term": "Scalar", "defs": ["A quantity that has magnitude but no direction in space, such as volume or temperature"]}, {"n": 102, "term": "Scaling", "defs": ["A commonly used practice in feature engineering to tame the range of values of a feature to match the scale of other features in the dataset"]}, {"n": 103, "term": "Sensitive attribute", "defs": ["A human attribute that may be given special consideration for legal, ethical, social, or personal reasons"]}, {"n": 104, "term": "Serial correlation", "defs": ["The relationship between a variable and a lagged version of itself over various time intervals. Repeating patterns often show a serial correlation when the level of a variable affects its future level."]}, {"n": 105, "term": "Spatiotemporal data", "defs": ["Time series data that includes geographic identifiers, such as latitude-longitude pairs"]}, {"n": 106, "term": "Strata, stratified sampling", "defs": ["Sampling technique used to divide units into homogeneous groups (strata) and draw a simple random sample from each group"]}, {"n": 107, "term": "Supervised learning", "defs": ["A type of machine learning algorithm in which a system is taught to classify input into specific, known classes"]}, {"n": 108, "term": "Tableau", "defs": ["A commercial data visualization package often used in data science projects"]}, {"n": 109, "term": "Telemetry", "defs": ["The process of recording and transmitting instrument readings"]}, {"n": 110, "term": "TensorFlow", "defs": ["A large-scale, distributed, machine learning platform"]}, {"n": 111, "term": "Test set", "defs": ["The subset of the dataset used to test a model after the model has gone through initial vetting by the validation set"]}, {"n": 112, "term": "Time series data", "defs": ["Measurements of observations accompanied by datetime stamps"]}, {"n": 113, "term": "Training", "defs": ["The process of determining the ideal parameters comprising a model"]}, {"n": 114, "term": "Underfitting", "defs": ["Result of a machine learning (ML) model being too simple to capture the complexities and underlying structure of the data, resulting in poor performance for both the training and text data"]}, {"n": 115, "term": "Unsupervised learning", "defs": ["A class of machine learning algorithms designed to identify groups of data without knowing what the groups will be in advance"]}, {"n": 116, "term": "Variance", "defs": ["The measure of how much a list of numbers varies from the mean (average) value. It is frequently used in statistics to measure how large the differences are in a set of numbers. It is calculated by averaging the squared difference of every number from the mean.", "In artificial intelligence (AI), the measure of how much the model varies when it is trained on different subsets of training data. A model with high variance is very sensitive to the training data and might tend to overfit."]}, {"n": 117, "term": "Vector", "defs": ["An ordered set of real numbers, each denoting a distance on a coordinate axis. These numbers may represent a series of details about a single person, movie, product, or the entity being modeled."]}, {"n": 118, "term": "Vector space", "defs": ["A collection of vectors (e.g., a matrix)"]}, {"n": 119, "term": "Weight", "defs": ["A coefficient for a feature in a linear model or an edge in a deep network"]}, {"n": 120, "term": "Width", "defs": ["The number of neurons in a particular layer of a neural network"]}];
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()) {
+    if (kid == null || kid === false) continue;
+    e.append(kid.nodeType ? kid : document.createTextNode(kid));
+  }
+  return e;
+}
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const rnd = (a, b) => a + Math.random() * (b - a);
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const trunc = (s, n) => { if (s.length <= n) return s; const cut = s.slice(0, n); return cut.slice(0, cut.lastIndexOf(' ') > 40 ? cut.lastIndexOf(' ') : n) + '…'; };
+const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+
+const CARDS = CARDS_RAW.map(c => {
+  const def = c.defs[0].replace(/\s*\((ISACA|CMMI)\)\s*/g, ' ').trim();
+  const term = c.term.trim();
+  let masked = def;
+  term.split(/[(),]/).map(s => s.trim()).filter(s => s.length > 1)
+    .sort((a, b) => b.length - a.length)
+    .forEach(p => { masked = masked.replace(new RegExp('(?<![A-Za-z])' + escRe(p) + '(?:s|es)?(?![A-Za-z])', 'gi'), '_____'); });
+  return { id: c.n, term, def, masked };
+});
+
+/* Question builder: mode 'd2t' = definition -> pick term, 't2d' = term -> pick definition */
+function buildQuestion(card, mode, nOpts) {
+  const others = shuffle(CARDS.filter(c => c.id !== card.id)).slice(0, nOpts - 1);
+  const all = shuffle([card, ...others]);
+  if (mode === 'd2t') {
+    return { card, mode, label: 'Which term matches this definition?', prompt: trunc(card.masked, 320),
+      options: all.map(c => ({ text: c.term, correct: c.id === card.id })) };
+  }
+  return { card, mode, label: 'Which definition matches this term?', prompt: card.term, big: true,
+    options: all.map(c => ({ text: trunc(c.masked, 150), correct: c.id === card.id })) };
+}
+function makeDeck() { let d = []; return () => { if (!d.length) d = shuffle(CARDS); return d.pop(); }; }
+
+/* =========================================================
+   STORAGE
+   ========================================================= */
+function load() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; } }
+function save(o) { try { localStorage.setItem(STORE_KEY, JSON.stringify(o)); } catch (e) {} }
+function getBest(id) { return load()[id] || { best: 0, plays: 0 }; }
+function saveScore(id, score) { const d = load(); const p = d[id] || { best: 0, plays: 0 }; p.plays++; p.best = Math.max(p.best, score); d[id] = p; save(d); }
+const TIERS = ['Rookie', 'Bronze', 'Silver', 'Gold', 'Platinum'];
+function rankFor(g, id) {
+  const e = load()[id]; if (!e || !e.plays) return 'Not yet determined';
+  let t = 0; g.thr.forEach((v, i) => { if (e.best >= v) t = i + 1; });
+  return TIERS[t];
+}
+
+/* =========================================================
+   ICONS
+   ========================================================= */
+const ICONS = {
+  picker: ['#c9dcef', '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="11" height="14" rx="2" transform="rotate(-14 8 13)" fill="#6d9bd6"/><rect x="9" y="4" width="11" height="14" rx="2" transform="rotate(12 14 11)" fill="#3a6fb5"/></svg>'],
+  hunter1: ['#c5d94e', '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="#6aa72a"/><circle cx="12" cy="12" r="6" fill="#1f6a2c"/><circle cx="12" cy="12" r="2.2" fill="#c5d94e"/><path d="M12 0v7M12 17v7M0 12h7M17 12h7" stroke="#0f3d18" stroke-width="1.6"/></svg>'],
+  hunter2: ['#c5d94e', '<svg viewBox="0 0 24 24"><circle cx="7.5" cy="12" r="6" fill="#1f8a3c"/><circle cx="16.5" cy="12" r="6" fill="#1f8a3c"/><circle cx="7.5" cy="12" r="2.2" fill="#c5d94e"/><circle cx="16.5" cy="12" r="2.2" fill="#c5d94e"/><path d="M7.5 5v14M16.5 5v14M1 12h13M10 12h13" stroke="#0f3d18" stroke-width="1"/></svg>'],
+  coupler: ['#f8d1dc', '<svg viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z" fill="#f0537f"/></svg>'],
+  sweeper: ['#fde05a', '<svg viewBox="0 0 24 24"><polygon points="12,1 14.5,6 20,4 18.5,9.5 23,12 18.5,14.5 20,20 14.5,18 12,23 9.5,18 4,20 5.5,14.5 1,12 5.5,9.5 4,4 9.5,6" fill="#e8742a"/><circle cx="12" cy="12" r="4.5" fill="#f5a623"/></svg>'],
+  elimination: ['#9b9b9b', '<svg viewBox="0 0 24 24"><path d="M12 2C7 2 4 5.5 4 10c0 3 1.5 4.7 3 5.7V19h10v-3.3c1.5-1 3-2.7 3-5.7 0-4.500-3-8-8-8z" fill="#eee"/><circle cx="8.8" cy="10.5" r="2.2" fill="#444"/><circle cx="15.2" cy="10.5" r="2.2" fill="#444"/><path d="M12 13l-1.2 2.4h2.4z" fill="#444"/><path d="M9 19v2.5M12 19v2.5M15 19v2.5" stroke="#eee" stroke-width="1.8"/></svg>'],
+  crossword: ['#d9c6e6', '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="9" height="9" fill="#fff"/><rect x="12" y="3" width="9" height="9" fill="#7a3fa0"/><rect x="3" y="12" width="9" height="9" fill="#7a3fa0"/><rect x="12" y="12" width="9" height="9" fill="#fff"/></svg>']
+};
+const iconEl = (id, cls) => h('span', { class: 'ico ' + (cls || ''), style: 'background:' + ICONS[id][0], html: ICONS[id][1] });
+
+/* =========================================================
+   GAME SHELL
+   ========================================================= */
+let cleanups = [];
+function runCleanups() { const c = cleanups; cleanups = []; c.forEach(f => { try { f(); } catch (e) {} }); }
+
+function renderGame(g, autostart) {
+  runCleanups();
+  const main = $('#main'); main.innerHTML = '';
+  const best = getBest(g.id);
+  const hud = h('div', { class: 'hud' });
+  const pills = {};
+  const setHud = (key, label, val) => {
+    let p = pills[key];
+    if (!p) { p = h('div', { class: 'pill' }, h('span'), h('b')); hud.append(p); pills[key] = p; }
+    p.firstChild.textContent = label; p.lastChild.textContent = val;
+  };
+  const stage = h('div', { class: 'stage' });
+  const body = h('div', { class: 'pb' }, hud, stage);
+  main.append(h('div', { class: 'gpage' },
+    h('div', { class: 'panel' },
+      h('div', { class: 'ph' }, h('span', {}, g.name), h('span', { style: 'font-weight:400;font-size:13px;color:#666' }, 'Highest score: ' + best.best + '  ·  Rank: ' + rankFor(g, g.id))),
+      body)));
+
+  let finished = false;
+  const api = {
+    stage, hud: setHud,
+    score: n => setHud('score', 'Score', n),
+    every: (fn, ms) => { const id = setInterval(fn, ms); cleanups.push(() => clearInterval(id)); return id; },
+    later: (fn, ms) => { const id = setTimeout(fn, ms); cleanups.push(() => clearTimeout(id)); return id; },
+    cleanup: fn => cleanups.push(fn),
+    finish: (score, msg, title) => {
+      if (finished) return; finished = true; runCleanups();
+      score = Math.max(0, Math.round(score));
+      const prev = getBest(g.id).best; const isNew = score > prev;
+      saveScore(g.id, score);
+      const rank = rankFor(g, g.id);
+      body.append(h('div', { class: 'overlay' }, h('div', { class: 'box' },
+        isNew ? h('span', { class: 'tag' }, '★ New high score!') : null,
+        h('h2', {}, title || 'Game over'),
+        h('div', {}, msg || ''),
+        h('div', { class: 'big' }, score),
+        h('div', {}, 'Highest score: ' + Math.max(prev, score) + '  ·  Rank: ' + rank),
+        h('div', { class: 'row' },
+          h('button', { class: 'btn big', onclick: () => renderGame(g, true) }, 'Play again'),
+          h('button', { class: 'btn big ghost', onclick: () => go('dashboard') }, 'Back to dashboard')))));
+    }
+  };
+  const begin = () => { stage.innerHTML = ''; hud.innerHTML = ''; for (const k in pills) delete pills[k]; api.score(0); g.start(api); };
+  if (autostart) { begin(); return; }
+  stage.append(h('div', { class: 'intro' }, iconEl(g.id),
+    h('div', { style: 'flex:1;min-width:260px' },
+      h('h3', {}, g.name), h('div', {}, g.desc),
+      h('ul', {}, g.how.map(x => h('li', {}, x))),
+      h('div', { style: 'color:#666;font-size:12px;margin-bottom:14px' }, 'Rank tiers (highest score): ' + g.thr.map((v, i) => TIERS[i + 1] + ' ' + v).join(' · ')),
+      h('button', { class: 'btn big', onclick: begin }, 'Start game'))));
+}
+
+/* =========================================================
+   GAME 1 – CARD PICKER
+   ========================================================= */
+function startPicker(api) {
+  const N = 10, T = 20;
+  const next = makeDeck();
+  let i = 0, score = 0, streak = 0, correct = 0, left = T, locked = true, qEl;
+  function nextQ() {
+    if (i >= N) return api.finish(score, 'You answered ' + correct + ' of ' + N + ' correctly.', 'Round complete');
+    const q = buildQuestion(next(), 'd2t', 4);
+    locked = false; left = T; api.stage.innerHTML = '';
+    const bar = h('div', { class: 'bar' }, h('i'));
+    const fb = h('div', { class: 'fb' });
+    const btns = q.options.map(o => h('button', { class: 'opt', onclick: () => pick(o, btn(o)) }, o.text));
+    const btn = o => btns[q.options.indexOf(o)];
+    api.stage.append(
+      h('div', { class: 'qmeta' }, h('span', {}, 'Question ' + (i + 1) + ' of ' + N), h('span', {}, 'Streak: ' + streak)),
+      bar,
+      h('div', { class: 'promptbox' }, h('small', {}, q.label), q.prompt),
+      h('div', { class: 'opts' }, btns), fb);
+    api.hud('time', 'Time', left + 's'); api.hud('q', 'Correct', correct + '/' + i);
+    const tick = () => {
+      left -= 0.25; bar.firstChild.style.width = Math.max(0, left / T * 100) + '%'; bar.classList.toggle('low', left < 6);
+      api.hud('time', 'Time', Math.ceil(Math.max(0, left)) + 's');
+      if (left <= 0) { clearInterval(iv); pick(null); }
+    };
+    const iv = setInterval(tick, 250); cleanups.push(() => clearInterval(iv));
+    function pick(opt, el) {
+      if (locked) return; locked = true; clearInterval(iv);
+      const ok = opt && opt.correct;
+      if (ok) { score += 10 + Math.floor(left / 2) + (streak >= 2 ? 5 : 0); streak++; correct++; } else streak = 0;
+      btns.forEach((b, k) => { b.disabled = true; if (q.options[k].correct) b.classList.add('ok'); });
+      if (el && !ok) el.classList.add('bad');
+      fb.className = 'fb ' + (ok ? 'ok' : 'bad');
+      fb.textContent = ok ? 'Correct!' : (opt ? 'Not quite — the answer is “' + q.card.term + '”.' : 'Time is up — the answer is “' + q.card.term + '”.');
+      api.score(score); i++; api.hud('q', 'Correct', correct + '/' + i);
+      api.later(nextQ, ok ? 900 : 1800);
+    }
+  }
+  nextQ();
+}
+
+/* =========================================================
+   GAME 2 – CARD HUNTER I  (find the card in a grid, 60 s)
+   ========================================================= */
+function startHunter1(api) {
+  const DUR = 60; const draw = makeDeck();
+  let left = DUR, score = 0, combo = 0, hits = 0, over = false;
+  const promptEl = h('div', { class: 'promptbox' });
+  const grid = h('div', { class: 'hgrid' });
+  const bar = h('div', { class: 'bar' }, h('i'));
+  api.stage.append(bar, promptEl, grid);
+  function round() {
+    const t = draw();
+    const cards = shuffle([t, ...shuffle(CARDS.filter(c => c.id !== t.id)).slice(0, 11)]);
+    promptEl.innerHTML = ''; promptEl.append(h('small', {}, 'Find the card that matches this definition'), trunc(t.masked, 260));
+    grid.innerHTML = '';
+    cards.forEach(c => {
+      const b = h('button', { class: 'tcard', onclick: () => shoot(c, b, t) }, c.term);
+      grid.append(b);
+    });
+  }
+  function shoot(c, b, t) {
+    if (over) return;
+    if (c.id === t.id) {
+      score += 10 + Math.min(combo, 5) * 2; combo++; hits++; b.classList.add('ok');
+      api.score(score); upd(); api.later(() => { if (!over) round(); }, 150);
+      grid.querySelectorAll('button').forEach(x => x.disabled = true);
+    } else {
+      score = Math.max(0, score - 5); combo = 0; b.classList.add('bad'); b.disabled = true; api.score(score); upd();
+    }
+  }
+  function upd() { api.hud('time', 'Time', Math.ceil(left) + 's'); api.hud('combo', 'Combo', '×' + (1 + Math.min(combo, 5))); api.hud('hits', 'Hits', hits); }
+  upd(); round();
+  api.every(() => {
+    left -= 0.25; bar.firstChild.style.width = (left / DUR * 100) + '%'; bar.classList.toggle('low', left <= 10); upd();
+    if (left <= 0) { over = true; api.finish(score, 'You hunted down ' + hits + ' cards in ' + DUR + ' seconds.', 'Time is up!'); }
+  }, 250);
+}
+
+/* =========================================================
+   GAME 3 – CARD HUNTER II  (moving targets, 60 s)
+   ========================================================= */
+function startHunter2(api) {
+  const DUR = 60; const draw = makeDeck();
+  let left = DUR, score = 0, combo = 0, hits = 0, over = false, target = null, list = [];
+  const promptEl = h('div', { class: 'promptbox' });
+  const arena = h('div', { class: 'arena' });
+  const bar = h('div', { class: 'bar' }, h('i'));
+  api.stage.append(bar, promptEl, arena);
+  const W = 150, H = 56;
+  function round() {
+    target = draw();
+    const cards = shuffle([target, ...shuffle(CARDS.filter(c => c.id !== target.id)).slice(0, 5)]);
+    promptEl.innerHTML = ''; promptEl.append(h('small', {}, 'Catch the moving card that matches this definition'), trunc(target.masked, 240));
+    arena.innerHTML = '';
+    const aw = Math.max(arena.clientWidth, 400), ah = arena.clientHeight || 380;
+    const sp = Math.min(2.4, 1 + hits * 0.05) * 70;
+    list = cards.map(c => {
+      const ang = rnd(0, Math.PI * 2);
+      const o = { c, x: rnd(0, aw - W), y: rnd(0, ah - H), vx: Math.cos(ang) * sp * rnd(.7, 1.3), vy: Math.sin(ang) * sp * rnd(.7, 1.3), dead: false };
+      o.el = h('div', { class: 'fcard', onpointerdown: e => { e.preventDefault(); shoot(o); } }, c.term);
+      arena.append(o.el); place(o); return o;
+    });
+  }
+  const place = o => { o.el.style.transform = 'translate(' + o.x + 'px,' + o.y + 'px)'; o.el.style.left = 0; o.el.style.top = 0; };
+  function shoot(o) {
+    if (over || o.dead) return;
+    if (o.c.id === target.id) {
+      score += 20 + Math.min(combo, 5) * 3; combo++; hits++; o.el.classList.add('ok'); api.score(score);
+      list.forEach(x => x.dead = true); upd(); api.later(() => { if (!over) round(); }, 160);
+    } else {
+      score = Math.max(0, score - 10); combo = 0; o.dead = true; o.el.classList.add('bad');
+      api.score(score); upd(); api.later(() => o.el.remove(), 250);
+    }
+  }
+  function upd() { api.hud('time', 'Time', Math.ceil(left) + 's'); api.hud('combo', 'Combo', '×' + (1 + Math.min(combo, 5))); api.hud('hits', 'Hits', hits); }
+  upd(); round();
+  let last = performance.now(), raf, acc = 0;
+  function frame(t) {
+    const dt = Math.min(0.05, (t - last) / 1000); last = t;
+    if (!over) {
+      left -= dt; acc += dt;
+      const aw = arena.clientWidth, ah = arena.clientHeight;
+      list.forEach(o => {
+        if (o.dead) return;
+        o.x += o.vx * dt; o.y += o.vy * dt;
+        if (o.x < 0) { o.x = 0; o.vx = Math.abs(o.vx); } if (o.x > aw - W) { o.x = aw - W; o.vx = -Math.abs(o.vx); }
+        if (o.y < 0) { o.y = 0; o.vy = Math.abs(o.vy); } if (o.y > ah - H) { o.y = ah - H; o.vy = -Math.abs(o.vy); }
+        place(o);
+      });
+      if (acc > .2) { acc = 0; bar.firstChild.style.width = Math.max(0, left / DUR * 100) + '%'; bar.classList.toggle('low', left <= 10); upd(); }
+      if (left <= 0) { over = true; api.finish(score, 'You caught ' + hits + ' moving cards.', 'Time is up!'); return; }
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame); api.cleanup(() => cancelAnimationFrame(raf));
+}
+
+/* =========================================================
+   GAME 4 – CARD COUPLER  (memory match: term <-> definition)
+   ========================================================= */
+function startCoupler(api) {
+  const PAIRS = 8;
+  const pool = shuffle(CARDS.filter(c => c.masked.length <= 95)).slice(0, PAIRS);
+  const tiles = shuffle(pool.flatMap(c => [{ c, kind: 't' }, { c, kind: 'd' }]));
+  let first = null, lock = false, moves = 0, matched = 0, miss = 0, time = 0;
+  const grid = h('div', { class: 'cgrid' });
+  api.stage.append(h('div', { class: 'promptbox' }, h('small', {}, 'How to play'), 'Flip two cards to match each term with its definition. Fewer mistakes and a faster time earn more points.'), grid);
+  const upd = () => { api.hud('time', 'Time', fmt(time)); api.hud('moves', 'Moves', moves); api.hud('pairs', 'Pairs', matched + '/' + PAIRS); api.score(matched * 100); };
+  upd();
+  api.every(() => { time++; api.hud('time', 'Time', fmt(time)); }, 1000);
+  tiles.forEach(t => {
+    t.el = h('button', { class: 'mcard' }, h('span', { class: 'back' }, '♥'));
+    t.el.onclick = () => flip(t);
+    grid.append(t.el);
+  });
+  function show(t) { t.up = true; t.el.className = 'mcard up ' + t.kind; t.el.textContent = t.kind === 't' ? t.c.term : t.c.masked; }
+  function hide(t) { t.up = false; t.el.className = 'mcard'; t.el.innerHTML = '<span class="back">♥</span>'; }
+  function flip(t) {
+    if (lock || t.up || t.done) return;
+    show(t);
+    if (!first) { first = t; return; }
+    moves++; const a = first, b = t; first = null;
+    if (a.c.id === b.c.id && a.kind !== b.kind) {
+      a.done = b.done = true; a.el.classList.add('done'); b.el.classList.add('done'); matched++; upd();
+      if (matched === PAIRS) {
+        const final = matched * 100 + Math.max(0, 300 - time * 3) + Math.max(0, 200 - miss * 15);
+        api.score(final);
+        api.later(() => api.finish(final, 'Cleared in ' + fmt(time) + ' with ' + moves + ' moves and ' + miss + ' mismatches.', 'All pairs matched!'), 500);
+      }
+    } else {
+      miss++; lock = true; a.el.classList.add('miss'); b.el.classList.add('miss'); upd();
+      api.later(() => { hide(a); hide(b); lock = false; }, 1000);
+    }
+  }
+}
+
+/* =========================================================
+   GAME 5 – CARD SWEEPER  (minesweeper + flashcard defuse)
+   ========================================================= */
+function startSweeper(api) {
+  const R = 9, C = 9, M = 10, LIVES = 3;
+  const draw = makeDeck();
+  const cells = []; let started = false, over = false, lives = LIVES, safe = 0, defused = 0, flags = 0, flagMode = false, time = 0, busy = false;
+  const grid = h('div', { class: 'sgrid' });
+  const wrap = h('div', { class: 'sw-wrap' });
+  const flagBtn = h('button', { class: 'btn ghost toggle', onclick: () => { flagMode = !flagMode; flagBtn.classList.toggle('on', flagMode); flagBtn.textContent = flagMode ? '🚩 Flag mode: ON' : '🚩 Flag mode: OFF'; } }, '🚩 Flag mode: OFF');
+  wrap.append(grid, h('div', { class: 'sw-side' },
+    h('p', {}, h('b', {}, 'Clear every safe card.')),
+    h('p', {}, 'Numbers show how many mine cards are next to a card. Hit a mine and you must identify the term from its definition to defuse it (+50). A wrong answer costs a life.'),
+    h('p', {}, 'Right-click (or use flag mode) to place a flag.'), flagBtn));
+  api.stage.append(wrap); api.stage.style.position = 'relative';
+  for (let i = 0; i < R * C; i++) {
+    const c = { i, mine: false, n: 0, open: false, flag: false };
+    c.el = h('button', { class: 'sc', onclick: () => click(c), oncontextmenu: e => { e.preventDefault(); toggleFlag(c); } });
+    cells.push(c); grid.append(c.el);
+  }
+  const nb = i => { const r = Math.floor(i / C), c = i % C, o = []; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { if (!dr && !dc) continue; const rr = r + dr, cc = c + dc; if (rr >= 0 && rr < R && cc >= 0 && cc < C) o.push(rr * C + cc); } return o; };
+  const liveScore = () => safe * 10 + defused * 50;
+  const upd = () => { api.hud('lives', 'Lives', '❤'.repeat(lives) + '♡'.repeat(LIVES - lives)); api.hud('mines', 'Mines', M - flags); api.hud('time', 'Time', fmt(time)); api.score(liveScore()); };
+  upd();
+  function paint(c) {
+    const e = c.el; e.className = 'sc'; e.textContent = '';
+    if (c.open) {
+      e.classList.add('open');
+      if (c.defused) { e.classList.add('def'); e.textContent = '✓'; }
+      else if (c.mine) { e.classList.add('mine'); e.textContent = '💥'; }
+      else if (c.n) { e.classList.add('n' + c.n); e.textContent = c.n; }
+    } else if (c.flag) e.textContent = '🚩';
+  }
+  function place(safeIdx) {
+    const ban = new Set([safeIdx, ...nb(safeIdx)]);
+    shuffle(cells.filter(c => !ban.has(c.i))).slice(0, M).forEach(c => c.mine = true);
+    cells.forEach(c => c.n = nb(c.i).filter(j => cells[j].mine).length);
+  }
+  function toggleFlag(c) {
+    if (over || busy || c.open) return; c.flag = !c.flag; flags += c.flag ? 1 : -1; paint(c); upd();
+  }
+  function click(c) {
+    if (over || busy) return;
+    if (flagMode) return toggleFlag(c);
+    if (c.open || c.flag) return;
+    if (!started) { started = true; place(c.i); api.every(() => { if (!over) { time++; api.hud('time', 'Time', fmt(time)); } }, 1000); }
+    if (c.mine) return quiz(c);
+    flood(c); upd(); checkWin();
+  }
+  function flood(c) {
+    const st = [c];
+    while (st.length) {
+      const x = st.pop(); if (x.open || x.mine) continue;
+      if (x.flag) { x.flag = false; flags--; }
+      x.open = true; safe++; paint(x);
+      if (x.n === 0) nb(x.i).forEach(j => { if (!cells[j].open) st.push(cells[j]); });
+    }
+  }
+  function checkWin() {
+    if (safe === R * C - M && !over) {
+      over = true;
+      const sc = liveScore() + Math.max(0, 300 - time) + lives * 100;
+      cells.filter(c => c.mine && !c.open).forEach(c => { c.el.classList.add('open', 'mine'); c.el.textContent = '💣'; });
+      api.later(() => api.finish(sc, 'Board cleared in ' + fmt(time) + ' with ' + lives + ' ' + (lives === 1 ? 'life' : 'lives') + ' left (+' + (Math.max(0, 300 - time) + lives * 100) + ' bonus).', 'Sweep complete!'), 700);
+    }
+  }
+  function quiz(c) {
+    busy = true;
+    const q = buildQuestion(draw(), 'd2t', 4);
+    const fb = h('div', { class: 'fb' });
+    const btns = q.options.map(o => h('button', { class: 'opt', onclick: () => answer(o, b(o)) }, o.text));
+    const b = o => btns[q.options.indexOf(o)];
+    const ov = h('div', { class: 'overlay modal' }, h('div', { class: 'box' },
+      h('h2', {}, '💣 Mine card!'),
+      h('div', { class: 'promptbox' }, h('small', {}, 'Defuse it: which term matches this definition?'), q.prompt),
+      h('div', { class: 'opts' }, btns), fb));
+    api.stage.append(ov);
+    function answer(o, el) {
+      btns.forEach(x => x.disabled = true); btns.forEach((x, k) => { if (q.options[k].correct) x.classList.add('ok'); });
+      if (o.correct) {
+        fb.className = 'fb ok'; fb.textContent = 'Defused! +50'; c.open = true; c.defused = true; defused++; if (c.flag) { c.flag = false; flags--; }
+      } else {
+        fb.className = 'fb bad'; fb.textContent = 'Boom! The answer was “' + q.card.term + '”. −1 life'; el.classList.add('bad');
+        c.open = true; lives--; if (c.flag) { c.flag = false; flags--; }
+      }
+      paint(c); upd();
+      api.later(() => {
+        ov.remove(); busy = false;
+        if (lives <= 0) {
+          over = true; cells.filter(x => x.mine && !x.open).forEach(x => { x.el.classList.add('open', 'mine'); x.el.textContent = '💣'; });
+          api.later(() => api.finish(liveScore(), 'You cleared ' + safe + ' safe cards and defused ' + defused + ' mines.', 'Out of lives!'), 900);
+        } else checkWin();
+      }, o.correct ? 900 : 2000);
+    }
+  }
+}
+
+/* =========================================================
+   GAME 6 – ELIMINATION  (sudden death)
+   ========================================================= */
+function startElimination(api) {
+  const draw = makeDeck();
+  let score = 0, streak = 0, locked = false;
+  function nextQ() {
+    const nOpts = Math.min(6, 3 + Math.floor(streak / 4));
+    const T = Math.max(7, 16 - Math.floor(streak / 2));
+    const q = buildQuestion(draw(), Math.random() < .5 ? 'd2t' : 't2d', nOpts);
+    let left = T; locked = false; api.stage.innerHTML = '';
+    const bar = h('div', { class: 'bar' }, h('i')); const fb = h('div', { class: 'fb' });
+    const btns = q.options.map(o => h('button', { class: 'opt', onclick: () => pick(o, b(o)) }, o.text));
+    const b = o => btns[q.options.indexOf(o)];
+    api.stage.append(
+      h('div', { class: 'qmeta' }, h('span', {}, 'One wrong answer and you are eliminated'), h('span', {}, 'Options: ' + nOpts + ' · ' + T + 's')),
+      bar, h('div', { class: 'promptbox' }, h('small', {}, q.label), q.big ? h('span', { style: 'font-size:22px;font-weight:700' }, q.prompt) : q.prompt),
+      h('div', { class: 'opts' }, btns), fb);
+    api.hud('streak', 'Streak', streak); api.hud('time', 'Time', T + 's');
+    const iv = setInterval(() => {
+      left -= .25; bar.firstChild.style.width = Math.max(0, left / T * 100) + '%'; bar.classList.toggle('low', left < 4);
+      api.hud('time', 'Time', Math.ceil(Math.max(0, left)) + 's'); if (left <= 0) { clearInterval(iv); pick(null); }
+    }, 250);
+    cleanups.push(() => clearInterval(iv));
+    function pick(o, el) {
+      if (locked) return; locked = true; clearInterval(iv);
+      btns.forEach((x, k) => { x.disabled = true; if (q.options[k].correct) x.classList.add('ok'); });
+      if (o && o.correct) {
+        score += 10 + Math.floor(left / 2) + Math.min(streak, 10); streak++; api.score(score);
+        fb.className = 'fb ok'; fb.textContent = 'Correct!'; api.later(nextQ, 700);
+      } else {
+        if (el) el.classList.add('bad');
+        fb.className = 'fb bad'; fb.innerHTML = '<span class="skull">💀</span> ' + (o ? 'Eliminated!' : 'Time ran out!') + ' The answer was “' + (q.mode === 'd2t' ? q.card.term : trunc(q.card.masked, 90)) + '”.';
+        api.later(() => api.finish(score, 'You survived ' + streak + ' ' + (streak === 1 ? 'question' : 'questions') + ' in a row.', '💀 Eliminated'), 1900);
+      }
+    }
+  }
+  nextQ();
+}
+
+/* =========================================================
+   GAME 7 – CROSSWORD
+   ========================================================= */
+function genCrossword() {
+  const cands = CARDS.filter(c => /^[A-Za-z]{4,13}$/.test(c.term));
+  let best = null;
+  const key = (r, c) => r + ',' + c;
+  for (let attempt = 0; attempt < 120; attempt++) {
+    const words = shuffle(cands).slice(0, 20).sort((a, b) => b.term.length - a.term.length);
+    const grid = new Map(), placed = [];
+    const can = (w, r, c, d) => {
+      const dr = d === 'D' ? 1 : 0, dc = d === 'A' ? 1 : 0, L = w.length;
+      if (grid.get(key(r - dr, c - dc)) || grid.get(key(r + dr * L, c + dc * L))) return -1;
+      let cross = 0;
+      for (let i = 0; i < L; i++) {
+        const rr = r + dr * i, cc = c + dc * i, ex = grid.get(key(rr, cc));
+        if (ex) { if (ex.ch !== w[i] || ex.dirs.has(d)) return -1; cross++; }
+        else if (grid.get(key(rr + dc, cc + dr)) || grid.get(key(rr - dc, cc - dr))) return -1;
+      }
+      return cross;
+    };
+    const put = (card, w, r, c, d) => {
+      const dr = d === 'D' ? 1 : 0, dc = d === 'A' ? 1 : 0;
+      for (let i = 0; i < w.length; i++) { const k = key(r + dr * i, c + dc * i), ex = grid.get(k); if (ex) ex.dirs.add(d); else grid.set(k, { ch: w[i], dirs: new Set([d]) }); }
+      placed.push({ card, w, r, c, d });
+    };
+    const w0 = words[0].term.toUpperCase(); put(words[0], w0, 0, 0, 'A');
+    for (let k = 1; k < words.length && placed.length < 12; k++) {
+      const card = words[k], w = card.term.toUpperCase(); let opts = [], bestC = 0;
+      for (const [pk, cell] of grid) {
+        const [pr, pc] = pk.split(',').map(Number);
+        for (let i = 0; i < w.length; i++) if (w[i] === cell.ch) {
+          for (const d of ['A', 'D']) {
+            if (cell.dirs.has(d)) continue;
+            const r = d === 'D' ? pr - i : pr, c = d === 'A' ? pc - i : pc;
+            const x = can(w, r, c, d);
+            if (x > 0) { if (x > bestC) { bestC = x; opts = []; } if (x === bestC) opts.push([r, c, d]); }
+          }
+        }
+      }
+      if (opts.length) { const [r, c, d] = opts[Math.floor(Math.random() * opts.length)]; put(card, w, r, c, d); }
+    }
+    let r0 = 1e9, r1 = -1e9, c0 = 1e9, c1 = -1e9;
+    for (const k of grid.keys()) { const [r, c] = k.split(',').map(Number); r0 = Math.min(r0, r); r1 = Math.max(r1, r); c0 = Math.min(c0, c); c1 = Math.max(c1, c); }
+    const area = (r1 - r0 + 1) * (c1 - c0 + 1);
+    const score = placed.length * 1000 - area;
+    if (!best || score > best.score) best = { score, placed, r0, c0, rows: r1 - r0 + 1, cols: c1 - c0 + 1 };
+    if (placed.length >= 11 && best.rows <= 18 && best.cols <= 18) break;
+  }
+  // normalise + number
+  const ws = best.placed.map(p => ({ card: p.card, w: p.w, r: p.r - best.r0, c: p.c - best.c0, d: p.d }));
+  const starts = [...new Set(ws.map(x => x.r + ',' + x.c))].map(s => s.split(',').map(Number)).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const numOf = {}; starts.forEach((s, i) => numOf[s[0] + ',' + s[1]] = i + 1);
+  ws.forEach(x => {
+    x.num = numOf[x.r + ',' + x.c]; x.cells = [];
+    for (let i = 0; i < x.w.length; i++) x.cells.push((x.r + (x.d === 'D' ? i : 0)) + ',' + (x.c + (x.d === 'A' ? i : 0)));
+  });
+  return { words: ws, rows: best.rows, cols: best.cols };
+}
+
+function startCrossword(api) {
+  const cw = genCrossword(); const words = cw.words;
+  let time = 0, hints = 0, active = { key: null, dir: 'A' };
+  const cellMap = new Map();
+  const letterAt = {};
+  words.forEach(w => w.cells.forEach((k, i) => letterAt[k] = w.w[i]));
+  const wordsAt = k => words.filter(w => w.cells.includes(k));
+  const wordOf = (k, d) => wordsAt(k).find(w => w.d === d);
+
+  const table = h('table', { class: 'cwgrid' });
+  for (let r = 0; r < cw.rows; r++) {
+    const tr = h('tr');
+    for (let c = 0; c < cw.cols; c++) {
+      const k = r + ',' + c;
+      if (!letterAt[k]) { tr.append(h('td')); continue; }
+      const td = h('td', { class: 'l' });
+      const num = words.find(w => w.r === r && w.c === c);
+      if (num) td.append(h('span', { class: 'n' }, num.num));
+      const inp = h('input', { maxlength: 2, autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', 'aria-label': 'Crossword cell' });
+      td.append(inp); tr.append(td);
+      cellMap.set(k, { td, inp, r, c });
+      inp.addEventListener('pointerdown', () => { if (document.activeElement === inp && wordsAt(k).length > 1) setActive(k, active.dir === 'A' ? 'D' : 'A'); });
+      inp.addEventListener('focus', () => { if (active.key !== k) setActive(k, active.dir); inp.select(); });
+      inp.addEventListener('input', () => {
+        const v = inp.value.replace(/[^a-zA-Z]/g, '').slice(-1).toUpperCase(); inp.value = v;
+        if (td.classList.contains('okc') || td.classList.contains('badc')) td.classList.remove('okc', 'badc');
+        updateSolved();
+        if (v) moveInWord(k, 1);
+      });
+      inp.addEventListener('keydown', e => {
+        const arrows = { ArrowLeft: [0, -1, 'A'], ArrowRight: [0, 1, 'A'], ArrowUp: [-1, 0, 'D'], ArrowDown: [1, 0, 'D'] };
+        if (arrows[e.key]) {
+          e.preventDefault(); const [dr, dc, d] = arrows[e.key]; const cur = cellMap.get(k);
+          const t = cellMap.get((cur.r + dr) + ',' + (cur.c + dc));
+          if (t) { const tk = (cur.r + dr) + ',' + (cur.c + dc); if (wordOf(tk, d) || wordOf(k, d)) active.dir = d; t.inp.focus(); setActive(tk, wordOf(tk, d) ? d : active.dir); }
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          if (inp.value) { inp.value = ''; td.classList.remove('okc', 'badc'); updateSolved(); }
+          else { moveInWord(k, -1, true); }
+        } else if (e.key === ' ') { e.preventDefault(); if (wordsAt(k).length > 1) setActive(k, active.dir === 'A' ? 'D' : 'A'); }
+      });
+    }
+    table.append(tr);
+  }
+  function moveInWord(k, step, clear) {
+    const w = wordOf(k, active.dir) || wordsAt(k)[0]; const i = w.cells.indexOf(k), t = w.cells[i + step];
+    if (t) { const ce = cellMap.get(t); ce.inp.focus(); if (clear) { ce.inp.value = ''; ce.td.classList.remove('okc', 'badc'); updateSolved(); } }
+  }
+  const clueEls = new Map();
+  const mkClue = w => {
+    const li = h('li', { onclick: () => { const first = w.cells.find(k => !cellMap.get(k).inp.value) || w.cells[0]; active.dir = w.d; cellMap.get(first).inp.focus(); setActive(first, w.d); } },
+      h('b', {}, w.num + '.'), trunc(w.card.masked, 170) + ' (' + w.w.length + ')');
+    clueEls.set(w, li); return li;
+  };
+  const across = words.filter(w => w.d === 'A').sort((a, b) => a.num - b.num), down = words.filter(w => w.d === 'D').sort((a, b) => a.num - b.num);
+  const status = h('div', { class: 'fb' });
+  const btn = (t, f, cls) => h('button', { class: 'btn ' + (cls || ''), onclick: f }, t);
+  const side = h('div', { class: 'cwclues' }, h('h4', {}, 'Across'), h('ol', {}, across.map(mkClue)), h('h4', {}, 'Down'), h('ol', {}, down.map(mkClue)));
+  api.stage.append(h('div', { class: 'cw' }, h('div', {}, table,
+    h('div', { class: 'cwbtns' },
+      btn('Check answers', check, 'ghost'),
+      btn('Hint (−15)', hint, 'ghost'),
+      btn('Submit', () => submit(), '')), status), side));
+
+  function setActive(k, dir) {
+    if (!wordOf(k, dir)) dir = wordsAt(k)[0].d;
+    active = { key: k, dir };
+    cellMap.forEach(c => c.td.classList.remove('hl', 'act'));
+    clueEls.forEach(li => li.classList.remove('act'));
+    const w = wordOf(k, dir);
+    w.cells.forEach(x => cellMap.get(x).td.classList.add('hl'));
+    cellMap.get(k).td.classList.add('act');
+    clueEls.get(w).classList.add('act');
+    const el = clueEls.get(w); if (el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+  }
+  const solved = w => w.cells.every((k, i) => cellMap.get(k).inp.value.toUpperCase() === w.w[i]);
+  function updateSolved() {
+    let n = 0; words.forEach(w => { const s = solved(w); if (s) n++; clueEls.get(w).classList.toggle('solved', s); });
+    api.hud('solved', 'Solved', n + '/' + words.length); api.score(Math.max(0, n * 100 - hints * 15));
+    return n;
+  }
+  function check() {
+    let wrong = 0, empty = 0;
+    cellMap.forEach((ce, k) => {
+      ce.td.classList.remove('okc', 'badc'); const v = ce.inp.value.toUpperCase();
+      if (!v) { empty++; return; }
+      if (v === letterAt[k]) ce.td.classList.add('okc'); else { ce.td.classList.add('badc'); wrong++; }
+    });
+    status.className = 'fb ' + (wrong ? 'bad' : 'ok');
+    status.textContent = wrong ? wrong + ' letter(s) are wrong.' : (empty ? 'So far so good — ' + empty + ' cell(s) still empty.' : 'All letters are correct!');
+  }
+  function hint() {
+    if (!active.key) { status.className = 'fb bad'; status.textContent = 'Select a word first.'; return; }
+    const w = wordOf(active.key, active.dir); const k = w.cells.find((x, i) => cellMap.get(x).inp.value.toUpperCase() !== w.w[i]);
+    if (!k) return;
+    const ce = cellMap.get(k); ce.inp.value = letterAt[k]; ce.td.classList.add('hint'); ce.td.classList.remove('badc'); hints++; updateSolved();
+  }
+  function submit() {
+    const n = updateSolved(); const all = n === words.length;
+    const sc = n * 100 - hints * 15 + (all ? Math.max(0, 300 - time) : 0);
+    cellMap.forEach((ce, k) => { if (ce.inp.value.toUpperCase() !== letterAt[k]) { ce.inp.value = letterAt[k]; ce.td.classList.add('badc'); } else ce.td.classList.add('okc'); ce.inp.readOnly = true; });
+    api.finish(sc, n + ' of ' + words.length + ' words correct' + (hints ? ', ' + hints + ' hint(s) used' : '') + (all ? ' (+' + Math.max(0, 300 - time) + ' time bonus)' : '') + '.', all ? 'Crossword complete!' : 'Crossword submitted');
+  }
+  api.every(() => { time++; api.hud('time', 'Time', fmt(time)); }, 1000);
+  api.hud('time', 'Time', '0:00'); updateSolved();
+  const first = across[0] || down[0]; cellMap.get(first.cells[0]).inp.focus(); setActive(first.cells[0], first.d);
+}
+
+/* =========================================================
+   GAME REGISTRY
+   ========================================================= */
+const GAMES = [
+  { id: 'picker', name: 'Card Picker', thr: [80, 140, 190, 230], start: startPicker,
+    desc: '10 rounds. Read the definition and pick the matching term.',
+    how: ['20 seconds per question, 4 choices.', '10 points per correct answer, plus up to 10 speed bonus points and a +5 bonus for a 3+ streak.'] },
+  { id: 'hunter1', name: 'Card Hunter I', thr: [100, 200, 300, 400], start: startHunter1,
+    desc: 'You have 60 seconds to hunt down the card that matches the definition on the board.',
+    how: ['A grid of 12 cards is shown with one definition at a time.', '+10 per hit (combo bonus up to +10), −5 for a miss.'] },
+  { id: 'hunter2', name: 'Card Hunter II', thr: [150, 300, 450, 600], start: startHunter2,
+    desc: 'Same hunt — but now the cards are on the move and they speed up as you score.',
+    how: ['60 seconds. Click or tap the moving card that matches the definition.', '+20 per hit (combo bonus up to +15), −10 for a miss (the wrong card disappears).'] },
+  { id: 'coupler', name: 'Card Coupler', thr: [700, 900, 1050, 1200], start: startCoupler,
+    desc: 'A memory match: pair each term with its definition.',
+    how: ['16 cards, 8 pairs. Flip two cards at a time.', '100 per pair, plus a time bonus and a bonus for few mismatches.'] },
+  { id: 'sweeper', name: 'Card Sweeper', thr: [200, 400, 700, 1000], start: startSweeper,
+    desc: 'Minesweeper with a twist: when you hit a mine card, identify the term to defuse it.',
+    how: ['Clear all 71 safe cards on the 9×9 board. 10 per safe card.', '3 lives. Defuse a mine by answering correctly (+50); a wrong answer costs a life.', 'Win bonus: remaining time and remaining lives.'] },
+  { id: 'elimination', name: 'Elimination', thr: [100, 250, 400, 600], start: startElimination,
+    desc: 'Sudden death! Keep answering until you slip — one mistake and you are out.',
+    how: ['Questions alternate between “definition → term” and “term → definition”.', 'More choices and less time as your streak grows.'] },
+  { id: 'crossword', name: 'Crossword', thr: [400, 700, 1000, 1300], start: startCrossword,
+    desc: 'Solve a fresh crossword where the clues are flashcard definitions.',
+    how: ['100 per correct word, −15 per hint, plus a time bonus if you solve everything.', 'Click a cell (click again to switch across/down), type letters, or select a clue.', 'The answer word is hidden in its own clue as “_____”.'] }
+];
+
+/* =========================================================
+   DASHBOARD + ROUTER
+   ========================================================= */
+function renderDashboard() {
+  runCleanups();
+  const main = $('#main'); main.innerHTML = '';
+  const grid = h('div', { class: 'dash' });
+  GAMES.forEach(g => {
+    const b = getBest(g.id);
+    grid.append(h('div', { class: 'panel' },
+      h('div', { class: 'ph' }, g.name),
+      h('div', { class: 'pb' }, h('div', { class: 'drow' }, iconEl(g.id),
+        h('div', { class: 'txt' }, h('div', {}, 'Your highest score: ' + b.best), h('div', {}, 'Your rank: ' + rankFor(g, g.id))),
+        h('button', { class: 'btn', onclick: () => go(g.id) }, 'Start playing')))));
+  });
+  main.append(grid, h('div', { class: 'dash-foot' }, CARDS.length + ' cards loaded from AAISM Flashcard. Scores are saved in this browser only. ',
+    h('a', { onclick: () => { if (confirm('Reset all saved scores?')) { save({}); renderDashboard(); } } }, 'Reset scores')));
+}
+function go(id) { if (location.hash.slice(1) === id) route(); else location.hash = id; }
+function route() {
+  const id = location.hash.slice(1) || 'dashboard';
+  const g = GAMES.find(x => x.id === id);
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.id === (g ? id : 'dashboard')));
+  if (g) renderGame(g); else renderDashboard();
+}
+(function init() {
+  const tabs = $('#tabs');
+  tabs.append(h('button', { 'data-id': 'dashboard', onclick: () => go('dashboard') }, 'Dashboard'));
+  GAMES.forEach(g => tabs.append(h('button', { 'data-id': g.id, onclick: () => go(g.id) }, g.name)));
+  $('#portal').href = USER_PORTAL_URL;
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body>
+</html>
