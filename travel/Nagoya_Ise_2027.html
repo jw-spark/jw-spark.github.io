@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>名古屋・伊势・鸟羽・伊贺上野 旅行手册</title>
+<style>
+  :root {
+    --navy: #2E5266;
+    --gold: #B8720A;
+    --gold-bg: #FFF4E5;
+    --light-bg: #F5F8FA;
+    --border: #CCCCCC;
+    --text: #2B2B2B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  .cover { text-align: center; padding: 60px 20px 50px; border-bottom: 3px solid var(--navy); margin-bottom: 40px; }
+  .cover h1 { font-size: 2.1em; color: var(--navy); margin-bottom: 8px; }
+  .cover p { color: #555; font-size: 1.05em; margin: 4px 0; }
+  .badge-row { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .badge { background: var(--light-bg); border: 1px solid var(--border); border-radius: 20px; padding: 6px 16px; font-size: 0.85em; color: var(--navy); }
+  h2.section-title { font-size: 1.5em; color: var(--navy); border-left: 6px solid var(--gold); padding-left: 14px; margin-top: 56px; margin-bottom: 20px; }
+  h2.day-title { font-size: 1.4em; color: #ffffff; background: var(--navy); padding: 12px 18px; border-radius: 6px 6px 0 0; margin-top: 48px; margin-bottom: 0; }
+  .day-block { border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; padding: 20px 22px 28px; margin-bottom: 10px; }
+  .day-theme { color: var(--gold); font-weight: 700; font-size: 1.08em; margin: 16px 0 18px; padding: 10px 14px; background: var(--gold-bg); border-radius: 6px; border-left: 4px solid var(--gold); }
+  h3.sub-title { font-size: 1.08em; color: var(--navy); margin: 26px 0 12px; border-bottom: 2px solid var(--light-bg); padding-bottom: 6px; }
+  table.timeline { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 0.94em; }
+  table.timeline th { background: var(--navy); color: #fff; padding: 10px 12px; text-align: left; border: 1px solid var(--border); }
+  table.timeline td { padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
+  table.timeline td.time { font-weight: 700; white-space: nowrap; width: 130px; }
+  table.timeline tr:nth-child(even) td { background: var(--light-bg); }
+  table.timeline tr:nth-child(odd) td { background: #ffffff; }
+  ul.plain-list { margin: 8px 0 16px; padding-left: 22px; }
+  ul.plain-list li { margin-bottom: 8px; }
+  ul.plain-list ul { margin-top: 6px; }
+  .tip-box, .rain-box, .note-box { border-radius: 6px; padding: 16px 18px; margin: 10px 0 20px; }
+  .tip-box { background: var(--gold-bg); border: 1px solid #F0DDB8; }
+  .rain-box { background: #EAF3FB; border: 1px solid #C9DEF0; }
+  .note-box { background: var(--light-bg); border: 1px solid var(--border); }
+  .tip-box .box-title { color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+  .rain-box .box-title { color: #2E6DA4; font-weight: 700; margin-bottom: 8px; }
+  .note-box .box-title { color: var(--navy); font-weight: 700; margin-bottom: 8px; }
+  .tip-box ul, .rain-box ul, .note-box ul { margin: 0; padding-left: 20px; }
+  .tip-box li, .rain-box li, .note-box li { margin-bottom: 6px; }
+  table.overview { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.92em; }
+  table.overview th { background: var(--navy); color: #fff; padding: 10px; border: 1px solid var(--border); }
+  table.overview td { padding: 10px; border: 1px solid var(--border); }
+  table.overview tr:nth-child(even) td { background: var(--light-bg); }
+  .hotel-card { border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 18px; background: #fafcfd; }
+  .hotel-card h4 { margin: 0 0 8px; color: var(--navy); font-size: 1.1em; }
+  .hotel-card p { margin: 4px 0; }
+  .tag { display: inline-block; background: var(--navy); color: #fff; font-size: 0.75em; padding: 3px 10px; border-radius: 12px; margin-right: 6px; margin-bottom: 4px; }
+  .packing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  @media (max-width: 640px) { .packing-grid { grid-template-columns: 1fr; } }
+  .packing-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .packing-card h4 { color: var(--navy); margin: 0 0 10px; font-size: 1.02em; border-bottom: 2px solid var(--light-bg); padding-bottom: 6px; }
+  .summary-box { border: 1px solid #F0DDB8; background: var(--gold-bg); border-radius: 8px; padding: 20px 24px; margin-top: 20px; }
+  .summary-box h3 { color: var(--gold); margin-top: 0; }
+  .footer-note { text-align: center; color: #888; font-size: 0.85em; margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .toc { background: var(--light-bg); border-radius: 8px; padding: 18px 24px; margin-bottom: 10px; }
+  .toc h3 { margin-top: 0; color: var(--navy); }
+  .toc ul { columns: 2; padding-left: 20px; }
+  @media (max-width: 640px) { .toc ul { columns: 1; } }
+  .toc a { color: var(--navy); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .fill { background: #FFF9C4; padding: 0 4px; border-radius: 3px; }
+
+  /* ---- language toggle ---- */
+  .lang-block { display: none; }
+  body:not(.lang-en) #zh { display: block; }
+  body.lang-en #en { display: block; }
+  .lang-switch { position: fixed; top: 12px; right: 12px; z-index: 1000; display: flex; background: #fff; border: 1px solid var(--navy); border-radius: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.18); font-family: inherit; }
+  .lang-switch button { border: 0; background: #fff; color: var(--navy); padding: 7px 16px; font-size: 0.9em; font-weight: 700; cursor: pointer; font-family: inherit; line-height: 1.2; }
+  .lang-switch button + button { border-left: 1px solid var(--navy); }
+  .lang-switch button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+  .lang-switch button:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  @media print { .lang-switch { display: none; } }
+</style>
+</head>
+<body>
+<div class="lang-switch" role="group" aria-label="Language / 语言">
+  <button type="button" data-lang="zh" aria-pressed="true">华文</button>
+  <button type="button" data-lang="en" aria-pressed="false">EN</button>
+</div>
+<div class="container">
+<div class="lang-block" id="zh" lang="zh-Hans">
+
+
+  <!-- COVER -->
+  <div class="cover">
+    <h1>名古屋・伊势・鸟羽・伊贺上野 旅行手册</h1>
+    <p>2027/2/20（六） – 2027/2/27（六） ｜ 8天7夜</p>
+    <p>亲子行程：带 5 岁小朋友，每天留足休息时间</p>
+    <div class="badge-row">
+      <span class="badge">🏨 名古屋：Daiwa Roynet 名古屋新干线口</span>
+      <span class="badge">🚃 近铁通行证 5 日 Plus（2/21–2/25）</span>
+      <span class="badge">🦑 伊势・鸟羽・伊贺上野</span>
+      <span class="badge">✈️ 去程 2/20 17:40 抵达 NGO ・ 回程 2/27 15:15 起飞</span>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>目录</h3>
+    <ul>
+      <li><a href="#flights">航班信息</a></li>
+      <li><a href="#overview">行程总览</a></li>
+      <li><a href="#hotels">住宿安排</a></li>
+      <li><a href="#day1">Day 1｜名古屋（抵达）</a></li>
+      <li><a href="#day2">Day 2｜近铁名古屋 → 伊势（外宫）</a></li>
+      <li><a href="#day3">Day 3｜伊势（内宫・御荫横丁）</a></li>
+      <li><a href="#day4">Day 4｜鸟羽（水族馆・珍珠岛）</a></li>
+      <li><a href="#day5">Day 5｜鸟羽 → 伊贺上野（忍者电车）</a></li>
+      <li><a href="#day6">Day 6｜忍者博物馆 → 回名古屋</a></li>
+      <li><a href="#day7">Day 7｜名古屋（科学馆・热田神宫）</a></li>
+      <li><a href="#day8">Day 8｜名古屋 → 回程</a></li>
+      <li><a href="#packing">打包与实用提醒</a></li>
+      <li><a href="#summary">行程核心原则回顾</a></li>
+    </ul>
+  </div>
+
+  <!-- FLIGHTS -->
+  <h2 class="section-title" id="flights">一、航班信息</h2>
+  <table class="overview">
+    <tr>
+      <th>航段</th><th>日期</th><th>时间</th><th>航班</th><th>备注</th>
+    </tr>
+    <tr>
+      <td>SIN → NGO</td>
+      <td>2/20（六）</td>
+      <td>17:40 抵达</td>
+      <td><span class="fill">航班号待填</span></td>
+      <td>新加坡 → 中部国际机场（名古屋），傍晚抵达，当晚直接入住名古屋</td>
+    </tr>
+    <tr>
+      <td>NGO → SIN</td>
+      <td>2/27（六）</td>
+      <td>15:15 起飞</td>
+      <td><span class="fill">航班号待填</span></td>
+      <td>建议 12:15 前抵达机场办理登机</td>
+    </tr>
+  </table>
+  <div class="note-box">
+    <div class="box-title">✈️ 航班提醒</div>
+    <ul>
+      <li>2/20 落地时间是傍晚，入境加上提领行李预留约 1 小时，当晚只安排「回酒店＋晚餐」，不排景点。</li>
+      <li>入境前先在 Visit Japan Web 填好资料，抵达时较快通关。</li>
+      <li>请确认航班使用 T1 还是 T2。机场的火车站在 T1 一侧，从 T2 步行过去约 10 分钟。</li>
+      <li>名古屋机场往返市区有两种选择：μ-SKY 特急约 28 分钟，成人 ¥1,430（¥980 车费＋¥450 特急券，全车对号）；普通特急／急行约 35–50 分钟，¥980。</li>
+    </ul>
+  </div>
+
+  <!-- OVERVIEW -->
+  <h2 class="section-title" id="overview">二、行程总览</h2>
+  <table class="overview">
+    <tr>
+      <th>天数</th><th>日期</th><th>地点</th><th>主题</th><th>住宿</th>
+    </tr>
+    <tr>
+      <td>Day 1</td><td>2/20（六）</td><td>名古屋</td>
+      <td>17:40 抵达 NGO ＋ 名铁进市区 ＋ 车站附近晚餐</td><td>Daiwa Roynet 名古屋新干线口</td>
+    </tr>
+    <tr>
+      <td>Day 2</td><td>2/21（日）</td><td>名古屋 → 伊势</td>
+      <td>近铁名古屋 → 伊势，轻松逛外宫（原行程第 1 天）</td><td>伊势</td>
+    </tr>
+    <tr>
+      <td>Day 3</td><td>2/22（一）</td><td>伊势</td>
+      <td>内宫 ＋ 御荫横丁，下午休息（原行程第 2 天）</td><td>伊势</td>
+    </tr>
+    <tr>
+      <td>Day 4</td><td>2/23（二・祝）</td><td>鸟羽</td>
+      <td>鸟羽水族馆 ＋ 御木本珍珠岛（原行程第 3 天）</td><td>鸟羽</td>
+    </tr>
+    <tr>
+      <td>Day 5</td><td>2/24（三）</td><td>鸟羽 → 伊贺上野</td>
+      <td>慢慢转往伊贺上野，坐忍者电车（原行程第 4 天）</td><td>伊贺上野</td>
+    </tr>
+    <tr>
+      <td>Day 6</td><td>2/25（四）</td><td>伊贺上野 → 名古屋</td>
+      <td>忍者博物馆 → 回近铁名古屋，傍晚在名古屋站周边轻松用餐（原行程第 5 天）</td><td>Daiwa Roynet 名古屋新干线口</td>
+    </tr>
+    <tr>
+      <td>Day 7</td><td>2/26（五）</td><td>名古屋</td>
+      <td>FUJI 名古屋科学馆 ＋ 热田神宫 ＋ 热田蓬莱轩鳗鱼饭晚餐</td><td>Daiwa Roynet 名古屋新干线口</td>
+    </tr>
+    <tr>
+      <td>Day 8</td><td>2/27（六）</td><td>名古屋 → NGO</td>
+      <td>名古屋站买伴手礼 → 前往机场 → 15:15 起飞</td><td>无（当天返程）</td>
+    </tr>
+  </table>
+  <div class="note-box">
+    <div class="box-title">📌 住宿分配</div>
+    <p style="margin:0;">名古屋站旁 Daiwa Roynet（2/20、2/25、2/26）共 3 晚；伊势 2 晚（2/21、2/22）、鸟羽 1 晚（2/23）、伊贺上野 1 晚（2/24）。名古屋、伊势、鸟羽、伊贺上野之间共搬家 4 次，Day 5 车程最长，请安排好零食和小玩具。</p>
+  </div>
+
+  <!-- HOTELS -->
+  <h2 class="section-title" id="hotels">三、住宿安排</h2>
+  <div class="hotel-card">
+    <h4>🏨 名古屋站旁（第 1、6、7 晚：2/20、2/25、2/26）</h4>
+    <p><strong>Daiwa Roynet Hotel Nagoya Shinkansen-guchi（大和 Roynet 酒店名古屋新干线口）</strong></p>
+    <p>地址：名古屋市中村区椿町 1-23｜从 JR 名古屋站太閤通口（新干线口）步行约 3 分钟；从名铁名古屋站步行约 13 分钟。</p>
+    <p>入住 14:00，退房 11:00，前台 24 小时服务。</p>
+    <div>
+      <span class="tag">步行到车站 3 分钟</span>
+      <span class="tag">自助早餐</span>
+      <span class="tag">投币式洗衣机</span>
+      <span class="tag">行李寄存（仅限一天）</span>
+    </div>
+  </div>
+  <div class="hotel-card">
+    <h4>⛩️ 伊势（第 2、3 晚：2/21、2/22）</h4>
+    <p><span class="fill">请填入已订旅馆名称与地址</span></p>
+    <p>建议选伊势市站附近的旅馆，方便步行去外宫，放完行李即可出门。</p>
+  </div>
+  <div class="hotel-card">
+    <h4>🐚 鸟羽（第 4 晚：2/23）</h4>
+    <p><span class="fill">请填入已订旅馆名称与地址</span></p>
+  </div>
+  <div class="hotel-card">
+    <h4>🥷 伊贺上野（第 5 晚：2/24）</h4>
+    <p><span class="fill">请填入已订旅馆名称与地址</span></p>
+  </div>
+  <div class="note-box">
+    <div class="box-title">⚠️ 提醒</div>
+    <p style="margin:0;">Daiwa Roynet 的行李寄存只限当天，所以去伊势这 4 晚请把行李一起带走。酒店大门在深夜 0 点到早上 6 点会上锁，晚归请带好房卡。</p>
+  </div>
+
+  <!-- DAY 1 -->
+  <h2 class="day-title" id="day1">Day 1｜2/20（六） 名古屋（抵达日）</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：傍晚抵达，只做「进市区、办入住、吃一顿暖和的晚餐」，早点睡，明天一早出发去伊势</div>
+    <h3 class="sub-title">② 具体时间线</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">17:40</td><td>飞机抵达中部国际机场（NGO），入境、提领行李，可顺手买 IC 卡（Suica／manaca 等皆可）</td></tr>
+      <tr><td class="time">约 18:45–19:15</td><td>走到机场车站，搭名铁前往名铁名古屋站。想快一点搭 μ-SKY（约 28 分钟，需另买 ¥450 特急券）；想省钱搭普通特急／急行（约 35–50 分钟）</td></tr>
+      <tr><td class="time">约 19:45–20:15</td><td>抵达名古屋站，步行到 Daiwa Roynet 办理入住（从 JR 太閤通口出站约 3 分钟）</td></tr>
+      <tr><td class="time">约 20:30–21:30</td><td>晚餐：就近吃名古屋名物。酒店附近有「矢场とん（味噌猪排）」名古屋站 Esca 店，从酒店步行约 3 分钟；也可以选更清淡的味噌乌冬或鸡肉饭</td></tr>
+      <tr><td class="time">21:30 起</td><td>回酒店洗澡、整理行李，把近铁通行证设定好（先不要激活，明早再激活）</td></tr>
+    </table>
+    <h3 class="sub-title">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>NGO → 名铁名古屋：μ-SKY 约 28 分钟，¥1,430；普通特急约 36 分钟，¥980</li>
+      <li>名铁名古屋 → 酒店：步行约 13 分钟；或走到 JR 名古屋站再从太閤通口出站，步行约 3 分钟</li>
+      <li>名古屋站周边是大型地下街，带行李走比较方便，不怕风吹雨淋</li>
+    </ul>
+    <h3 class="sub-title">④ 亲子贴心提示</h3>
+    <div class="tip-box">
+      <div class="box-title">贴心提示</div>
+      <ul>
+        <li>今天落地时间已晚，小孩可能又累又饿，建议在机场就先准备点心，不要等到酒店再找东西吃。</li>
+        <li>近铁通行证请在 2/21 早上要搭车前才激活，这样 5 个连续日历日刚好用到 2/25。</li>
+        <li>明天一早要搬家去伊势，今晚先把需要的衣物与零食装好随身包。</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
+    <div class="rain-box">
+      <div class="box-title">雨天备案</div>
+      <ul>
+        <li>今天只有「机场 → 车站 → 酒店 → 晚餐」，晚餐点选在车站大楼或地下街里，几乎不会淋到雨。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 2 -->
+  <h2 class="day-title" id="day2">Day 2｜2/21（日） 近铁名古屋 → 伊势</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：从近铁名古屋搭特急到伊势，先放行李，下午只逛一个地方——外宫</div>
+    <h3 class="sub-title">② 具体时间线</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午</td><td>酒店退房，步行到近铁名古屋站，激活通行证，从近铁名古屋站出发，搭特急到<strong>伊势市站</strong></td></tr>
+      <tr><td class="time">车程中</td><td>特急约 1 小时 20 分，急行约 1 小时 40 分；特急每小时有 2 到 3 班</td></tr>
+      <tr><td class="time">抵达后</td><td>先到旅馆放行李</td></tr>
+      <tr><td class="time">下午</td><td>走路去<strong>外宫</strong>，从伊势市站步行约 5 分钟</td></tr>
+      <tr><td class="time">傍晚</td><td>晚餐在伊势市区吃，早点休息</td></tr>
+    </table>
+    <h3 class="sub-title">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>近铁名古屋 → 伊势市：特急约 1 小时 20 分，急行约 1 小时 40 分</li>
+      <li>通行证不含特急费，搭特急需另外购买特急券；搭急行则不需要</li>
+      <li>铁路和巴士都不能用截图过闸，要用手机里的 QR code 本人使用</li>
+      <li>伊势市站 → 外宫：步行约 5 分钟</li>
+    </ul>
+    <h3 class="sub-title">④ 亲子贴心提示</h3>
+    <div class="tip-box">
+      <div class="box-title">贴心提示</div>
+      <ul>
+        <li>今天只排外宫一个景点，把体力留给明天的内宫。</li>
+        <li>车程较长，可带点心、小玩具或绘本，让小孩在车上不无聊。</li>
+        <li>若小孩累了，可以把外宫缩短，直接回旅馆休息。</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
+    <div class="rain-box">
+      <div class="box-title">雨天备案</div>
+      <ul>
+        <li>外宫以户外参拜为主，雨大时可缩短参拜时间，早点回旅馆休息，晚餐就近在伊势市区解决。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 3 -->
+  <h2 class="day-title" id="day3">Day 3｜2/22（一） 伊势：内宫和门前街</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：搭巴士去内宫参拜，逛御荫横丁，下午回旅馆休息，傍晚再轻松吃饭</div>
+    <h3 class="sub-title">② 具体时间线</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午</td><td>从伊势市站搭巴士去<strong>内宫</strong>，约 15 到 20 分钟</td></tr>
+      <tr><td class="time">上午至中午</td><td>参拜内宫，之后逛旁边的<strong>御荫横丁</strong></td></tr>
+      <tr><td class="time">中午</td><td>小孩可以吃赤福年糕（御祓町的老店，创业于 1707 年）</td></tr>
+      <tr><td class="time">午后</td><td>回旅馆休息</td></tr>
+      <tr><td class="time">傍晚</td><td>轻松吃饭，早点休息</td></tr>
+    </table>
+    <h3 class="sub-title">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>伊势市站 → 内宫：巴士约 15 到 20 分钟</li>
+      <li>伊势的三重交通巴士在通行证范围内</li>
+      <li>2026 年 4 月 1 日起，CAN Bus 不再经过伊势市站，请搭一般的神宫巴士</li>
+      <li>上下车时要向司机出示通行证</li>
+    </ul>
+    <h3 class="sub-title">④ 亲子贴心提示</h3>
+    <div class="tip-box">
+      <div class="box-title">贴心提示</div>
+      <ul>
+        <li>午后回旅馆休息是刻意安排的，小孩累了可以直接取消下午的活动。</li>
+        <li>内宫路面有碎石路，建议穿好走的鞋；推车可能不太好推。</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
+    <div class="rain-box">
+      <div class="box-title">雨天备案</div>
+      <ul>
+        <li>御荫横丁有不少店家有屋檐，可以边躲雨边逛、边吃点心；雨大就缩短内宫参拜时间，早点回旅馆。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 4 -->
+  <h2 class="day-title" id="day4">Day 4｜2/23（二・日本国定假日） 鸟羽，小孩最开心的一天</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：搭近铁去鸟羽，上午逛鸟羽水族馆，午餐后到御木本珍珠岛，晚上住鸟羽</div>
+    <h3 class="sub-title">② 具体时间线</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午</td><td>搭近铁到<strong>鸟羽站</strong>，换乘不多；行李可留在伊势旅馆，或直接把住宿改到鸟羽</td></tr>
+      <tr><td class="time">上午至中午</td><td><strong>鸟羽水族馆</strong>——从鸟羽站步行约 10 分钟；营业时间 9:30–17:00，最后入场 16:00；有儒艮、海狮和海象表演；建议留 2 到 3 小时，带小孩要再多留一些</td></tr>
+      <tr><td class="time">午餐</td><td>水族馆附近用餐休息</td></tr>
+      <tr><td class="time">下午</td><td><strong>御木本珍珠岛</strong>——从鸟羽站步行约 5 分钟，可以看海女潜水表演；如果小孩累了，可以只逛一半，不用全部走完</td></tr>
+      <tr><td class="time">傍晚</td><td>住鸟羽</td></tr>
+    </table>
+    <h3 class="sub-title">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>伊势市 → 鸟羽：近铁，换乘不多</li>
+      <li>鸟羽站 → 鸟羽水族馆：步行约 10 分钟</li>
+      <li>鸟羽站 → 御木本珍珠岛：步行约 5 分钟</li>
+    </ul>
+    <h3 class="sub-title">④ 亲子贴心提示</h3>
+    <div class="tip-box">
+      <div class="box-title">贴心提示</div>
+      <ul>
+        <li>2/23 是日本的国定假日（天皇诞生日），水族馆和珍珠岛人会比较多，建议开门就进场，并先确认海狮、海象表演的时间。</li>
+        <li>缆车和索道不在通行证范围，所以没有排进去。</li>
+        <li>水族馆之后体力会下降，珍珠岛可以只逛一半，不用全部走完。</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
+    <div class="rain-box">
+      <div class="box-title">雨天备案</div>
+      <ul>
+        <li>鸟羽水族馆大多在室内，雨天也能玩得很开心，可以多留一点时间。</li>
+        <li>珍珠岛的海女表演在户外，雨天或天气太冷时，可以缩短停留时间，早点回旅馆休息。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 5 -->
+  <h2 class="day-title" id="day5">Day 5｜2/24（三） 转往伊贺上野（只搬一次家）</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：睡到自然醒，中午前后出发，换车转往伊贺上野，坐忍者图案的伊贺铁道，下午在上野公园散步</div>
+    <h3 class="sub-title">② 具体时间线</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午</td><td>睡到自然醒，慢慢吃早餐，整理行李</td></tr>
+      <tr><td class="time">中午前后</td><td>出发。路线：鸟羽 → 伊势中川（近铁）→ 伊贺神户（近铁大阪线）→ 伊贺铁道到<strong>上野市站</strong></td></tr>
+      <tr><td class="time">车程中</td><td>从名古屋出发全程约 2 小时，从鸟羽出发会更久，估计 2.5 到 3 小时；<strong>伊贺铁道</strong>的车厢有忍者图案，小孩通常会喜欢</td></tr>
+      <tr><td class="time">下午</td><td>入住旅馆放行李后，在<strong>上野公园</strong>散步；博物馆和城堡都在公园内，从上野市站步行约 10 分钟</td></tr>
+      <tr><td class="time">傍晚</td><td>住伊贺上野，早点休息</td></tr>
+    </table>
+    <h3 class="sub-title">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>鸟羽 → 伊势中川（近铁）→ 伊贺神户（近铁大阪线）→ 上野市站（伊贺铁道）</li>
+      <li>伊贺铁道不收 IC 卡，只收现金，但持通行证可直接搭</li>
+      <li>搭近铁特急需另外购买特急券，搭急行或普通列车则不需要</li>
+      <li>上野市站 → 上野公园：步行约 10 分钟</li>
+    </ul>
+    <h3 class="sub-title">④ 亲子贴心提示</h3>
+    <div class="tip-box">
+      <div class="box-title">贴心提示</div>
+      <ul>
+        <li>今天车程最长，要带零食和小玩具。</li>
+        <li>伊贺铁道的忍者车厢是今天的重点，让小孩期待一下，转车时比较不会闹。</li>
+        <li>转车次数多，行李尽量精简，可以把大件行李先收好，只带随身小包。</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
+    <div class="rain-box">
+      <div class="box-title">雨天备案</div>
+      <ul>
+        <li>下午的上野公园是户外散步，雨天可以直接在旅馆休息，把景点留到明天上午的忍者博物馆。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 6 -->
+  <h2 class="day-title" id="day6">Day 6｜2/25（四） 忍者博物馆，然后回名古屋</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：上午参观伊贺流忍者博物馆，中午前后离开，下午回到近铁名古屋，晚上在名古屋站周边轻松用餐，近铁通行证用到今天</div>
+    <h3 class="sub-title">② 具体时间线</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午 10:00 起</td><td><strong>伊贺流忍者博物馆</strong>——平日 10:00–16:00（最后入场 15:30），假日到 16:30；建议留 2 小时</td></tr>
+      <tr><td class="time">博物馆内</td><td>4 岁到初中生门票 ¥700，忍术表演 ¥600，手里剑 ¥300 投 6 次</td></tr>
+      <tr><td class="time">中午前后</td><td>离开伊贺上野，搭车回近铁名古屋，约 2 小时（特急）到 2.5 小时（急行）</td></tr>
+      <tr><td class="time">下午</td><td>回到近铁名古屋站，步行到 Daiwa Roynet 办理入住，先洗澡休息</td></tr>
+      <tr><td class="time">傍晚 17:30 起</td><td>名古屋站周边晚餐，名物建议：矢场とん（味噌猪排）、きしめん（扁平面）、鸡翅（手羽先）等，选小孩吃得下的</td></tr>
+      <tr><td class="time">晚上</td><td>在站内商场或地下街逛逛，早点回酒店休息</td></tr>
+    </table>
+    <h3 class="sub-title">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>伊贺上野 → 近铁名古屋：特急约 2 小时，急行约 2.5 小时</li>
+      <li>通行证用到今天为止（5 个连续日历日：2/21–2/25）</li>
+      <li>近铁名古屋 → 酒店：步行约 15 分钟（不想拖行李可搭 JR／计程车一小段）</li>
+    </ul>
+    <h3 class="sub-title">④ 亲子贴心提示</h3>
+    <div class="tip-box">
+      <div class="box-title">贴心提示</div>
+      <ul>
+        <li>每一站都有午休或回旅馆的时间，小孩累了可以直接取消下午的景点。</li>
+        <li>忍术表演、手里剑可以看小孩精神决定要不要玩。</li>
+        <li>回名古屋这趟较长，上车前先吃点东西、上洗手间。</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
+    <div class="rain-box">
+      <div class="box-title">雨天备案</div>
+      <ul>
+        <li>忍者博物馆以室内参观为主，雨天不受影响。</li>
+        <li>名古屋站周边有地下街和大型商场，晚餐和逛街全程都可以不淋雨。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 7 -->
+  <h2 class="day-title" id="day7">Day 7｜2/26（五） 名古屋：科学馆＋热田神宫</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：上午去 FUJI 名古屋科学馆（原名古屋市科学馆）玩实验室，下午到热田神宫森林散步，傍晚吃一顿热田蓬莱轩的鳗鱼饭（ひつまぶし）。近铁通行证已过期，改用 IC 卡搭乘</div>
+    <h3 class="sub-title">② 具体时间线</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午 8:00</td><td>酒店自助早餐（6:30–10:00；6 岁以下儿童免费，成人 ¥1,200），吃饱再出门</td></tr>
+      <tr><td class="time">上午 9:00</td><td>搭地铁东山线，从名古屋站坐 1 站到<strong>伏见站</strong>，出站步行约 5 分钟到科学馆</td></tr>
+      <tr><td class="time">上午 9:30–12:30</td><td><strong>FUJI 名古屋科学馆</strong>——9:30 开馆，建议一开门就进场：深冻实验室（−30°C，馆方提供保暖衣物）用号码牌分组入场，放电实验室要排队；另有水的实验区、9 米高的人造龙卷风。建议停留 2 到 3 小时</td></tr>
+      <tr><td class="time">中午 12:30–13:30</td><td>午餐：馆内有可以自带便当的休息区，馆外也有咖啡厅；也可以在伏见站周边找餐厅</td></tr>
+      <tr><td class="time">下午 13:30–14:00</td><td>搭地铁东山线到荣站，转名城线到<strong>热田神宫西站</strong>（全程约 20–25 分钟）</td></tr>
+      <tr><td class="time">下午 14:00–15:45</td><td><strong>热田神宫</strong>——境内约 19 公顷，有上千年的樟树森林，是仅次于伊势神宫的重要神社；境内全天开放，免费参拜；累了可以到「清め餅（Kiyome-mochi）」茶店休息，吃点和果子</td></tr>
+      <tr><td class="time">傍晚 16:30–18:00</td><td><strong>热田蓬莱轩</strong>——晚餐 16:30 开始营业（最后点餐 20:30），建议一开门就进去，避开排队人潮；招牌是鳗鱼三吃（ひつまぶし）；菜单也有本地鸡肉料理，可给小孩点不吃鳗鱼的选择</td></tr>
+      <tr><td class="time">晚上 18:00–19:00</td><td>搭车回名古屋站，回酒店整理行李，明天要去机场</td></tr>
+      <tr><td class="time">选项：晚上 19:30 起</td><td>如果体力还够：Midland Square 的<strong>空中漫步（Sky Promenade）</strong>看夜景，在名古屋站步行约 1 分钟；户外露天，冬天风大要穿暖</td></tr>
+    </table>
+    <h3 class="sub-title">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>名古屋站 → 伏见站：地铁东山线 1 站；伏见站出口 5（东山线）或出口 4（鹤舞线）步行约 5 分钟到科学馆</li>
+      <li>伏见站 → 热田神宫西站：东山线到荣站，转名城线，全程约 20–25 分钟</li>
+      <li>热田神宫 → 名古屋站：名铁名古屋本线从神宫前站出发，约 20 分钟；神宫前站离神宫东门约步行 3 分钟</li>
+      <li>热田蓬莱轩本店：从热田神宫天马町站 4 号出口步行约 7 分钟；热田蓬莱轩另有神宫分店可选</li>
+      <li>今天不使用近铁通行证，改用 IC 卡或单程票</li>
+    </ul>
+    <h3 class="sub-title">④ 亲子贴心提示</h3>
+    <div class="tip-box">
+      <div class="box-title">贴心提示</div>
+      <ul>
+        <li>科学馆营业 9:30–17:00（最后入场 16:30），周一休馆，每月第三个周五也休馆；2/26 是 2 月第四个周五，正常开放。</li>
+        <li>门票：初中生以下免费；成人展览＋天象厅 ¥1,000，只看展览 ¥500。</li>
+        <li>天象厅只有日语解说，要求安静；小孩若坐不住，可以只玩实验室，不看天象厅。</li>
+        <li>有些体验项目会依年龄或健康状况限制入场；馆内没有推车出租，也不能寄存，推车请自带。</li>
+        <li>热田神宫的碎石参道较长，小孩累了可以只走到本宫再折返。</li>
+        <li>热田蓬莱轩的鳗鱼饭午餐时段常常要排很久，所以安排在傍晚一开门就进去。</li>
+        <li>名古屋站周边晚上也有很多餐厅，若不想吃鳗鱼，可以直接回车站大楼用餐。</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
+    <div class="rain-box">
+      <div class="box-title">雨天备案</div>
+      <ul>
+        <li>科学馆全程在室内，雨天不受影响，可以把停留时间拉长到下午。</li>
+        <li>热田神宫以户外参拜为主，雨大时缩短到 30 分钟左右，参拜后直接去蓬莱轩用餐。</li>
+        <li>Sky Promenade 雨天仍可入场，现场会提供雨披；但强风时可能限制入场，雨天风冷，建议直接回酒店休息。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 8 -->
+  <h2 class="day-title" id="day8">Day 8｜2/27（六） 名古屋（返程日）</h2>
+  <div class="day-block">
+    <div class="day-theme">① 今日主题：上午在名古屋站买伴手礼，不赶行程，约 11:00 前后搭名铁前往机场，15:15 起飞返回新加坡</div>
+    <h3 class="sub-title">② 具体时间线</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">时段</th><th>行程内容</th></tr>
+      <tr><td class="time">上午 7:30–8:30</td><td>酒店早餐，慢慢吃，整理最后行李</td></tr>
+      <tr><td class="time">上午 8:30–10:15</td><td>在名古屋站周边（JR 名古屋高岛屋、JR Gate Tower、站内地下街）买伴手礼，名古屋常见伴手礼有ういろう（外郎）、虾饼（えびせんべい）等</td></tr>
+      <tr><td class="time">上午 10:15</td><td>回酒店取行李，退房（退房时间 11:00）</td></tr>
+      <tr><td class="time">上午 10:45–11:15</td><td>步行到名铁名古屋站，买 μ-SKY 特急券（或搭普通特急）</td></tr>
+      <tr><td class="time">11:00–11:30</td><td>搭名铁到机场，最迟 11:30 前上车。μ-SKY 约 28 分钟，约 12:00 前抵达机场</td></tr>
+      <tr><td class="time">12:15 前</td><td>办理登机手续、托运行李、安检（建议至少提前 3 小时抵达）</td></tr>
+      <tr><td class="time">12:30–14:30</td><td>机场吃午餐，逛免税店，小孩最后放电</td></tr>
+      <tr><td class="time">15:15</td><td>起飞返回新加坡</td></tr>
+    </table>
+    <h3 class="sub-title">③ 交通指南</h3>
+    <ul class="plain-list">
+      <li>酒店 → 名铁名古屋：步行约 13 分钟</li>
+      <li>名铁名古屋 → 机场：μ-SKY 约 28 分钟 ¥1,430；普通特急约 36 分钟 ¥980</li>
+      <li>只有开往「中部国际机场」的列车才到机场，上车前请看清楚列车目的地</li>
+      <li>若航班在 T2 起飞，从机场车站步行过去约 10 分钟，请预留时间</li>
+    </ul>
+    <h3 class="sub-title">④ 亲子贴心提示</h3>
+    <div class="tip-box">
+      <div class="box-title">贴心提示</div>
+      <ul>
+        <li>最后一天不排景点，避免赶车影响心情，也让小孩有充足体力应付飞行。</li>
+        <li>伴手礼若买液体、膏状食品，要放托运行李，不能带上机。</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ 备选方案（雨天）</h3>
+    <div class="rain-box">
+      <div class="box-title">雨天备案</div>
+      <ul>
+        <li>全程在车站大楼、地下街与机场内，几乎不受雨天影响。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PACKING -->
+  <h2 class="section-title" id="packing">四、打包与实用提醒</h2>
+  <h3 class="sub-title">✅ 证件与财务</h3>
+  <div class="packing-grid">
+    <div class="packing-card">
+      <h4>必备证件</h4>
+      <ul class="plain-list">
+        <li>护照（效期 6 个月以上）及影本备份（拍照存手机）</li>
+        <li>Visit Japan Web 入境 QR code（出发前填好）</li>
+        <li>机票／登机证电子存档</li>
+        <li>各旅馆订房确认单（日文地址最好也存一份）</li>
+        <li>旅游保险保单</li>
+      </ul>
+    </div>
+    <div class="packing-card">
+      <h4>财务与通讯</h4>
+      <ul class="plain-list">
+        <li>日元现金（伊贺铁道、部分小店只收现金）</li>
+        <li>IC 卡（Suica／ICOCA／manaca，机场或车站购买，搭名古屋地铁、名铁用）</li>
+        <li>信用卡</li>
+        <li>手机上网卡或 eSIM（近铁通行证是电子票，需要手机上网和 QR code）</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="sub-title">✅ 近铁通行证与交通</h3>
+  <div class="note-box">
+    <div class="box-title">近铁通行证 5 日 Plus（2/21–2/25）</div>
+    <ul>
+      <li>可搭近铁全线与伊贺铁道，也可搭伊势・鸟羽・志摩一带的三重交通巴士与鸟羽市 Kamome 巴士。</li>
+      <li>不含特急费，搭特急要另外买特急券；急行与普通列车不需要。</li>
+      <li>不含缆车与索道，所以行程没有排缆车或索道。</li>
+      <li>铁路和巴士都不能用截图过闸，要用手机里的 QR code。</li>
+      <li>要在想开始使用的那天激活通行证；巴士下车时记得向司机出示。</li>
+      <li>通行证有效期是连续 5 个日历日，所以 2/26、2/27 在名古屋要改用 IC 卡。</li>
+      <li>6 岁以下儿童免费；若小孩届时已满 6 岁，需要购买儿童票。</li>
+    </ul>
+  </div>
+  <h3 class="sub-title">✅ 小朋友与天气</h3>
+  <div class="packing-grid">
+    <div class="packing-card">
+      <h4>小朋友用品</h4>
+      <ul class="plain-list">
+        <li>常备儿童药物（退烧药、肠胃药）</li>
+        <li>零食、小玩具、绘本（Day 5 车程最长）</li>
+        <li>轻便推车或背带（鸟羽、上野公园等步行较多）</li>
+        <li>安抚玩偶或习惯物</li>
+      </ul>
+    </div>
+    <div class="packing-card">
+      <h4>冬季衣物</h4>
+      <ul class="plain-list">
+        <li>2 月偏冷，建议洋葱式穿法（内层保暖、外层防风）</li>
+        <li>围巾、手套、帽子、暖暖包</li>
+        <li>防滑好走的鞋（神宫内有碎石路）</li>
+        <li>折叠伞或轻便雨衣</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="sub-title">✅ 其他注意事项</h3>
+  <div class="note-box">
+    <div class="box-title">其他提醒</div>
+    <ul>
+      <li>Daiwa Roynet 的行李寄存只限当天，去伊势这几天请把行李带走。</li>
+      <li>行程中的营业时间、门票价格以官方公告为准，出发前再确认一次。</li>
+      <li>2/23（二）是日本国定假日，鸟羽水族馆与珍珠岛会比较多人，建议早点进场。</li>
+      <li>日本的巴士与铁路有时会因天气、节日调整班次，前一天用 Google Maps 或 Navitime 再确认。</li>
+      <li>日本电压 100V、插座为 A 型两脚，与新加坡不同，请带转接头。</li>
+    </ul>
+  </div>
+
+  <!-- SUMMARY -->
+  <h2 class="section-title" id="summary">五、行程核心原则回顾</h2>
+  <div class="summary-box">
+    <h3>📋 行程核心原则回顾</h3>
+    <ul class="plain-list">
+      <li><strong>松弛有度：</strong>每个地点只排 1 到 2 个主要景点，每一站都有午休或回旅馆的时间，小孩累了可以直接取消下午的景点。</li>
+      <li><strong>交通简单：</strong>伊势、鸟羽、伊贺上野之间用近铁通行证一次搞定，铁路和巴士都要用手机 QR code，不能用截图过闸。</li>
+      <li><strong>只搬必要的家：</strong>名古屋 → 伊势（2 晚）→ 鸟羽 → 伊贺上野 → 回名古屋，Day 5 车程最长，已留足时间。</li>
+      <li><strong>名古屋补位：</strong>抵达日只做进市区与晚餐；Day 6 傍晚轻松用餐；Day 7 去科学馆和热田神宫，傍晚吃鳗鱼饭；Day 8 买伴手礼后搭 μ-SKY 去机场。</li>
+      <li><strong>返程不赶：</strong>最后一天全程在车站周边，预留 3 小时抵达机场。</li>
+    </ul>
+  </div>
+
+  <div class="footer-note">
+    名古屋・伊势・鸟羽・伊贺上野 旅行手册 ｜ 2027/2/20 – 2027/2/27
+  </div>
+</div>
+<div class="lang-block" id="en" lang="en">
+  <!-- COVER -->
+  <div class="cover">
+    <h1>Nagoya · Ise · Toba · Iga Ueno Travel Guide</h1>
+    <p>Feb 20 (Sat) – Feb 27 (Sat), 2027 ｜ 8 days / 7 nights</p>
+    <p>Family trip with a 5-year-old – plenty of rest time every day</p>
+    <div class="badge-row">
+      <span class="badge">🏨 Nagoya: Daiwa Roynet Hotel Nagoya Shinkansen-guchi</span>
+      <span class="badge">🚃 Kintetsu Rail Pass 5-Day Plus (Feb 21–25)</span>
+      <span class="badge">🦑 Ise · Toba · Iga Ueno</span>
+      <span class="badge">✈️ Arrive NGO 17:40 on Feb 20 · Depart NGO 15:15 on Feb 27</span>
+    </div>
+  </div>
+  <!-- TOC -->
+  <div class="toc">
+    <h3>Contents</h3>
+    <ul>
+      <li><a href="#flights-en">Flight Information</a></li>
+      <li><a href="#overview-en">Itinerary Overview</a></li>
+      <li><a href="#hotels-en">Accommodation</a></li>
+      <li><a href="#day1-en">Day 1 | Nagoya (Arrival)</a></li>
+      <li><a href="#day2-en">Day 2 | Kintetsu Nagoya → Ise (Geku)</a></li>
+      <li><a href="#day3-en">Day 3 | Ise (Naiku · Okage Yokocho)</a></li>
+      <li><a href="#day4-en">Day 4 | Toba (Aquarium · Pearl Island)</a></li>
+      <li><a href="#day5-en">Day 5 | Toba → Iga Ueno (Ninja Train)</a></li>
+      <li><a href="#day6-en">Day 6 | Ninja Museum → Back to Nagoya</a></li>
+      <li><a href="#day7-en">Day 7 | Nagoya (Science Museum · Atsuta Jingu)</a></li>
+      <li><a href="#day8-en">Day 8 | Nagoya → Departure</a></li>
+      <li><a href="#packing-en">Packing &amp; Practical Reminders</a></li>
+      <li><a href="#summary-en">Trip Principles Recap</a></li>
+    </ul>
+  </div>
+
+  <!-- FLIGHTS -->
+  <h2 class="section-title" id="flights-en">1. Flight Information</h2>
+  <table class="overview">
+    <tr><th>Sector</th><th>Date</th><th>Time</th><th>Flight</th><th>Notes</th></tr>
+    <tr>
+      <td>SIN → NGO</td><td>Feb 20 (Sat)</td><td>Arrive 17:40</td>
+      <td><span class="fill">Flight no. TBC</span></td>
+      <td>Singapore → Chubu Centrair International Airport (Nagoya). Evening arrival, go straight to Nagoya for the night</td>
+    </tr>
+    <tr>
+      <td>NGO → SIN</td><td>Feb 27 (Sat)</td><td>Depart 15:15</td>
+      <td><span class="fill">Flight no. TBC</span></td>
+      <td>Aim to reach the airport by 12:15 for check-in</td>
+    </tr>
+  </table>
+  <div class="note-box">
+    <div class="box-title">✈️ Flight Reminders</div>
+    <ul>
+      <li>You land in the evening. Allow about 1 hour for immigration and baggage, and plan only "hotel + dinner" for that night – no sightseeing.</li>
+      <li>Fill in Visit Japan Web before departure so you clear arrivals faster.</li>
+      <li>Check whether your flight uses Terminal 1 or 2. The airport train station is on the Terminal 1 side; from Terminal 2 it is about a 10-minute walk.</li>
+      <li>Airport ↔ Nagoya by Meitetsu: the μ-SKY limited express takes about 28 minutes and costs ¥1,430 for an adult (¥980 fare + ¥450 limited-express ticket, all seats reserved); ordinary limited express / express takes about 35–50 minutes and costs ¥980.</li>
+    </ul>
+  </div>
+
+  <!-- OVERVIEW -->
+  <h2 class="section-title" id="overview-en">2. Itinerary Overview</h2>
+  <table class="overview">
+    <tr><th>Day</th><th>Date</th><th>Location</th><th>Theme</th><th>Stay</th></tr>
+    <tr><td>Day 1</td><td>Feb 20 (Sat)</td><td>Nagoya</td><td>Arrive NGO 17:40 + Meitetsu into the city + dinner near the station</td><td>Daiwa Roynet Nagoya Shinkansen-guchi</td></tr>
+    <tr><td>Day 2</td><td>Feb 21 (Sun)</td><td>Nagoya → Ise</td><td>Kintetsu Nagoya → Ise, an easy visit to Geku (original plan, day 1)</td><td>Ise</td></tr>
+    <tr><td>Day 3</td><td>Feb 22 (Mon)</td><td>Ise</td><td>Naiku + Okage Yokocho, rest in the afternoon (original plan, day 2)</td><td>Ise</td></tr>
+    <tr><td>Day 4</td><td>Feb 23 (Tue, holiday)</td><td>Toba</td><td>Toba Aquarium + Mikimoto Pearl Island (original plan, day 3)</td><td>Toba</td></tr>
+    <tr><td>Day 5</td><td>Feb 24 (Wed)</td><td>Toba → Iga Ueno</td><td>A slow transfer to Iga Ueno on the ninja train (original plan, day 4)</td><td>Iga Ueno</td></tr>
+    <tr><td>Day 6</td><td>Feb 25 (Thu)</td><td>Iga Ueno → Nagoya</td><td>Ninja Museum → back to Kintetsu Nagoya, relaxed dinner near Nagoya Station (original plan, day 5)</td><td>Daiwa Roynet Nagoya Shinkansen-guchi</td></tr>
+    <tr><td>Day 7</td><td>Feb 26 (Fri)</td><td>Nagoya</td><td>FUJI Nagoya Science Museum + Atsuta Jingu + hitsumabushi dinner</td><td>Daiwa Roynet Nagoya Shinkansen-guchi</td></tr>
+    <tr><td>Day 8</td><td>Feb 27 (Sat)</td><td>Nagoya → NGO</td><td>Souvenirs at Nagoya Station → airport → 15:15 flight</td><td>None (departing that day)</td></tr>
+  </table>
+  <div class="note-box">
+    <div class="box-title">📌 Accommodation Plan</div>
+    <p style="margin:0;">Next to Nagoya Station at Daiwa Roynet (Feb 20, 25, 26) – 3 nights; Ise 2 nights (Feb 21, 22); Toba 1 night (Feb 23); Iga Ueno 1 night (Feb 24). Four moves between Nagoya, Ise, Toba and Iga Ueno. Day 5 has the longest ride, so pack snacks and small toys.</p>
+  </div>
+
+  <!-- HOTELS -->
+  <h2 class="section-title" id="hotels-en">3. Accommodation</h2>
+  <div class="hotel-card">
+    <h4>🏨 Next to Nagoya Station (Nights 1, 6 &amp; 7: Feb 20, 25, 26)</h4>
+    <p><strong>Daiwa Roynet Hotel Nagoya Shinkansen-guchi</strong></p>
+    <p>Address: 1-23 Tsubaki-cho, Nakamura-ku, Nagoya | About 3 minutes on foot from the Taiko-dori (Shinkansen) exit of JR Nagoya Station; about 13 minutes from Meitetsu Nagoya Station.</p>
+    <p>Check-in 14:00, check-out 11:00, 24-hour front desk.</p>
+    <div>
+      <span class="tag">3 min walk to station</span>
+      <span class="tag">Buffet breakfast</span>
+      <span class="tag">Coin laundry</span>
+      <span class="tag">Same-day luggage storage only</span>
+    </div>
+  </div>
+  <div class="hotel-card">
+    <h4>⛩️ Ise (Nights 2 &amp; 3: Feb 21, 22)</h4>
+    <p><span class="fill">Please add hotel name and address</span></p>
+    <p>A hotel near Iseshi Station is best, so you can drop your bags and walk to Geku.</p>
+  </div>
+  <div class="hotel-card">
+    <h4>🐚 Toba (Night 4: Feb 23)</h4>
+    <p><span class="fill">Please add hotel name and address</span></p>
+  </div>
+  <div class="hotel-card">
+    <h4>🥷 Iga Ueno (Night 5: Feb 24)</h4>
+    <p><span class="fill">Please add hotel name and address</span></p>
+  </div>
+  <div class="note-box">
+    <div class="box-title">⚠️ Reminder</div>
+    <p style="margin:0;">Daiwa Roynet's luggage storage is for the same day only, so take all your bags with you to Ise for the next 4 nights. The hotel's front door is locked from midnight to 6 AM, so bring your room card if you return late.</p>
+  </div>
+
+  <!-- DAY 1 -->
+  <h2 class="day-title" id="day1-en">Day 1 | Feb 20 (Sat) Nagoya (Arrival Day)</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Arrive in the evening and do only three things – get into the city, check in and have a warm dinner. Early night; tomorrow morning you head to Ise.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">17:40</td><td>Land at Chubu Centrair Airport (NGO), clear immigration and collect luggage. You can buy an IC card (Suica / manaca etc.) at the same time.</td></tr>
+      <tr><td class="time">About 18:45–19:15</td><td>Walk to the airport station and take the Meitetsu line to Meitetsu Nagoya. For speed take the μ-SKY (about 28 minutes, ¥450 extra for the limited-express ticket); to save money take an ordinary limited express / express (about 35–50 minutes).</td></tr>
+      <tr><td class="time">About 19:45–20:15</td><td>Arrive at Nagoya Station and walk to Daiwa Roynet to check in (about 3 minutes from the JR Taiko-dori exit).</td></tr>
+      <tr><td class="time">About 20:30–21:30</td><td>Dinner nearby with a Nagoya specialty. Yabaton (miso katsu), Nagoya Station Esca branch, is about 3 minutes' walk from the hotel; miso udon or chicken rice are lighter options.</td></tr>
+      <tr><td class="time">From 21:30</td><td>Back to the hotel to bathe and repack. Set up your Kintetsu pass but don't activate it yet – activate it tomorrow morning.</td></tr>
+    </table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>NGO → Meitetsu Nagoya: μ-SKY about 28 minutes, ¥1,430; ordinary limited express about 36 minutes, ¥980.</li>
+      <li>Meitetsu Nagoya → hotel: about 13 minutes on foot; or walk to JR Nagoya Station and leave via the Taiko-dori exit, about 3 minutes to the hotel.</li>
+      <li>Nagoya Station has a large underground mall, handy with luggage and out of the wind and rain.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>You land late, so the child may be tired and hungry. Have snacks ready at the airport instead of searching once you reach the hotel.</li>
+        <li>Activate the Kintetsu pass on the morning of Feb 21, just before your first train, so its 5 consecutive calendar days run exactly to Feb 25.</li>
+        <li>You move to Ise tomorrow morning, so pack tomorrow's clothes and snacks in a day bag tonight.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Today is only airport → station → hotel → dinner. Choose a restaurant inside the station building or underground mall and you will barely get wet.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 2 -->
+  <h2 class="day-title" id="day2-en">Day 2 | Feb 21 (Sun) Kintetsu Nagoya → Ise</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Take the limited express from Kintetsu Nagoya to Ise, drop your bags, then visit just one place this afternoon – Geku.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">Morning</td><td>Check out, walk to Kintetsu Nagoya Station, activate the pass, and take the limited express to <strong>Iseshi Station</strong>.</td></tr>
+      <tr><td class="time">On the train</td><td>Limited express about 1 hr 20 min, express about 1 hr 40 min; limited expresses run 2–3 times an hour.</td></tr>
+      <tr><td class="time">On arrival</td><td>Drop your bags at the hotel first.</td></tr>
+      <tr><td class="time">Afternoon</td><td>Walk to <strong>Geku</strong>, about 5 minutes on foot from Iseshi Station.</td></tr>
+      <tr><td class="time">Evening</td><td>Dinner in Ise city, early night.</td></tr>
+    </table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Kintetsu Nagoya → Iseshi: limited express about 1 hr 20 min, express about 1 hr 40 min.</li>
+      <li>The pass does not cover limited-express tickets, so you need to buy one separately for the limited express; the express needs none.</li>
+      <li>You cannot go through the gates or board with a screenshot on rail or buses – use the QR code on your phone.</li>
+      <li>Iseshi Station → Geku: about 5 minutes on foot.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>Only Geku is planned today, saving energy for Naiku tomorrow.</li>
+        <li>The ride is long, so bring snacks, small toys or picture books.</li>
+        <li>If the child gets tired, shorten Geku and go straight back to the hotel.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Geku is an outdoor visit. In heavy rain, shorten the visit, go back to the hotel early and have dinner nearby in Ise city.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 3 -->
+  <h2 class="day-title" id="day3-en">Day 3 | Feb 22 (Mon) Ise: Naiku and the Shopping Street</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Take a bus to Naiku, stroll Okage Yokocho, rest at the hotel in the afternoon, and have a relaxed dinner in the evening.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">Morning</td><td>Take a bus from Iseshi Station to <strong>Naiku</strong>, about 15–20 minutes.</td></tr>
+      <tr><td class="time">Late morning</td><td>Visit Naiku, then stroll the neighbouring <strong>Okage Yokocho</strong>.</td></tr>
+      <tr><td class="time">Midday</td><td>The child can have Akafuku rice cakes (an old shop in Oharaimachi, founded in 1707).</td></tr>
+      <tr><td class="time">Afternoon</td><td>Back to the hotel to rest.</td></tr>
+      <tr><td class="time">Evening</td><td>A relaxed meal and an early night.</td></tr>
+    </table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Iseshi Station → Naiku: bus, about 15–20 minutes.</li>
+      <li>Mie Kotsu buses in the Ise area are covered by the pass.</li>
+      <li>From April 1, 2026, the CAN Bus no longer stops at Iseshi Station – take a regular Jingu bus instead.</li>
+      <li>Show your pass to the driver when boarding and alighting.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>The afternoon rest at the hotel is deliberate – if the child is tired, just cancel the afternoon plans.</li>
+        <li>Naiku has gravel paths; wear comfortable shoes. Strollers may be hard to push.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Many Okage Yokocho shops have awnings, so you can browse and snack while sheltering. In heavy rain, shorten the Naiku visit and head back to the hotel.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 4 -->
+  <h2 class="day-title" id="day4-en">Day 4 | Feb 23 (Tue, national holiday) Toba, the Child's Favourite Day</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Take the Kintetsu to Toba, visit Toba Aquarium in the morning and Mikimoto Pearl Island after lunch; stay the night in Toba.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">Morning</td><td>Take the Kintetsu to <strong>Toba Station</strong>, with few transfers. Leave your luggage at the Ise hotel, or move your stay to Toba.</td></tr>
+      <tr><td class="time">Morning to midday</td><td><strong>Toba Aquarium</strong> – about 10 minutes on foot from Toba Station; open 9:30–17:00, last entry 16:00; dugong, sea lion and walrus shows; allow 2–3 hours, more with a child.</td></tr>
+      <tr><td class="time">Lunch</td><td>Eat and rest near the aquarium.</td></tr>
+      <tr><td class="time">Afternoon</td><td><strong>Mikimoto Pearl Island</strong> – about 5 minutes on foot from Toba Station; you can watch the ama diver show. If the child is tired, do only half and don't walk it all.</td></tr>
+      <tr><td class="time">Evening</td><td>Stay in Toba.</td></tr>
+    </table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Ise → Toba: Kintetsu, few transfers.</li>
+      <li>Toba Station → Toba Aquarium: about 10 minutes on foot.</li>
+      <li>Toba Station → Mikimoto Pearl Island: about 5 minutes on foot.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>Feb 23 is a Japanese national holiday (Emperor's Birthday), so the aquarium and Pearl Island will be busier. Enter as soon as they open and check the show times first.</li>
+        <li>Cable cars and ropeways are not covered by the pass, so none are planned.</li>
+        <li>Energy drops after the aquarium, so Pearl Island can be done only halfway.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Toba Aquarium is mostly indoors, so rain won't spoil it – you can stay longer.</li>
+        <li>The ama diver show at Pearl Island is outdoors; in rain or very cold weather, cut the visit short and rest at the hotel.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 5 -->
+  <h2 class="day-title" id="day5-en">Day 5 | Feb 24 (Wed) Moving to Iga Ueno (only one move)</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Sleep in, set off around midday, change trains to Iga Ueno, ride the ninja-themed Iga Railway, and stroll Ueno Park in the afternoon.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">Morning</td><td>Wake naturally, have a slow breakfast and pack.</td></tr>
+      <tr><td class="time">Around midday</td><td>Set off. Route: Toba → Ise-Nakagawa (Kintetsu) → Iga-Kambe (Kintetsu Osaka Line) → Iga Railway to <strong>Uenoshi Station</strong>.</td></tr>
+      <tr><td class="time">On the train</td><td>The whole trip takes about 2 hours from Nagoya; from Toba it is longer, so <strong>expect 2.5 to 3 hours</strong>. The <strong>Iga Railway</strong> carriages have ninja designs, which children usually like.</td></tr>
+      <tr><td class="time">Afternoon</td><td>Check in and drop your bags, then stroll <strong>Ueno Park</strong>; the museum and castle are inside the park, about 10 minutes' walk from Uenoshi Station.</td></tr>
+      <tr><td class="time">Evening</td><td>Stay in Iga Ueno and rest early.</td></tr>
+    </table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Toba → Ise-Nakagawa (Kintetsu) → Iga-Kambe (Kintetsu Osaka Line) → Uenoshi (Iga Railway).</li>
+      <li>The Iga Railway does not accept IC cards, only cash, but you can ride directly with the pass.</li>
+      <li>Kintetsu limited expresses need a separate ticket; express and local trains do not.</li>
+      <li>Uenoshi Station → Ueno Park: about 10 minutes on foot.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>Today has the longest ride – bring snacks and small toys.</li>
+        <li>The ninja carriage on the Iga Railway is today's highlight. Tell the child about it beforehand and transfers go more smoothly.</li>
+        <li>There are several transfers, so travel light and keep only a small day bag handy.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>The afternoon walk in Ueno Park is outdoors. In rain, rest at the hotel and leave the sights for tomorrow morning's Ninja Museum.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 6 -->
+  <h2 class="day-title" id="day6-en">Day 6 | Feb 25 (Thu) Ninja Museum, then back to Nagoya</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Visit the Iga-ryu Ninja Museum in the morning, leave around midday, return to Kintetsu Nagoya in the afternoon, and have a relaxed dinner around Nagoya Station. Today is the last day of the Kintetsu pass.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">From 10:00</td><td><strong>Iga-ryu Ninja Museum</strong> – weekdays 10:00–16:00 (last entry 15:30), weekends and holidays until 16:30; allow about 2 hours.</td></tr>
+      <tr><td class="time">In the museum</td><td>Ages 4 to junior high: ¥700 admission; ninjutsu show ¥600; shuriken (throwing stars) ¥300 for 6 throws.</td></tr>
+      <tr><td class="time">Around midday</td><td>Leave Iga Ueno and return to Kintetsu Nagoya – about 2 hours by limited express, 2.5 hours by express.</td></tr>
+      <tr><td class="time">Afternoon</td><td>Arrive at Kintetsu Nagoya, walk to Daiwa Roynet to check in, then bathe and rest.</td></tr>
+      <tr><td class="time">From 17:30</td><td>Dinner around Nagoya Station. Nagoya specialties to try: Yabaton (miso katsu), kishimen (flat noodles), tebasaki (chicken wings) – choose what the child can eat.</td></tr>
+      <tr><td class="time">Evening</td><td>Browse the station mall or underground mall, then an early night.</td></tr>
+    </table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Iga Ueno → Kintetsu Nagoya: limited express about 2 hours, express about 2.5 hours.</li>
+      <li>The pass is used up today (5 consecutive calendar days: Feb 21–25).</li>
+      <li>Kintetsu Nagoya → hotel: about 15 minutes on foot (take a JR train or taxi for a short hop if you don't want to drag luggage).</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>Every stop has a lunch or hotel rest, so if the child is tired, you can cancel the afternoon sights.</li>
+        <li>Decide on the ninjutsu show and shuriken depending on the child's energy.</li>
+        <li>The ride back to Nagoya is long – eat and use the restroom before boarding.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>The Ninja Museum is mostly indoors and unaffected by rain.</li>
+        <li>The area around Nagoya Station has an underground mall and large shopping centres, so dinner and browsing can be done without going out in the rain.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 7 -->
+  <h2 class="day-title" id="day7-en">Day 7 | Feb 26 (Fri) Nagoya: Science Museum + Atsuta Jingu</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Play in the labs at the FUJI Nagoya Science Museum (formerly the Nagoya City Science Museum) in the morning, walk through the forest at Atsuta Jingu in the afternoon, and have hitsumabushi (eel rice) for an early dinner at Atsuta Horaiken. The Kintetsu pass has expired, so use an IC card today.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">8:00 AM</td><td>Buffet breakfast at the hotel (6:30–10:00; free for children under 6, ¥1,200 for adults) – eat well before heading out.</td></tr>
+      <tr><td class="time">9:00 AM</td><td>Take the Higashiyama Subway Line 1 stop from Nagoya Station to <strong>Fushimi Station</strong>, then walk about 5 minutes to the museum.</td></tr>
+      <tr><td class="time">9:30 AM–12:30 PM</td><td><strong>FUJI Nagoya Science Museum</strong> – opens at 9:30; go in as soon as it opens. The Deep Freezing Lab (−30°C; warm clothing is provided) uses numbered tickets for small groups, and the Discharge Lab has a queue; there is also a water-experiment area and a 9-metre indoor tornado. Allow 2–3 hours.</td></tr>
+      <tr><td class="time">12:30–1:30 PM</td><td>Lunch: the museum has rest areas where you can eat a packed lunch, and there is a café just outside; or find a restaurant near Fushimi Station.</td></tr>
+      <tr><td class="time">1:30–2:00 PM</td><td>Take the Higashiyama Line to Sakae, transfer to the Meijo Line to <strong>Atsuta-jingu-nishi Station</strong> (about 20–25 minutes in total).</td></tr>
+      <tr><td class="time">2:00–3:45 PM</td><td><strong>Atsuta Jingu</strong> – about 19 hectares of grounds with a camphor forest over a thousand years old; it ranks second only to Ise Grand Shrine. The grounds are open 24 hours and free to enter; when tired, rest at the Kiyome-mochi teahouse with a Japanese sweet.</td></tr>
+      <tr><td class="time">4:30–6:00 PM</td><td><strong>Atsuta Horaiken</strong> – dinner service starts at 16:30 (last order 20:30); go in as soon as it opens to avoid the queue. The signature dish is hitsumabushi (eel served three ways); the menu also has local chicken dishes for a child who doesn't eat eel.</td></tr>
+      <tr><td class="time">6:00–7:00 PM</td><td>Return to Nagoya Station and the hotel, and repack – tomorrow you fly home.</td></tr>
+      <tr><td class="time">Optional: from 7:30 PM</td><td>If energy remains: the <strong>Sky Promenade</strong> at Midland Square for the night view, about 1 minute on foot from Nagoya Station. It is an open-air deck, so it is windy and cold in winter – dress warmly.</td></tr>
+    </table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Nagoya Station → Fushimi Station: Higashiyama Line, 1 stop; from Exit 5 (Higashiyama Line) or Exit 4 (Tsurumai Line) it is about 5 minutes on foot to the museum.</li>
+      <li>Fushimi Station → Atsuta-jingu-nishi Station: Higashiyama Line to Sakae, transfer to the Meijo Line, about 20–25 minutes in total.</li>
+      <li>Atsuta Jingu → Nagoya Station: Meitetsu Nagoya Line from Jingu-mae Station, about 20 minutes; Jingu-mae Station is about 3 minutes on foot from the shrine's east gate.</li>
+      <li>Atsuta Horaiken main restaurant: about 7 minutes on foot from Exit 4 of Atsuta Jingu Tenma-cho Station; Atsuta Horaiken also has a Jingu branch.</li>
+      <li>The Kintetsu pass is not used today – use an IC card or single tickets.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>The museum is open 9:30–17:00 (last entry 16:30) and closed Mondays and the third Friday of each month. Feb 26 is the fourth Friday of February, so it is open as normal.</li>
+        <li>Admission: free for junior high school students and under; adults ¥1,000 for exhibits + planetarium, ¥500 for exhibits only.</li>
+        <li>The planetarium has Japanese narration only and requires quiet. If the child can't sit still, just do the labs and skip the dome.</li>
+        <li>Some activities may be refused by age or health; the museum has no stroller rental or storage, so bring your own stroller.</li>
+        <li>The gravel approach at Atsuta Jingu is fairly long – if the child tires, walk only as far as the main hall and turn back.</li>
+        <li>The hitsumabushi lunch queue at Atsuta Horaiken is often very long, which is why dinner at opening time is planned.</li>
+        <li>There are plenty of restaurants around Nagoya Station in the evening too; if you'd rather skip eel, eat in the station building.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>The science museum is entirely indoors, so rain doesn't matter and you can stretch the visit into the afternoon.</li>
+        <li>Atsuta Jingu is mostly outdoors; in heavy rain keep it to about 30 minutes and go straight to dinner at Horaiken.</li>
+        <li>The Sky Promenade stays open in the rain and gives out ponchos, but may restrict entry in strong wind; with a cold, wet evening, going back to the hotel is the better choice.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DAY 8 -->
+  <h2 class="day-title" id="day8-en">Day 8 | Feb 27 (Sat) Nagoya (Departure Day)</h2>
+  <div class="day-block">
+    <div class="day-theme">① Theme: Buy souvenirs at Nagoya Station in the morning without rushing, take the Meitetsu to the airport around 11:00, and fly to Singapore at 15:15.</div>
+    <h3 class="sub-title">② Timeline</h3>
+    <table class="timeline">
+      <tr><th style="width:130px;">Time</th><th>Plan</th></tr>
+      <tr><td class="time">7:30–8:30 AM</td><td>Hotel breakfast, take your time, and do the final packing.</td></tr>
+      <tr><td class="time">8:30–10:15 AM</td><td>Buy souvenirs around Nagoya Station (JR Nagoya Takashimaya, JR Gate Tower, the station underground mall). Popular Nagoya souvenirs include uiro (rice sweets) and ebi senbei (shrimp crackers).</td></tr>
+      <tr><td class="time">10:15 AM</td><td>Go back to the hotel, collect your bags and check out (check-out 11:00).</td></tr>
+      <tr><td class="time">10:45–11:15 AM</td><td>Walk to Meitetsu Nagoya Station and buy a μ-SKY limited-express ticket (or take an ordinary limited express).</td></tr>
+      <tr><td class="time">11:00–11:30 AM</td><td>Take the Meitetsu to the airport; board by 11:30 at the latest. μ-SKY takes about 28 minutes, arriving around 12:00.</td></tr>
+      <tr><td class="time">By 12:15 PM</td><td>Check in, drop bags and clear security (aim to arrive at least 3 hours before departure).</td></tr>
+      <tr><td class="time">12:30–2:30 PM</td><td>Lunch at the airport, browse the duty-free shops, and let the child burn off the last of their energy.</td></tr>
+      <tr><td class="time">3:15 PM</td><td>Depart for Singapore.</td></tr>
+    </table>
+    <h3 class="sub-title">③ Getting Around</h3>
+    <ul class="plain-list">
+      <li>Hotel → Meitetsu Nagoya: about 13 minutes on foot.</li>
+      <li>Meitetsu Nagoya → airport: μ-SKY about 28 minutes, ¥1,430; ordinary limited express about 36 minutes, ¥980.</li>
+      <li>Only trains bound for "Chubu International Airport" reach the airport – check the destination before boarding.</li>
+      <li>If your flight leaves from Terminal 2, it is about 10 minutes on foot from the airport station, so allow time.</li>
+    </ul>
+    <h3 class="sub-title">④ Tips for Kids</h3>
+    <div class="tip-box">
+      <div class="box-title">Tips</div>
+      <ul>
+        <li>No sightseeing on the last day, so you won't be rushing for trains and the child has enough energy for the flight.</li>
+        <li>Liquid or paste-type food souvenirs must go in your checked baggage, not hand luggage.</li>
+      </ul>
+    </div>
+    <h3 class="sub-title">⑤ Backup Plan (Rain)</h3>
+    <div class="rain-box">
+      <div class="box-title">Rain plan</div>
+      <ul>
+        <li>Everything is inside the station buildings, underground mall and airport, so rain barely matters.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PACKING -->
+  <h2 class="section-title" id="packing-en">4. Packing &amp; Practical Reminders</h2>
+  <h3 class="sub-title">✅ Documents &amp; Finance</h3>
+  <div class="packing-grid">
+    <div class="packing-card">
+      <h4>Essential documents</h4>
+      <ul class="plain-list">
+        <li>Passport (valid 6+ months) and a backup copy (photo on your phone)</li>
+        <li>Visit Japan Web immigration QR code (fill it in before departure)</li>
+        <li>Electronic copies of flight tickets / boarding passes</li>
+        <li>Hotel booking confirmations (keep the Japanese addresses too)</li>
+        <li>Travel insurance policy</li>
+      </ul>
+    </div>
+    <div class="packing-card">
+      <h4>Money &amp; connectivity</h4>
+      <ul class="plain-list">
+        <li>Japanese yen in cash (the Iga Railway and some small shops take cash only)</li>
+        <li>IC card (Suica / ICOCA / manaca, bought at the airport or a station; used on Nagoya subways and Meitetsu)</li>
+        <li>Credit card</li>
+        <li>Mobile data SIM or eSIM (the Kintetsu pass is a digital ticket, so you need data and a QR code)</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="sub-title">✅ Kintetsu Pass &amp; Transport</h3>
+  <div class="note-box">
+    <div class="box-title">Kintetsu Rail Pass 5-Day Plus (Feb 21–25)</div>
+    <ul>
+      <li>Covers all Kintetsu lines and the Iga Railway, plus Mie Kotsu buses and the Toba City Kamome buses in the Ise–Toba–Shima area.</li>
+      <li>Limited-express charges are not included – buy a limited-express ticket separately; express and local trains need none.</li>
+      <li>Cable cars and ropeways are not included, so none are planned.</li>
+      <li>You cannot go through gates or board with a screenshot on rail or buses – use the QR code on your phone.</li>
+      <li>Activate the pass on the day you want to start, and show it to the driver when getting off a bus.</li>
+      <li>The pass runs for 5 consecutive calendar days, so for Feb 26–27 in Nagoya you use an IC card instead.</li>
+      <li>Children under 6 ride free; if your child turns 6 before the trip, you need to buy a child pass.</li>
+    </ul>
+  </div>
+  <h3 class="sub-title">✅ Child &amp; Weather</h3>
+  <div class="packing-grid">
+    <div class="packing-card">
+      <h4>Child essentials</h4>
+      <ul class="plain-list">
+        <li>Regular children's medication (fever reducer, stomach medicine)</li>
+        <li>Snacks, small toys and picture books (Day 5 has the longest ride)</li>
+        <li>A light stroller or carrier (lots of walking in Toba and Ueno Park, and the Science Museum has no stroller rental)</li>
+        <li>A comfort toy or familiar item</li>
+      </ul>
+    </div>
+    <div class="packing-card">
+      <h4>Winter clothing</h4>
+      <ul class="plain-list">
+        <li>February is cold – dress in layers (warm inner layer, windproof outer layer)</li>
+        <li>Scarf, gloves, hat and hand warmers</li>
+        <li>Non-slip walking shoes (the shrine grounds have gravel paths)</li>
+        <li>A folding umbrella or light raincoat</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="sub-title">✅ Other Notes</h3>
+  <div class="note-box">
+    <div class="box-title">Other reminders</div>
+    <ul>
+      <li>Daiwa Roynet's luggage storage is same-day only, so take your bags with you for the Ise stay.</li>
+      <li>Opening hours and ticket prices follow official announcements – double-check before you go.</li>
+      <li>Feb 23 (Tue) is a Japanese national holiday, so the Toba Aquarium and Pearl Island will be busier – enter early.</li>
+      <li>Japanese buses and trains may adjust schedules for weather or holidays; check again the day before with Google Maps or Navitime.</li>
+      <li>Japan uses 100V and Type A two-pin sockets, which differ from Singapore – bring an adapter.</li>
+    </ul>
+  </div>
+
+  <!-- SUMMARY -->
+  <h2 class="section-title" id="summary-en">5. Trip Principles Recap</h2>
+  <div class="summary-box">
+    <h3>📋 Trip Principles Recap</h3>
+    <ul class="plain-list">
+      <li><strong>Relaxed pacing:</strong> Only 1–2 main sights per place, with a lunch or hotel rest at every stop, so if the child is tired you can simply cancel the afternoon sights.</li>
+      <li><strong>Simple transport:</strong> Ise, Toba and Iga Ueno are connected by one Kintetsu pass, using QR codes on your phone (screenshots will not work at gates).</li>
+      <li><strong>Only the necessary moves:</strong> Nagoya → Ise (2 nights) → Toba → Iga Ueno → back to Nagoya. Day 5 has the longest ride and has plenty of time allowed.</li>
+      <li><strong>Nagoya filled in:</strong> Arrival day is only the city transfer and dinner; Day 6 is a relaxed dinner; Day 7 is the Science Museum and Atsuta Jingu; Day 8 is souvenirs and the μ-SKY to the airport.</li>
+      <li><strong>No rush on departure:</strong> The last day stays around the station, with 3 hours allowed to reach the airport.</li>
+    </ul>
+  </div>
+
+  <div class="footer-note">
+    Nagoya · Ise · Toba · Iga Ueno Travel Guide ｜ Feb 20 – Feb 27, 2027
+  </div>
+</div>
+</div>
+<script>
+(function () {
+  var TITLES = { zh: "名古屋・伊势・鸟羽・伊贺上野 旅行手册", en: "Nagoya · Ise · Toba · Iga Ueno Travel Guide" };
+  var btns = document.querySelectorAll('.lang-switch button');
+  function headings(id) { return document.querySelectorAll('#' + id + ' h2'); }
+  function currentIndex(cur) {
+    var hs = headings(cur), idx = -1;
+    for (var i = 0; i < hs.length; i++) { if (hs[i].getBoundingClientRect().top <= 80) idx = i; }
+    return idx;
+  }
+  function apply(lang) {
+    document.body.classList.toggle('lang-en', lang === 'en');
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hans';
+    document.title = TITLES[lang];
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
+  }
+  function setLang(lang) {
+    var cur = document.body.classList.contains('lang-en') ? 'en' : 'zh';
+    if (cur === lang) return;
+    var idx = currentIndex(cur);
+    apply(lang);
+    var hs = headings(lang);
+    if (idx >= 0 && hs[idx]) { hs[idx].scrollIntoView(); } else { window.scrollTo(0, 0); }
+    try { localStorage.setItem('ngo-lang', lang); } catch (e) {}
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
+  var saved = null;
+  try { saved = localStorage.getItem('ngo-lang'); } catch (e) {}
+  var q = /[?&]lang=(en|zh)/.exec(location.search);
+  apply(q ? q[1] : (saved === 'en' ? 'en' : 'zh'));
+})();
+</script>
+</body>
+</html>
