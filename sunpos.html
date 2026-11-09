@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bus Seat Sun Finder</title>
+
+  <!-- Leaflet CSS (OpenStreetMap wrapper) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; flex-direction: column; height: 100vh; }
+    #controls { padding: 15px; background: #f8f9fa; border-bottom: 1px solid #ccc; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; }
+    .input-group { display: flex; flex-direction: column; gap: 4px; }
+    label { font-weight: bold; font-size: 0.85rem; }
+    input, button { padding: 8px 12px; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: #007bff; color: white; font-weight: bold; cursor: pointer; border: none; }
+    button:hover { background: #0056b3; }
+    #result-panel { width: 100%; padding: 12px; background: #e9ecef; border-radius: 6px; font-size: 1.1rem; text-align: center; }
+    .recommendation { font-weight: bold; color: #2b8a3e; font-size: 1.3rem; margin-top: 4px; }
+    #map { flex: 1; width: 100%; }
+  </style>
+</head>
+<body>
+
+  <div id="controls">
+    <div class="input-group">
+      <label for="travel-time">Departure Date & Time:</label>
+      <input type="datetime-local" id="travel-time">
+    </div>
+    <button onclick="calculateSeat()">Calculate Seat Side</button>
+    
+    <div id="result-panel">
+      <div>Click two points on the map: <b>1st = Start</b>, <b>2nd = Destination</b></div>
+      <div id="seat-advice" class="recommendation"></div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <!-- Leaflet JS & SunCalc JS CDN -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+
+  <script>
+    // Initialize default time to now
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('travel-time').value = now.toISOString().slice(0, 16);
+
+    // Initialize Map with OpenStreetMap (No API Key Required!)
+    const map = L.map('map').setView([1.3521, 103.8198], 12); // Default centered (Singapore)
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    let startPoint = null;
+    let endPoint = null;
+    let startMarker = null;
+    let endMarker = null;
+    let routeLine = null;
+    let sunLine = null;
+
+    // Handle map clicks to set origin and destination
+    map.on('click', function(e) {
+      if (!startPoint || (startPoint && endPoint)) {
+        // Reset points
+        startPoint = e.latlng;
+        endPoint = null;
+        if (startMarker) map.removeLayer(startMarker);
+        if (endMarker) map.removeLayer(endMarker);
+        if (routeLine) map.removeLayer(routeLine);
+        if (sunLine) map.removeLayer(sunLine);
+
+        startMarker = L.marker(startPoint).addTo(map).bindPopup("Start Point").openPopup();
+        document.getElementById('seat-advice').innerHTML = "Now click your <b>Destination</b> point.";
+      } else {
+        endPoint = e.latlng;
+        endMarker = L.marker(endPoint).addTo(map).bindPopup("Destination").openPopup();
+        routeLine = L.polyline([startPoint, endPoint], { color: 'blue', weight: 4 }).addTo(map);
+        calculateSeat();
+      }
+    });
+
+    // Compute Bus Bearing (Forward Direction in degrees)
+    function getBearing(start, end) {
+      const lat1 = start.lat * Math.PI / 180;
+      const lat2 = end.lat * Math.PI / 180;
+      const dLon = (end.lng - start.lng) * Math.PI / 180;
+
+      const y = Math.sin(dLon) * Math.cos(lat2);
+      const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+      const brng = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+      return brng;
+    }
+
+    function calculateSeat() {
+      if (!startPoint || !endPoint) {
+        return;
+      }
+
+      const travelTime = new Date(document.getElementById('travel-time').value);
+      
+      // Calculate Bus Heading
+      const busHeading = getBearing(startPoint, endPoint);
+
+      // Midpoint coordinate for sun estimation
+      const midLat = (startPoint.lat + endPoint.lat) / 2;
+      const midLng = (startPoint.lng + endPoint.lng) / 2;
+
+      // Get Sun Position via SunCalc
+      const sunPos = SunCalc.getPosition(travelTime, midLat, midLng);
+      
+      // SunCalc returns azimuth in radians measured from South to West (-PI to PI).
+      // Convert to standard compass degrees (0° = North, 90° = East, 180° = South, 270° = West)
+      let sunAzimuthDeg = (sunPos.azimuth * (180 / Math.PI) + 180) % 360;
+      const sunAltitudeDeg = sunPos.altitude * (180 / Math.PI);
+
+      // Draw Sun Vector Line on Map
+      if (sunLine) map.removeLayer(sunLine);
+      const sunVectorLength = 0.05; // degree offset for visual ray
+      const sunLat = midLat + sunVectorLength * Math.cos(sunAzimuthDeg * Math.PI / 180);
+      const sunLng = midLng + sunVectorLength * Math.sin(sunAzimuthDeg * Math.PI / 180);
+      sunLine = L.polyline([[midLat, midLng], [sunLat, sunLng]], { color: 'orange', weight: 3, dashArray: '6, 6' }).addTo(map);
+
+      // Check if sun is below horizon
+      if (sunAltitudeDeg < 0) {
+        document.getElementById('seat-advice').innerHTML = "🌙 The sun is below the horizon (Night time). Sit anywhere!";
+        return;
+      }
+
+      // Calculate relative angle of the sun to the bus orientation
+      let relativeAngle = (sunAzimuthDeg - busHeading + 360) % 360;
+
+      let advice = "";
+      if (relativeAngle > 15 && relativeAngle < 165) {
+        advice = "☀️ Sun is on your <b>RIGHT</b>. 👉 <br><span style='color:#2b8a3e'>Sit on the LEFT SIDE of the bus to stay in shade! 🪑</span>";
+      } else if (relativeAngle > 195 && relativeAngle < 345) {
+        advice = "☀️ Sun is on your <b>LEFT</b>. 👈 <br><span style='color:#2b8a3e'>Sit on the RIGHT SIDE of the bus to stay in shade! 🪑</span>";
+      } else if (relativeAngle >= 345 || relativeAngle <= 15) {
+        advice = "☀️ Sun is directly <b>AHEAD</b> of the bus. 🚘 Both window sides will get shade depending on glare.";
+      } else {
+        advice = "☀️ Sun is directly <b>BEHIND</b> the bus. 🚍 Both window sides will be shaded!";
+      }
+
+      document.getElementById('seat-advice').innerHTML = advice;
+    }
+  </script>
+</body>
+</html>
