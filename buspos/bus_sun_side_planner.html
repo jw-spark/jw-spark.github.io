@@ -44,6 +44,19 @@
   .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle; }
   #map { height:340px; border-radius:12px; }
   .me { width:18px; height:18px; border-radius:50%; background:#2563eb; border:3px solid #fff; box-shadow:0 0 0 4px rgba(37,99,235,.35); }
+  .stoplist { display:flex; flex-direction:column; gap:8px; }
+  .stopbtn { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:#0a1324; border:1.5px solid var(--line); border-radius:12px; padding:10px 12px; color:var(--txt); cursor:pointer; }
+  .stopbtn.sel { border-color:var(--green); background:#0b2133; }
+  .stopbtn .n { flex:0 0 28px; height:28px; border-radius:50%; background:#1b2a47; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .stopbtn.sel .n { background:var(--green); color:#04210f; }
+  .stopbtn .t { flex:1; min-width:0; }
+  .stopbtn .t b { display:block; font-size:14px; }
+  .stopbtn .t span { font-size:12px; color:var(--mute); }
+  .stopbtn .d { font-size:12px; color:var(--mute); text-align:right; white-space:nowrap; }
+  .stopbtn.sel .d { color:var(--green); }
+  .badge { display:inline-block; font-size:10px; padding:1px 6px; border-radius:8px; background:#1b2a47; color:var(--mute); margin-left:6px; vertical-align:middle; }
+  .num { width:22px; height:22px; border-radius:50%; background:#1b2a47; color:#fff; border:2px solid #fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .num.sel { background:#22c55e; color:#04210f; }
   h3 { margin:0 0 8px; font-size:14px; color:var(--mute); font-weight:600; }
 </style>
 </head>
@@ -56,7 +69,6 @@
   <div class="card">
     <div class="row">
       <label>Bus service <input id="svc" value="2" size="5" style="width:80px"></label>
-      <label>Direction <select id="dir"></select></label>
       <label>Get off at <select id="alight"></select></label>
     </div>
     <div class="row">
@@ -67,9 +79,19 @@
     <div class="row">
       <label>Latitude <input id="lat" type="number" step="0.00001"></label>
       <label>Longitude <input id="lng" type="number" step="0.00001"></label>
-      <button class="ghost" id="gps">📍 My GPS</button>
+      <button class="ghost" id="gps">📍 Auto-detect GPS</button>
     </div>
     <div id="status">Starting…</div>
+  </div>
+
+  <div class="card">
+    <h3>① Your location <span style="font-weight:400">· auto-detect, or tap the map / drag the blue dot</span></h3>
+    <div id="map"></div>
+  </div>
+
+  <div class="card">
+    <h3>② Choose your boarding stop <span style="font-weight:400">· nearest stops on this bus service</span></h3>
+    <div class="stoplist" id="stopList"><span style="font-size:13px;color:var(--mute)">Waiting for your location…</span></div>
   </div>
 
   <div class="card" id="verdict" hidden>
@@ -93,10 +115,6 @@
     </div>
   </div>
 
-  <div class="card">
-    <h3>Route from your nearest stop <span style="font-weight:400">· click the map or drag the blue dot to change your location</span></h3>
-    <div id="map"></div>
-  </div>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -276,6 +294,7 @@ const routeStops = codes => codes.map(c => normStop(c, stopsDB[c])).filter(s => 
 
 function setPos(lat, lng, fromUser) {
   userPos = [lat, lng];
+  if (fromUser !== "silent") { chosenKey = null; fitNear = true; }
   $("lat").value = lat.toFixed(5); $("lng").value = lng.toFixed(5);
   if (map) {
     if (!meMarker) {
@@ -296,6 +315,9 @@ function getGPS() {
 function fallbackPos() { setPos(1.3521, 103.8198); }
 function schedule() { clearTimeout(timer); timer = setTimeout(run, 250); }
 
+let chosenKey = null, lastSvc = null, fitNear = true, nearList = [];
+const MAX_STOPS = 6, WALK_M_PER_MIN = 80;
+
 async function run() {
   try {
     if (!userPos) return;
@@ -303,23 +325,21 @@ async function run() {
     const svcNo = $("svc").value.trim().toUpperCase();
     const svc = servicesDB[svcNo];
     if (!svc) throw new Error("Bus service " + svcNo + " not found.");
+    if (svcNo !== lastSvc) { chosenKey = null; lastSvc = svcNo; fitNear = true; }
     const lists = svc.routes.map(routeStops);
 
-    // direction menu (keep choice if possible)
-    const prevDir = $("dir").value;
-    $("dir").innerHTML = `<option value="auto">Auto (nearest stop)</option>` + lists.map((l, i) =>
-      `<option value="${i}">To ${l[l.length-1].name}</option>`).join("");
-    $("dir").value = [...$("dir").options].some(o => o.value === prevDir) ? prevDir : "auto";
+    // nearest stops (every direction; the last stop of a direction is excluded because nobody boards there)
+    const cands = [];
+    lists.forEach((l, di) => l.forEach((s, i) => {
+      if (i < l.length - 1) cands.push({ di, i, s, key: di + ":" + s.code, dist: haversine(userPos, [s.lat, s.lng]), to: l[l.length - 1].name });
+    }));
+    cands.sort((x, y) => x.dist - y.dist);
+    nearList = cands.slice(0, MAX_STOPS);
+    if (!nearList.some(c => c.key === chosenKey)) chosenKey = nearList[0].key;
+    const pick = nearList.find(c => c.key === chosenKey);
+    renderStopList(pick);
 
-    let dirIdx;
-    if ($("dir").value === "auto") {
-      let bd = Infinity; dirIdx = 0;
-      lists.forEach((l, i) => { const n = nearestIndex(l, userPos, true); if (n.dist < bd) { bd = n.dist; dirIdx = i; } });
-    } else dirIdx = +$("dir").value;
-
-    const list = lists[dirIdx];
-    const near = nearestIndex(list, userPos, true);
-    const board = near.index;
+    const list = lists[pick.di], board = pick.i;
 
     // alight menu
     const prevAl = $("alight").value;
@@ -335,10 +355,10 @@ async function run() {
     const startMin = hh * 60 + mm;
     const ride = list.slice(board, endIdx + 1);
     const segs = analyseRide(ride, y, mo, d, startMin);
-    if (!segs.length) throw new Error("No ride found – you are at the last stop of this direction. Try the other direction.");
+    if (!segs.length) throw new Error("No ride found from this stop. Try another stop or the Get-off stop.");
     const sum = summarise(segs);
 
-    renderVerdict(sum, segs, list[board], near.dist, startMin);
+    renderVerdict(sum, segs, list[board], pick.dist, startMin, pick.to);
     renderBar(segs, sum, startMin);
     renderMap(list, board, endIdx, segs);
     status(`Bus ${svcNo} · ${svc.name}`);
@@ -348,7 +368,22 @@ async function run() {
   }
 }
 
-function renderVerdict(sum, segs, boardStop, distM, startMin) {
+function renderStopList(pick) {
+  $("stopList").innerHTML = nearList.map((c, k) => {
+    const walk = Math.max(1, Math.round(c.dist / WALK_M_PER_MIN));
+    return `<button type="button" class="stopbtn${c.key === pick.key ? " sel" : ""}" data-key="${c.key}">
+      <div class="n">${k + 1}</div>
+      <div class="t"><b>${c.s.name}</b><span>${c.s.road || ""} · ${c.s.code} · towards ${c.to}</span></div>
+      <div class="d">${Math.round(c.dist)} m<br>~${walk} min walk</div></button>`;
+  }).join("");
+}
+$("stopList").addEventListener("click", e => {
+  const btn = e.target.closest ? e.target.closest(".stopbtn") : null;
+  if (!btn) return;
+  chosenKey = btn.dataset.key; fitNear = false; run();
+});
+
+function renderVerdict(sum, segs, boardStop, distM, startMin, toName) {
   const V = $("verdict"); V.hidden = false; $("busCard").hidden = false;
   const rideMin = Math.round(sum.tot);
   const side = sum.sit === "L" ? "LEFT" : sum.sit === "R" ? "RIGHT" : null;
@@ -365,7 +400,7 @@ function renderVerdict(sum, segs, boardStop, distM, startMin) {
       : sum.reason === "frontback" ? "The sun is mostly in front of or behind the bus, not on the windows."
       : "The sun shines on both sides about equally – see the bar below.";
   }
-  $("vInfo").textContent = `Board at ${boardStop.name} (${Math.round(distM)} m away) · about ${rideMin} min ride · left/right as seen facing the front of the bus`;
+  $("vInfo").textContent = `Board at ${boardStop.name} (${Math.round(distM)} m away), towards ${toName} · about ${rideMin} min ride · left/right as seen facing the front of the bus`;
   $("busWrap").innerHTML = busSVG(sum);
 }
 function renderBar(segs, sum, startMin) {
@@ -386,13 +421,26 @@ function renderMap(list, board, endIdx, segs) {
   const col = { L: "#22c55e", R: "#a78bfa", N: "#94a3b8" };
   segs.forEach(g => {
     const sit = g.side === "L" ? "R" : g.side === "R" ? "L" : "N";
-    L.polyline([g.a, g.b], { color: sit === "R" ? col.R : sit === "L" ? col.L : col.N, weight: 6, opacity: .95 }).addTo(layer);
+    L.polyline([g.a, g.b], { color: sit === "R" ? col.R : sit === "L" ? col.L : col.N, weight: 6, opacity: .95, interactive: false }).addTo(layer);
   });
-  const b = list[board], e = list[endIdx];
-  L.circleMarker([b.lat, b.lng], { radius: 8, color: "#fff", weight: 2, fillColor: "#22c55e", fillOpacity: 1 }).bindTooltip("Board: " + b.name).addTo(layer);
-  L.circleMarker([e.lat, e.lng], { radius: 8, color: "#fff", weight: 2, fillColor: "#ef4444", fillOpacity: 1 }).bindTooltip("Get off: " + e.name).addTo(layer);
-  L.polyline([userPos, [b.lat, b.lng]], { color: "#2563eb", weight: 3, dashArray: "3 6" }).addTo(layer);
-  map.fitBounds(L.latLngBounds([userPos, ...list.slice(board, endIdx + 1).map(s => [s.lat, s.lng])]).pad(.1));
+  const e = list[endIdx];
+  L.circleMarker([e.lat, e.lng], { radius: 8, color: "#fff", weight: 2, fillColor: "#ef4444", fillOpacity: 1, bubblingMouseEvents: false })
+    .bindTooltip("Get off: " + e.name).addTo(layer);
+  // numbered, clickable candidate stops
+  nearList.forEach((c, k) => {
+    const sel = c.key === chosenKey;
+    L.marker([c.s.lat, c.s.lng], {
+      zIndexOffset: sel ? 1000 : 0,
+      icon: L.divIcon({ className: "", html: `<div class="num${sel ? " sel" : ""}">${k + 1}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] })
+    }).bindTooltip(`${k + 1}. ${c.s.name} (towards ${c.to})`)
+      .on("click", () => { chosenKey = c.key; fitNear = false; run(); }).addTo(layer);
+  });
+  const b = nearList.find(c => c.key === chosenKey).s;
+  L.polyline([userPos, [b.lat, b.lng]], { color: "#2563eb", weight: 3, dashArray: "3 6", interactive: false }).addTo(layer);
+  const pts = fitNear ? [userPos, ...nearList.map(c => [c.s.lat, c.s.lng])]
+                      : [userPos, ...list.slice(board, endIdx + 1).map(s => [s.lat, s.lng])];
+  map.fitBounds(L.latLngBounds(pts).pad(.15), { maxZoom: 17 });
+  fitNear = false;
 }
 
 /* ---- init ---- */
@@ -403,7 +451,7 @@ function initMap() {
   layer = L.layerGroup().addTo(map);
   map.on("click", e => setPos(e.latlng.lat, e.latlng.lng, true));
 }
-["svc", "dir", "alight", "date", "time"].forEach(id => $(id).addEventListener("change", schedule));
+["svc", "alight", "date", "time"].forEach(id => $(id).addEventListener("change", schedule));
 $("svc").addEventListener("input", schedule);
 ["lat", "lng"].forEach(id => $(id).addEventListener("change", () => {
   const la = parseFloat($("lat").value), ln = parseFloat($("lng").value);
