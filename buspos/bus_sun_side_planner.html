@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SG Bus – Which Side to Sit</title>
+<title>Bus Arrival</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
   :root { --bg:#070d1a; --card:#0f1a2e; --line:#1f2f4d; --txt:#e5ecf9; --mute:#8da2c6;
@@ -13,7 +13,6 @@
   body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:var(--bg); color:var(--txt); }
   header { padding:16px 20px 6px; max-width:760px; margin:0 auto; }
   header h1 { margin:0; font-size:20px; }
-  header p { margin:4px 0 0; font-size:13px; color:var(--mute); }
   main { max-width:760px; margin:0 auto; padding:10px 16px 30px; }
   .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px 16px; margin-bottom:14px; }
   .row { display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; }
@@ -23,6 +22,7 @@
   input[type=number] { width:118px; }
   button { padding:9px 14px; border:0; border-radius:8px; background:#2563eb; color:#fff; font-size:13px; cursor:pointer; }
   button.ghost { background:#1b2a47; color:var(--txt); }
+
   #status { display:none; font-size:12px; margin-top:10px; }
   #status.err { display:block; color:#fca5a5; }
   #info { font-size:12px; color:var(--mute); margin-top:10px; }
@@ -31,16 +31,30 @@
   details#adv summary::-webkit-details-marker { display:none; }
   details#adv summary::after { content:"▾"; font-size:14px; }
   details#adv[open] summary::after { content:"▴"; }
-  .busbtn .d b { display:block; font-size:20px; line-height:1.1; }
-  .busbtn .d small { font-size:11px; }
-  .busbtn.sel .n { background:var(--green); color:#04210f; }
-  .bn { width:36px; height:36px; border-radius:50%; background:#4fc3f7; color:#fff; border:3px solid #fff; font-size:15px; font-weight:800; font-family:"Segoe UI",sans-serif; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px #4fc3f7bb, 0 2px 6px rgba(0,0,0,.45); text-shadow:0 1px 2px rgba(0,0,0,.35); }
-  .bn.sel { transform:scale(1.2); box-shadow:0 0 0 4px #22c55e, 0 2px 8px rgba(0,0,0,.5); }
-  .leaflet-popup-content { font-family:"Segoe UI",sans-serif; font-size:14px; line-height:1.45; color:#222; margin:12px 16px; }
-  .buspill { position:absolute; transform:translate(-50%,-50%); white-space:nowrap; background:#f5b324; color:#1a1205; font-weight:800; font-size:12px; padding:3px 8px; border-radius:12px; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.5); }
-  .buspill.n1 { background:#22c55e; }
-  @media (max-width:520px) { main { padding:8px 10px 24px; } .card { padding:12px; } input[type=number] { width:100px; } #verdict h2 { font-size:26px; } }
 
+  /* top row: bus service + refresh panel */
+  .toprow { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+  .toprow > label { flex:0 0 auto; }
+  .refresh { flex:1 1 300px; min-width:0; display:grid; grid-template-columns:auto minmax(40px,1fr) auto auto; align-items:center; gap:8px 10px; background:#0a1324; border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .refresh .lbl2 { font-size:12px; color:var(--mute); white-space:nowrap; }
+  .track { min-width:0; height:8px; background:#1b2a47; border-radius:4px; overflow:hidden; }
+  .track div { height:100%; width:100%; background:linear-gradient(90deg,#00b4d8,#48cae4); border-radius:4px; transition:width 1s linear; }
+  #cd { font-size:14px; font-weight:700; color:#00b4d8; min-width:34px; text-align:right; white-space:nowrap; }
+  #refreshBtn { background:#00b4d8; color:#07202b; font-weight:700; padding:8px 14px; white-space:nowrap; min-width:0; }
+  #refreshBtn:disabled { background:#1b2a47; color:#8da2c6; cursor:default; }
+  .spin { display:inline-block; width:12px; height:12px; border:2px solid #8da2c6; border-top-color:transparent; border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:5px; }
+  @keyframes sp { to { transform:rotate(360deg); } }
+  @media (max-width:560px) {
+    main { padding:8px 10px 24px; } .card { padding:12px; }
+    input[type=number] { width:100px; }
+    .toprow { flex-direction:column; align-items:stretch; gap:10px; }
+    .toprow > label input#svc { width:100% !important; }
+    .refresh { flex:none; width:100%; grid-template-columns:auto minmax(30px,1fr) auto; }
+    #refreshBtn { grid-column:1 / -1; width:100%; padding:10px 14px; }
+    #verdict h2 { font-size:26px; }
+  }
+
+  /* verdict + bus picture */
   #verdict { text-align:center; border:2px solid var(--green); border-radius:18px; padding:14px 12px; background:#0b1a2a; }
   #verdict.either { border-color:var(--blue); }
   #verdict h2 { margin:0; font-size:30px; color:var(--green); font-weight:800; }
@@ -48,7 +62,6 @@
   #verdict p { margin:6px 0 0; font-size:14px; color:var(--mute); }
   #verdict p b { color:var(--txt); }
   #verdict small { display:block; margin-top:6px; font-size:12px; color:#6f84a8; }
-
   #busWrap svg { width:100%; height:auto; max-height:560px; display:block; }
   .lbl { fill:#9fb3d9; font-weight:700; }
   .tiny { fill:#6f84a8; font-size:15px; letter-spacing:.12em; }
@@ -58,9 +71,17 @@
   .barlbl { display:flex; justify-content:space-between; font-size:11px; color:var(--mute); margin-top:4px; }
   .legend { font-size:12px; color:var(--mute); display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; }
   .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+
+  /* map */
   #map { height:340px; border-radius:12px; }
   .me { width:18px; height:18px; border-radius:50%; background:#2563eb; border:3px solid #fff; box-shadow:0 0 0 4px rgba(37,99,235,.35); }
+  .num { width:22px; height:22px; border-radius:50%; background:#1b2a47; color:#fff; border:2px solid #fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .num.sel { background:#22c55e; color:#04210f; }
+  .bn { width:36px; height:36px; border-radius:50%; background:#4fc3f7; color:#fff; border:3px solid #fff; font-size:15px; font-weight:800; font-family:"Segoe UI",sans-serif; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px #4fc3f7bb, 0 2px 6px rgba(0,0,0,.45); text-shadow:0 1px 2px rgba(0,0,0,.35); }
+  .bn.sel { transform:scale(1.2); box-shadow:0 0 0 4px #22c55e, 0 2px 8px rgba(0,0,0,.5); }
+  .leaflet-popup-content { font-family:"Segoe UI",sans-serif; font-size:14px; line-height:1.45; color:#222; margin:12px 16px; }
 
+  /* arrival rows (tap to use that bus's time) */
   .stoplist { display:flex; flex-direction:column; gap:8px; }
   .stopbtn { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:#0a1324; border:1.5px solid var(--line); border-radius:12px; padding:10px 12px; color:var(--txt); cursor:pointer; }
   .stopbtn.sel { border-color:var(--green); background:#0b2133; }
@@ -71,41 +92,14 @@
   .stopbtn .t span { font-size:12px; color:var(--mute); }
   .stopbtn .d { font-size:12px; color:var(--mute); text-align:right; white-space:nowrap; }
   .stopbtn.sel .d { color:var(--green); }
-  .num { width:22px; height:22px; border-radius:50%; background:#1b2a47; color:#fff; border:2px solid #fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
-  .num.sel { background:#22c55e; color:#04210f; }
-
-  .arr { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
-  .arr:last-of-type { border-bottom:0; }
-  .arr .lab { width:34px; font-size:12px; color:var(--mute); }
-  .arr .mins { width:74px; font-size:22px; font-weight:800; }
-  .arr .mid { flex:1; min-width:0; font-size:13px; line-height:1.7; }
-  .arr .mid b { font-size:15px; margin-right:6px; }
-  .chip { display:inline-block; font-size:11px; padding:1px 8px; border-radius:9px; margin-right:4px; color:#04110a; font-weight:700; }
-  .chip.g { background:#1b2a47; color:var(--mute); font-weight:600; }
+  .busbtn .d b { display:block; font-size:20px; line-height:1.1; }
+  .busbtn .d small { font-size:11px; }
   .others { margin-top:10px; font-size:12px; color:var(--mute); display:flex; flex-wrap:wrap; gap:6px; }
   .others span { background:#0a1324; border:1px solid var(--line); border-radius:8px; padding:3px 8px; }
   .others b { color:var(--txt); }
   .upd { font-size:11px; color:#6f84a8; margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
   .upd label { flex-direction:row; align-items:center; text-transform:none; letter-spacing:0; font-size:12px; }
   .upd input { padding:0; }
-  .toprow { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
-  .toprow > label { flex:0 0 auto; }
-  /* refresh panel: one tidy grid (label | bar | seconds), button on its own full-width line on phones */
-  .refresh { flex:1 1 300px; min-width:0; display:grid; grid-template-columns:auto minmax(40px,1fr) auto auto; align-items:center; gap:8px 10px; background:#0a1324; border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
-  .refresh .lbl2 { font-size:12px; color:var(--mute); white-space:nowrap; }
-  .track { min-width:0; height:8px; background:#1b2a47; border-radius:4px; overflow:hidden; }
-  .track div { height:100%; width:100%; background:linear-gradient(90deg,#00b4d8,#48cae4); border-radius:4px; transition:width 1s linear; }
-  #cd { font-size:14px; font-weight:700; color:#00b4d8; min-width:34px; text-align:right; white-space:nowrap; }
-  #refreshBtn { background:#00b4d8; color:#07202b; font-weight:700; padding:8px 14px; white-space:nowrap; min-width:0; }
-  #refreshBtn:disabled { background:#1b2a47; color:#8da2c6; cursor:default; }
-  @media (max-width:560px) {
-    .toprow { flex-direction:column; align-items:stretch; gap:10px; }
-    .toprow > label input#svc { width:100% !important; }
-    .refresh { flex:none; width:100%; grid-template-columns:auto minmax(30px,1fr) auto; }
-    #refreshBtn { grid-column:1 / -1; width:100%; padding:10px 14px; }
-  }
-  .spin { display:inline-block; width:12px; height:12px; border:2px solid #8da2c6; border-top-color:transparent; border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:5px; }
-  @keyframes sp { to { transform:rotate(360deg); } }
   h3 { margin:0 0 8px; font-size:14px; color:var(--mute); font-weight:600; }
 </style>
 </head>
@@ -150,7 +144,7 @@
 
   <div class="card" id="arrCard" hidden>
     <h3 id="arrTitle"></h3>
-    <div id="arrBody"></div>
+    <div id="arrBody" class="stoplist"></div>
     <div class="upd">
       <span id="arrUpd"></span>
       <label><input type="checkbox" id="arrAll"> Show all services at this stop</label>
@@ -180,6 +174,8 @@
 /* ================= CORE LOGIC ================= */
 const BASE = "https://data.busrouter.sg/v1/";
 const SPEED_M_PER_MIN = 20000 / 60;     // assume ~20 km/h average bus speed incl. stops
+const HOME_STOP = "97039";              // Bef Jln Bena - chosen by default when you are close to it
+const HOME_RADIUS_M = 150;
 const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
 
 // Approximate sun position for Singapore. totalMin = minutes after 00:00 SG time on y-mo-d.
@@ -281,7 +277,7 @@ function busSVG(sum) {
            <line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".75" stroke-width="3" stroke-dasharray="9 7"/>`;
     ball = `<circle cx="${x}" cy="${y}" r="28" fill="#f5b324" fill-opacity=".28"/><circle cx="${x}" cy="${y}" r="16" fill="#f5b324" stroke="#fff3c4" stroke-width="2"/>`;
   }
-  // each label is drawn twice: a thick dark copy underneath (outline) and the coloured text on top - works in every browser
+  // each label is drawn twice: a thick dark copy underneath (outline) and the coloured text on top
   const txt = (x, y, size, weight, fill, content, cls) =>
     `<text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="${weight}" fill="#0a1224" stroke="#0a1224" stroke-width="6" stroke-linejoin="round">${content.replace(/ fill="[^"]*"/g, "")}</text>
      <text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="${weight}" ${cls ? 'class="' + cls + '"' : 'fill="' + fill + '"'}>${content}</text>`;
@@ -323,9 +319,10 @@ function sgNow() {
     hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()).forEach(x => p[x.type] = x.value);
   return { date: `${p.year}-${p.month}-${p.day}`, time: `${p.hour}:${p.minute}` };
 }
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function updateSum() {
   const d = $("date").value, t = $("time").value;
-  $("advSum").textContent = "⚙ " + (d ? +d.slice(8, 10) + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+d.slice(5, 7) - 1] + " " : "") + t + " · " +
+  $("advSum").textContent = "⚙ " + (d ? +d.slice(8, 10) + " " + MONTHS[+d.slice(5, 7) - 1] + " " : "") + t + " · " +
     (userPos ? userPos[0].toFixed(4) + ", " + userPos[1].toFixed(4) : "locating…");
   const so = $("alight").selectedOptions && $("alight").selectedOptions[0];
   if ($("alight").value && so) $("advSum").textContent += " · off: " + so.text;
@@ -352,12 +349,12 @@ async function ensureData() {
 const routeStops = codes => codes.map(c => normStop(c, stopsDB[c])).filter(s => s && isFinite(s.lat) && isFinite(s.lng));
 
 let chosenKey = null, lastSvc = null, fitNear = true, nearList = [];
-const MAX_STOPS = 6, WALK_M_PER_MIN = 80;
-const HOME_STOP = "97039", HOME_RADIUS_M = 130;   // Bef Jln Bena: auto-selected when you are within ~130 m
+const MAX_STOPS = 6;
 
+// fromUser: undefined = GPS fix, true = map tap / drag (never moves the map view), "typed" = typed coordinates, "silent" = no re-run
 function setPos(lat, lng, fromUser) {
   userPos = [lat, lng];
-  if (fromUser !== "silent") { chosenKey = null; if (fromUser !== true) fitNear = true; }  // map taps/drags never move the map view
+  if (fromUser !== "silent") { chosenKey = null; if (fromUser !== true) fitNear = true; }
   $("lat").value = lat.toFixed(5); $("lng").value = lng.toFixed(5); updateSum();
   if (map) {
     if (!meMarker) {
@@ -368,7 +365,7 @@ function setPos(lat, lng, fromUser) {
   if (fromUser !== "silent") schedule();
 }
 function getGPS() {
-  if (!navigator.geolocation) { status("GPS not available – using Singapore centre. Click the map to set your location.", true); fallbackPos(); return; }
+  if (!navigator.geolocation) { status("GPS not available – using Singapore centre. Tap the map to set your location.", true); fallbackPos(); return; }
   status("Getting your GPS location …");
   navigator.geolocation.getCurrentPosition(
     p => { busFit = true; setPos(p.coords.latitude, p.coords.longitude); if (map) map.setView(userPos, 15); },
@@ -388,24 +385,27 @@ async function run() {
     if (svcNo !== lastSvc) { chosenKey = null; lastSvc = svcNo; fitNear = true; }
     const lists = svc.routes.map(routeStops);
 
-    // nearest stops (every direction; the last stop of a direction is excluded because nobody boards there)
+    // candidate boarding stops in every direction (the last stop of a direction is excluded - nobody boards there)
     const cands = [];
     lists.forEach((l, di) => l.forEach((s, i) => {
       if (i < l.length - 1) cands.push({ di, i, s, key: di + ":" + s.code, dist: haversine(userPos, [s.lat, s.lng]), to: l[l.length - 1].name });
     }));
+    if (!cands.length) throw new Error("No stops found for bus " + svcNo + ".");
     cands.sort((x, y) => x.dist - y.dist);
     nearList = cands.slice(0, MAX_STOPS);
-    if (!nearList.length) throw new Error("No stops found for this service.");
-    // default choice: Bef Jln Bena if you are within ~130 m of it, otherwise the nearest stop by GPS
-    const home = cands.find(c => c.s.code === HOME_STOP && c.dist <= HOME_RADIUS_M);
-    if (home && !nearList.some(c => c.key === home.key)) nearList.push(home);
-    if (!nearList.some(c => c.key === chosenKey)) chosenKey = (home || nearList[0]).key;
+
+    if (!nearList.some(c => c.key === chosenKey)) {
+      // default stop: Bef Jln Bena if this bus stops there and you are within HOME_RADIUS_M of it, otherwise the nearest stop
+      const home = cands.find(c => c.s.code === HOME_STOP && c.dist <= HOME_RADIUS_M);
+      if (home) {
+        chosenKey = home.key;
+        if (!nearList.includes(home)) nearList = [home, ...nearList.slice(0, MAX_STOPS - 1)];
+      } else chosenKey = nearList[0].key;
+    }
     const pick = nearList.find(c => c.key === chosenKey);
-
     const list = lists[pick.di], board = pick.i;
-    loadArrivals(pick.s.code, pick.s.name, [pick.s.lat, pick.s.lng]);
 
-    // alight menu
+    // get-off menu
     const prevAl = $("alight").value;
     const after = list.slice(board + 1);
     $("alight").innerHTML = `<option value="">End of route (${list[list.length-1].name})</option>` +
@@ -417,8 +417,8 @@ async function run() {
     const [y, mo, d] = $("date").value.split("-").map(Number);
     const [hh, mm] = $("time").value.split(":").map(Number);
     const startMin = hh * 60 + mm;
-    const ride = list.slice(board, endIdx + 1);
-    const segs = analyseRide(ride, y, mo, d, startMin);
+    loadArrivals(pick.s.code, pick.s.name, [pick.s.lat, pick.s.lng]);
+    const segs = analyseRide(list.slice(board, endIdx + 1), y, mo, d, startMin);
     if (!segs.length) throw new Error("No ride found from this stop. Try another stop or the Get-off stop.");
     const sum = summarise(segs);
 
@@ -431,7 +431,6 @@ async function run() {
     console.error(e);
   }
 }
-
 
 function renderVerdict(sum, segs, boardStop, distM, startMin, toName) {
   const V = $("verdict"); V.hidden = false; $("busCard").hidden = false;
@@ -472,14 +471,14 @@ function renderMap(list, board, endIdx, segs) {
   const e = list[endIdx];
   L.circleMarker([e.lat, e.lng], { radius: 8, color: "#fff", weight: 2, fillColor: "#ef4444", fillOpacity: 1, bubblingMouseEvents: false })
     .bindTooltip("Get off: " + e.name).addTo(layer);
-  // numbered, clickable candidate stops
+  // lettered, clickable candidate stops (letters so they are not confused with bus numbers)
   nearList.forEach((c, k) => {
-    const sel = c.key === chosenKey;
+    const sel = c.key === chosenKey, letter = String.fromCharCode(65 + k);
     L.marker([c.s.lat, c.s.lng], {
       zIndexOffset: sel ? 1000 : 0,
-      icon: L.divIcon({ className: "", html: `<div class="num${sel ? " sel" : ""}">${String.fromCharCode(65 + k)}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] })
-    }).bindTooltip(sel ? c.s.name : `Stop ${String.fromCharCode(65 + k)}: ${c.s.name} (towards ${c.to})`, sel ? { permanent: true, direction: "top", offset: [0, -12] } : {})
-      .on("click", () => { chosenKey = c.key; fitNear = false; run(); }).addTo(layer);
+      icon: L.divIcon({ className: "", html: `<div class="num${sel ? " sel" : ""}">${letter}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] })
+    }).bindTooltip(sel ? c.s.name : `Stop ${letter}: ${c.s.name} (towards ${c.to})`, sel ? { permanent: true, direction: "top", offset: [0, -12] } : {})
+      .on("click", () => { chosenKey = c.key; run(); }).addTo(layer);
   });
   const b = nearList.find(c => c.key === chosenKey).s;
   L.polyline([userPos, [b.lat, b.lng]], { color: "#2563eb", weight: 3, dashArray: "3 6", interactive: false }).addTo(layer);
@@ -512,9 +511,11 @@ function slots(svc) {
 function loadArrivals(code, name, pos) {
   if (code === arrStop && arrData) { renderArrivals(); return; }
   // keep the old rows (dimmed) and old bus markers on screen until the new stop's data arrives - no blank flash
-  arrStop = code; arrName = name; arrPos = pos || null; arrErr = null; arrSel = null; arrLoading = true;
+  arrStop = code; arrName = name; arrPos = pos || null; arrErr = null; arrSel = null; arrLoading = true; busFit = true;
   renderArrivals(); fetchArrivals();
 }
+
+// refresh countdown (60 s) + Refresh Now button
 const REFRESH_SEC = 60;
 let nextAt = Date.now() + REFRESH_SEC * 1000, fetching = false;
 function resetCountdown() { nextAt = Date.now() + REFRESH_SEC * 1000; drawCountdown(); }
@@ -531,14 +532,17 @@ async function fetchArrivals() {
   if (fetching) return;
   const code = arrStop;
   fetching = true; resetCountdown();
+  let j = null, err = null;
   try {
     const r = await fetch(ARR_URL + encodeURIComponent(code), { cache: "no-store" });
     if (!r.ok) throw new Error("HTTP " + r.status);
-    const j = await r.json();
-    if (code !== arrStop) { fetching = false; fetchArrivals(); return; }
-    arrData = j.services || []; arrErr = null; arrAt = new Date(); arrLoading = false;
-  } catch (e) { if (code !== arrStop) { fetching = false; fetchArrivals(); return; } arrErr = e.message; if (arrLoading) arrData = null; arrLoading = false; }
-  fetching = false; resetCountdown();
+    j = await r.json();
+  } catch (e) { err = e.message; }
+  fetching = false;
+  if (code !== arrStop) { fetchArrivals(); return; }       // you picked another stop meanwhile - drop this answer, fetch the new stop
+  if (err) { arrErr = err; if (arrLoading) arrData = null; }
+  else { arrData = j.services || []; arrErr = null; arrAt = new Date(); }
+  arrLoading = false; resetCountdown();
   renderArrivals();
 }
 function renderArrivals() {
@@ -582,7 +586,7 @@ function renderArrivals() {
   }
   $("arrUpd").textContent = arrLoading ? "Updating …" : arrAt ? `Updated ${hhmm(arrAt)} · auto-refresh every 60 s` : "";
 }
-// draw the selected service's live buses on the map (redrawn only when the data or minutes change)
+// draw the selected service's live buses on the map (redrawn only when a bus moves or the selection changes)
 function showBuses(svc) {
   if (!busLayer) return;
   const buses = svc ? slots(svc).map((b, i) => ({ b, i })).filter(x => hasLive(x.b)) : [];
@@ -607,6 +611,7 @@ function showBuses(svc) {
     if (canHover) { mk.on("mouseover", () => mk.openPopup()); mk.on("mouseout", () => mk.closePopup()); }
     busMarkers[b.time] = mk;
   });
+  // first time for a newly chosen stop: zoom so the stop, you and the approaching buses are all visible
   if (busFit && pts.length && map) {
     const all = [...pts]; if (arrPos) all.push(arrPos); if (userPos) all.push(userPos);
     map.fitBounds(L.latLngBounds(all).pad(.2), { maxZoom: 17 });
@@ -621,7 +626,7 @@ $("arrBody").addEventListener("click", e => {
   $("date").value = ymd(d); $("time").value = hhmm(d); updateSum();
   renderArrivals(); schedule();
   const mk = busMarkers[arrSel];
-  if (mk && map) map.panTo(mk.getLatLng ? mk.getLatLng() : mk.pos);
+  if (mk && map) map.panTo(mk.getLatLng());
 });
 $("arrAll").addEventListener("change", renderArrivals);
 /* ================= END BUS ARRIVALS ================= */
@@ -641,16 +646,16 @@ $("svc").addEventListener("input", schedule);
   const la = parseFloat($("lat").value), ln = parseFloat($("lng").value);
   if (isFinite(la) && isFinite(ln)) setPos(la, ln, "typed");
 }));
-$("now").onclick = () => { setNow(); schedule(); };
+$("now").onclick = () => { setNow(); arrSel = null; schedule(); };
 $("gps").onclick = getGPS;
-
 $("refreshBtn").addEventListener("click", fetchArrivals);
 setInterval(() => { if (drawCountdown() === 0 && !fetching) fetchArrivals(); }, 1000);
 setInterval(() => { if (arrData && !arrLoading) renderArrivals(); }, 30000);
-drawCountdown();
+
 setNow();
 initMap();
 getGPS();
+drawCountdown();
 </script>
 </body>
 </html>
