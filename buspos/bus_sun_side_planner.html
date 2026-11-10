@@ -87,6 +87,16 @@
   .upd { font-size:11px; color:#6f84a8; margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
   .upd label { flex-direction:row; align-items:center; text-transform:none; letter-spacing:0; font-size:12px; }
   .upd input { padding:0; }
+  .toprow { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+  .refresh { flex:1; min-width:230px; display:flex; align-items:center; gap:10px; background:#0a1324; border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .refresh .lbl2 { font-size:12px; color:var(--mute); white-space:nowrap; }
+  .track { flex:1; min-width:50px; height:8px; background:#1b2a47; border-radius:4px; overflow:hidden; }
+  .track div { height:100%; width:100%; background:linear-gradient(90deg,#00b4d8,#48cae4); border-radius:4px; transition:width 1s linear; }
+  #cd { font-size:14px; font-weight:700; color:#00b4d8; min-width:34px; text-align:right; }
+  #refreshBtn { background:#00b4d8; color:#07202b; font-weight:700; padding:8px 14px; white-space:nowrap; }
+  #refreshBtn:disabled { background:#1b2a47; color:#8da2c6; cursor:default; }
+  .spin { display:inline-block; width:12px; height:12px; border:2px solid #8da2c6; border-top-color:transparent; border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:5px; }
+  @keyframes sp { to { transform:rotate(360deg); } }
   h3 { margin:0 0 8px; font-size:14px; color:var(--mute); font-weight:600; }
 </style>
 </head>
@@ -96,13 +106,21 @@
 </header>
 <main>
   <div class="card">
-    <div class="row">
+    <div class="toprow">
       <label>Bus service <input id="svc" value="2" size="5" style="width:80px"></label>
-      <label>Get off at <select id="alight"></select></label>
+      <div class="refresh">
+        <span class="lbl2">Next refresh in</span>
+        <div class="track"><div id="cdBar"></div></div>
+        <span id="cd">60s</span>
+        <button id="refreshBtn" type="button"><span id="rIcon">↻</span> Refresh Now</button>
+      </div>
     </div>
     <div id="status"></div>
     <details id="adv">
-      <summary id="advSum">⚙ Date, time &amp; GPS</summary>
+      <summary id="advSum">⚙ Get off, date, time &amp; GPS</summary>
+      <div class="row">
+        <label>Get off at <select id="alight" style="max-width:100%"></select></label>
+      </div>
       <div class="row">
         <label>Date (SG) <input id="date" type="date"></label>
         <label>Time (SG) <input id="time" type="time"></label>
@@ -127,7 +145,6 @@
     <div class="upd">
       <span id="arrUpd"></span>
       <label><input type="checkbox" id="arrAll"> Show all services at this stop</label>
-      <button class="ghost" id="arrRefresh" type="button">↻ Refresh</button>
     </div>
   </div>
 
@@ -301,6 +318,8 @@ function updateSum() {
   const d = $("date").value, t = $("time").value;
   $("advSum").textContent = "⚙ " + (d ? +d.slice(8, 10) + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+d.slice(5, 7) - 1] + " " : "") + t + " · " +
     (userPos ? userPos[0].toFixed(4) + ", " + userPos[1].toFixed(4) : "locating…");
+  const so = $("alight").selectedOptions && $("alight").selectedOptions[0];
+  if ($("alight").value && so) $("advSum").textContent += " · off: " + so.text;
 }
 function setNow() { const n = sgNow(); $("date").value = n.date; $("time").value = n.time; updateSum(); }
 // errors stay visible on the main card; everything else goes into the collapsed settings panel
@@ -397,7 +416,7 @@ async function run() {
     renderVerdict(sum, segs, list[board], pick.dist, startMin, pick.to);
     renderBar(segs, sum, startMin);
     renderMap(list, board, endIdx, segs);
-    status(`Bus ${svcNo} · ${svc.name}`);
+    status(`Bus ${svcNo} · ${svc.name}`); updateSum();
   } catch (e) {
     status("Failed: " + e.message, true);
     console.error(e);
@@ -487,16 +506,30 @@ function loadArrivals(code, name, pos) {
   arrStop = code; arrName = name; arrPos = pos || null; arrErr = null; arrSel = null; arrLoading = true;
   renderArrivals(); fetchArrivals();
 }
+const REFRESH_SEC = 60;
+let nextAt = Date.now() + REFRESH_SEC * 1000, fetching = false;
+function resetCountdown() { nextAt = Date.now() + REFRESH_SEC * 1000; drawCountdown(); }
+function drawCountdown() {
+  const left = Math.max(0, Math.ceil((nextAt - Date.now()) / 1000));
+  $("cd").textContent = left + "s";
+  $("cdBar").style.width = (100 * left / REFRESH_SEC) + "%";
+  $("refreshBtn").disabled = fetching;
+  $("rIcon").innerHTML = fetching ? '<span class="spin"></span>' : "↻";
+  return left;
+}
 async function fetchArrivals() {
-  if (!arrStop) return;
+  if (!arrStop) { resetCountdown(); return; }
+  if (fetching) return;
   const code = arrStop;
+  fetching = true; resetCountdown();
   try {
     const r = await fetch(ARR_URL + encodeURIComponent(code), { cache: "no-store" });
     if (!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
-    if (code !== arrStop) return;
+    if (code !== arrStop) { fetching = false; fetchArrivals(); return; }
     arrData = j.services || []; arrErr = null; arrAt = new Date(); arrLoading = false;
-  } catch (e) { if (code !== arrStop) return; arrErr = e.message; if (arrLoading) arrData = null; arrLoading = false; }
+  } catch (e) { if (code !== arrStop) { fetching = false; fetchArrivals(); return; } arrErr = e.message; if (arrLoading) arrData = null; arrLoading = false; }
+  fetching = false; resetCountdown();
   renderArrivals();
 }
 function renderArrivals() {
@@ -538,7 +571,7 @@ function renderArrivals() {
     });
     body.innerHTML += `<div class="others">${others.join("") || "No other services."}</div>`;
   }
-  $("arrUpd").textContent = arrLoading ? "Updating …" : arrAt ? `Updated ${hhmm(arrAt)} · refreshes every 60 s` : "";
+  $("arrUpd").textContent = arrLoading ? "Updating …" : arrAt ? `Updated ${hhmm(arrAt)} · auto-refresh every 60 s` : "";
 }
 // draw the selected service's live buses on the map (redrawn only when the data or minutes change)
 function showBuses(svc) {
@@ -582,7 +615,6 @@ $("arrBody").addEventListener("click", e => {
   if (mk && map) map.panTo(mk.getLatLng ? mk.getLatLng() : mk.pos);
 });
 $("arrAll").addEventListener("change", renderArrivals);
-$("arrRefresh").addEventListener("click", fetchArrivals);
 /* ================= END BUS ARRIVALS ================= */
 
 /* ---- init ---- */
@@ -603,8 +635,10 @@ $("svc").addEventListener("input", schedule);
 $("now").onclick = () => { setNow(); schedule(); };
 $("gps").onclick = getGPS;
 
-setInterval(fetchArrivals, 60000);
+$("refreshBtn").addEventListener("click", fetchArrivals);
+setInterval(() => { if (drawCountdown() === 0 && !fetching) fetchArrivals(); }, 1000);
 setInterval(() => { if (arrData && !arrLoading) renderArrivals(); }, 30000);
+drawCountdown();
 setNow();
 initMap();
 getGPS();
