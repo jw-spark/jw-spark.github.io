@@ -92,8 +92,7 @@
 </head>
 <body>
 <header>
-  <h1>🚌 SG Bus – Which Side Should I Sit?</h1>
-  <p>Uses your GPS, the current time and the bus route to find the shady side.</p>
+  <h1>🚌 Bus Arrival</h1>
 </header>
 <main>
   <div class="card">
@@ -119,7 +118,6 @@
   </div>
 
   <div class="card">
-    <h3>Your location &amp; nearby stops <span style="font-weight:400">· tap a lettered stop (A, B, C…) to board there · drag the blue dot to move</span></h3>
     <div id="map"></div>
   </div>
 
@@ -331,7 +329,7 @@ const HOME_STOP = "97039", HOME_RADIUS_M = 130;   // Bef Jln Bena: auto-selected
 
 function setPos(lat, lng, fromUser) {
   userPos = [lat, lng];
-  if (fromUser !== "silent") { chosenKey = null; fitNear = true; }
+  if (fromUser !== "silent") { chosenKey = null; if (fromUser !== true) fitNear = true; }  // map taps/drags never move the map view
   $("lat").value = lat.toFixed(5); $("lng").value = lng.toFixed(5); updateSum();
   if (map) {
     if (!meMarker) {
@@ -345,7 +343,7 @@ function getGPS() {
   if (!navigator.geolocation) { status("GPS not available – using Singapore centre. Click the map to set your location.", true); fallbackPos(); return; }
   status("Getting your GPS location …");
   navigator.geolocation.getCurrentPosition(
-    p => { setPos(p.coords.latitude, p.coords.longitude); if (map) map.setView(userPos, 15); },
+    p => { busFit = true; setPos(p.coords.latitude, p.coords.longitude); if (map) map.setView(userPos, 15); },
     () => { status("GPS blocked or unavailable – using Singapore centre. Tap the map to set your location.", true); if (!userPos) fallbackPos(); },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
 }
@@ -457,9 +455,7 @@ function renderMap(list, board, endIdx, segs) {
   });
   const b = nearList.find(c => c.key === chosenKey).s;
   L.polyline([userPos, [b.lat, b.lng]], { color: "#2563eb", weight: 3, dashArray: "3 6", interactive: false }).addTo(layer);
-  const pts = fitNear ? [userPos, ...nearList.map(c => [c.s.lat, c.s.lng])]
-                      : [userPos, ...list.slice(board, endIdx + 1).map(s => [s.lat, s.lng])];
-  map.fitBounds(L.latLngBounds(pts).pad(.15), { maxZoom: 17 });
+  if (fitNear) map.fitBounds(L.latLngBounds([userPos, ...nearList.map(c => [c.s.lat, c.s.lng])]).pad(.15), { maxZoom: 17 });
   fitNear = false;
 }
 
@@ -469,7 +465,7 @@ const LOAD = { SEA: ["Seats", "#22c55e"], SDA: ["Standing", "#f5b324"], LSD: ["F
 const TYPE = { SD: "Single deck", DD: "Double deck", BD: "Bendy" };
 const hhmm = d => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Singapore", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d);
 const ymd = d => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Singapore", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
-let arrStop = null, arrName = "", arrPos = null, arrData = null, arrErr = null, arrAt = null, busFit = false, busKey = "", arrSel = null, busMarkers = {};
+let arrStop = null, arrName = "", arrPos = null, arrData = null, arrErr = null, arrAt = null, busFit = true, busKey = "", arrSel = null, busMarkers = {}, arrLoading = false;
 
 const minsTo = t => Math.round((new Date(t) - Date.now()) / 60000);
 const minsTxt = m => m <= 0 ? "Arr" : m + " min";
@@ -487,7 +483,8 @@ function slots(svc) {
 }
 function loadArrivals(code, name, pos) {
   if (code === arrStop && arrData) { renderArrivals(); return; }
-  arrStop = code; arrName = name; arrPos = pos || null; arrData = null; arrErr = null; arrAt = null; busFit = true; busKey = ""; arrSel = null;
+  // keep the old rows (dimmed) and old bus markers on screen until the new stop's data arrives - no blank flash
+  arrStop = code; arrName = name; arrPos = pos || null; arrErr = null; arrSel = null; arrLoading = true;
   renderArrivals(); fetchArrivals();
 }
 async function fetchArrivals() {
@@ -498,8 +495,8 @@ async function fetchArrivals() {
     if (!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
     if (code !== arrStop) return;
-    arrData = j.services || []; arrErr = null; arrAt = new Date();
-  } catch (e) { if (code !== arrStop) return; arrErr = e.message; }
+    arrData = j.services || []; arrErr = null; arrAt = new Date(); arrLoading = false;
+  } catch (e) { if (code !== arrStop) return; arrErr = e.message; if (arrLoading) arrData = null; arrLoading = false; }
   renderArrivals();
 }
 function renderArrivals() {
@@ -508,11 +505,13 @@ function renderArrivals() {
   const svcNo = $("svc").value.trim().toUpperCase();
   $("arrTitle").textContent = `Bus ${svcNo} arrivals · ${arrName} (${arrStop})`;
   const body = $("arrBody");
+  $("arrCard").style.opacity = arrLoading && arrData ? ".55" : "";
+  $("arrCard").style.pointerEvents = arrLoading && arrData ? "none" : "";
   if (!arrData) {
     body.innerHTML = `<span style="font-size:13px;color:${arrErr ? "#fca5a5" : "var(--mute)"}">${arrErr
       ? "Could not load arrival info (" + arrErr + "). If you opened this file from your PC and it is blocked, host the page or run: python -m http.server"
       : "Loading arrival info …"}</span>`;
-    $("arrUpd").textContent = ""; showBuses(null); return;
+    $("arrUpd").textContent = ""; if (!arrLoading) showBuses(null); return;
   }
   const svc = arrData.find(s => String(s.no).toUpperCase() === svcNo);
   const labels = ["Next", "2nd", "3rd"];
@@ -539,13 +538,13 @@ function renderArrivals() {
     });
     body.innerHTML += `<div class="others">${others.join("") || "No other services."}</div>`;
   }
-  $("arrUpd").textContent = arrAt ? `Updated ${hhmm(arrAt)} · refreshes every 20 s` : "";
+  $("arrUpd").textContent = arrLoading ? "Updating …" : arrAt ? `Updated ${hhmm(arrAt)} · refreshes every 60 s` : "";
 }
 // draw the selected service's live buses on the map (redrawn only when the data or minutes change)
 function showBuses(svc) {
   if (!busLayer) return;
   const buses = svc ? slots(svc).map((b, i) => ({ b, i })).filter(x => hasLive(x.b)) : [];
-  const key = arrStop + "|" + (svc ? svc.no : "") + "|" + arrSel + "|" + buses.map(x => x.b.lat + "," + x.b.lng + "," + minsTo(x.b.time)).join(";");
+  const key = arrStop + "|" + (svc ? svc.no : "") + "|" + arrSel + "|" + buses.map(x => x.b.lat + "," + x.b.lng + "," + x.b.time).join(";");
   if (key === busKey) return;
   busKey = key;
   busLayer.clearLayers(); busMarkers = {};
@@ -599,13 +598,13 @@ function initMap() {
 $("svc").addEventListener("input", schedule);
 ["lat", "lng"].forEach(id => $(id).addEventListener("change", () => {
   const la = parseFloat($("lat").value), ln = parseFloat($("lng").value);
-  if (isFinite(la) && isFinite(ln)) setPos(la, ln, true);
+  if (isFinite(la) && isFinite(ln)) setPos(la, ln, "typed");
 }));
 $("now").onclick = () => { setNow(); schedule(); };
 $("gps").onclick = getGPS;
 
-setInterval(fetchArrivals, 20000);
-setInterval(() => { if (arrData) renderArrivals(); }, 5000);
+setInterval(fetchArrivals, 60000);
+setInterval(() => { if (arrData && !arrLoading) renderArrivals(); }, 30000);
 setNow();
 initMap();
 getGPS();
