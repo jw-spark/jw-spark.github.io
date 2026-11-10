@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SG Bus – Which Side to Sit</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root { --blue:#2563eb; --orange:#f59e0b; --grey:#9ca3af; --bg:#f6f7fb; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Segoe UI,Arial,sans-serif; background:var(--bg); color:#1f2937; }
+  header { background:#0f172a; color:#fff; padding:14px 20px; }
+  header h1 { margin:0; font-size:20px; }
+  header p { margin:4px 0 0; font-size:13px; opacity:.8; }
+  main { max-width:1100px; margin:0 auto; padding:16px; }
+  .card { background:#fff; border-radius:10px; padding:14px 16px; margin-bottom:14px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+  label { display:flex; flex-direction:column; font-size:12px; color:#6b7280; gap:4px; }
+  input, select { padding:8px; border:1px solid #d1d5db; border-radius:6px; font-size:14px; }
+  button { padding:9px 16px; border:0; border-radius:6px; background:var(--blue); color:#fff; font-size:14px; cursor:pointer; }
+  button.secondary { background:#e5e7eb; color:#111; }
+  #status { font-size:13px; color:#6b7280; margin-top:8px; }
+  #status.err { color:#b91c1c; }
+  .reco { font-size:18px; font-weight:600; margin:0 0 6px; }
+  .bar { display:flex; height:18px; border-radius:9px; overflow:hidden; margin:8px 0; }
+  .bar div { height:100%; }
+  .legend { font-size:13px; display:flex; gap:16px; flex-wrap:wrap; }
+  .dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+  #map { height:380px; border-radius:8px; margin-bottom:14px; }
+  table { border-collapse:collapse; width:100%; font-size:13px; }
+  th, td { padding:6px 8px; text-align:left; border-bottom:1px solid #eee; }
+  th { background:#f3f4f6; position:sticky; top:0; }
+  .tablewrap { max-height:420px; overflow:auto; }
+  .tag { padding:2px 8px; border-radius:10px; color:#fff; font-size:12px; white-space:nowrap; }
+  .L { background:var(--orange); } .R { background:var(--blue); } .N { background:var(--grey); }
+  small { color:#6b7280; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🚌 SG Bus – Which Side Should I Sit?</h1>
+  <p>Pulls stop GPS locations from BusRouter SG data and works out where the sun will be.</p>
+</header>
+<main>
+  <div class="card">
+    <div class="controls">
+      <label>Bus service <input id="svc" value="2" size="6"></label>
+      <label>Direction <select id="dir"><option value="0">Direction 1</option><option value="1">Direction 2</option></select></label>
+      <label>Date <input id="date" type="date"></label>
+      <label>Board time <input id="time" type="time" value="08:30"></label>
+      <label>Trip length (min) <input id="dur" type="number" value="60" min="5" max="240" style="width:90px"></label>
+      <button id="go">Load &amp; analyse</button>
+      <button id="csv" class="secondary" disabled>Download CSV</button>
+    </div>
+    <div id="status">Ready.</div>
+  </div>
+
+  <div class="card" id="resultCard" hidden>
+    <p class="reco" id="reco"></p>
+    <div class="bar" id="bar"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--orange)"></span>Sun on LEFT → sit RIGHT</span>
+      <span><span class="dot" style="background:var(--blue)"></span>Sun on RIGHT → sit LEFT</span>
+      <span><span class="dot" style="background:var(--grey)"></span>Sun in front/behind or low → either side</span>
+    </div>
+    <p><small id="route"></small></p>
+  </div>
+
+  <div id="map" hidden></div>
+
+  <div class="card" id="tableCard" hidden>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Stop</th><th>Name</th><th>Road</th><th>Lat</th><th>Lng</th><th>Est. time</th><th>Heading</th><th>Sit on</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ===== CORE LOGIC ===== */
+const BASE = "https://data.busrouter.sg/v1/";
+const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+
+// Approximate sun position (NOAA-style). dt = Date built from Singapore local clock values.
+function sunPosition(y, mo, d, hh, mm, lat = 1.35, lon = 103.82, tz = 8) {
+  const utc = new Date(Date.UTC(y, mo - 1, d, hh - tz, mm));
+  const start = Date.UTC(utc.getUTCFullYear(), 0, 0);
+  const n = Math.floor((utc - start) / 864e5);
+  const hours = utc.getUTCHours() + utc.getUTCMinutes() / 60;
+  const g = 2 * Math.PI / 365 * (n - 1 + (hours - 12) / 24);
+  const decl = 0.006918 - 0.399912*Math.cos(g) + 0.070257*Math.sin(g) - 0.006758*Math.cos(2*g)
+             + 0.000907*Math.sin(2*g) - 0.002697*Math.cos(3*g) + 0.00148*Math.sin(3*g);
+  const eqt = 229.18 * (0.000075 + 0.001868*Math.cos(g) - 0.032077*Math.sin(g)
+             - 0.014615*Math.cos(2*g) - 0.040849*Math.sin(2*g));
+  const solarMin = hours * 60 + eqt + 4 * lon;
+  const ha = rad(solarMin / 4 - 180), la = rad(lat);
+  const elev = Math.asin(Math.sin(la)*Math.sin(decl) + Math.cos(la)*Math.cos(decl)*Math.cos(ha));
+  const az = Math.atan2(-Math.sin(ha)*Math.cos(decl),
+                        Math.sin(decl)*Math.cos(la) - Math.cos(decl)*Math.sin(la)*Math.cos(ha));
+  return { az: (deg(az) + 360) % 360, elev: deg(elev) };
+}
+
+function bearing(a, b) { // [lat,lng]
+  const p1 = rad(a[0]), p2 = rad(b[0]), dl = rad(b[1] - a[1]);
+  const y = Math.sin(dl) * Math.cos(p2);
+  const x = Math.cos(p1)*Math.sin(p2) - Math.sin(p1)*Math.cos(p2)*Math.cos(dl);
+  return (deg(Math.atan2(y, x)) + 360) % 360;
+}
+
+// returns "L" (sun on left of bus), "R", or "N" (front/back/low sun)
+function sunSide(heading, sunAz, elev) {
+  if (elev < 8) return "N";
+  const diff = ((sunAz - heading + 540) % 360) - 180; // + = sun to the right
+  const a = Math.abs(diff);
+  if (a < 30 || a > 150) return "N";
+  return diff > 0 ? "R" : "L";
+}
+
+function analyse(codes, stops, y, mo, d, hh, mm, durMin) {
+  const out = [];
+  const n = codes.length;
+  codes.forEach((c, i) => {
+    const s = stops[c]; if (!s) return;
+    const lng = s[0], lat = s[1];
+    const nx = stops[codes[Math.min(i + 1, n - 1)]], pv = stops[codes[Math.max(i - 1, 0)]];
+    let a, b;
+    if (i === n - 1) { a = [pv[1], pv[0]]; b = [lat, lng]; }
+    else { a = [lat, lng]; b = [nx[1], nx[0]]; }
+    const heading = (a[0] === b[0] && a[1] === b[1]) ? 0 : bearing(a, b);
+    const offset = n > 1 ? Math.round(durMin * i / (n - 1)) : 0;
+    const t = hh * 60 + mm + offset;
+    const sp = sunPosition(y, mo, d, Math.floor(t / 60), t % 60);
+    out.push({ seq: i + 1, code: c, name: s[2], road: s[3], lat, lng,
+               heading: Math.round(heading), time: offset,
+               clock: String(Math.floor(t/60) % 24).padStart(2,"0") + ":" + String(t % 60).padStart(2,"0"),
+               side: sunSide(heading, sp.az, sp.elev) });
+  });
+  return out;
+}
+/* ===== END CORE ===== */
+
+/* ===== UI ===== */
+const $ = id => document.getElementById(id);
+let cache = {}, lastRows = [], map, layer;
+
+$("date").value = new Date().toISOString().slice(0, 10);
+
+async function getJSON(name) {
+  if (cache[name]) return cache[name];
+  const r = await fetch(BASE + name);
+  if (!r.ok) throw new Error(name + " – HTTP " + r.status);
+  return (cache[name] = await r.json());
+}
+function setStatus(msg, err) { $("status").textContent = msg; $("status").className = err ? "err" : ""; }
+
+$("go").onclick = async () => {
+  try {
+    setStatus("Loading data from data.busrouter.sg …");
+    const [stops, services] = await Promise.all([getJSON("data/stops.min.json"), getJSON("data/services.min.json")]);
+    const svcNo = $("svc").value.trim().toUpperCase();
+    const svc = services[svcNo];
+    if (!svc) throw new Error("Service " + svcNo + " not found.");
+    const dirSel = $("dir");
+    // label directions
+    svc.routes.forEach((r, i) => {
+      dirSel.options[i] && (dirSel.options[i].text = `Dir ${i+1}: ${stops[r[0]][2]} → ${stops[r[r.length-1]][2]}`);
+    });
+    const dir = Math.min(+dirSel.value, svc.routes.length - 1);
+    const [y, mo, d] = $("date").value.split("-").map(Number);
+    const [hh, mm] = $("time").value.split(":").map(Number);
+    lastRows = analyse(svc.routes[dir], stops, y, mo, d, hh, mm, +$("dur").value || 60);
+    render(svcNo, svc);
+    setStatus(`Loaded ${lastRows.length} stops.`);
+    $("csv").disabled = false;
+  } catch (e) {
+    setStatus("Failed: " + e.message + " (needs internet access to data.busrouter.sg)", true);
+  }
+};
+
+function render(svcNo, svc) {
+  const cnt = { L: 0, R: 0, N: 0 };
+  lastRows.forEach(r => cnt[r.side]++);
+  const tot = lastRows.length;
+  const sitSide = cnt.L > cnt.R ? "RIGHT" : cnt.R > cnt.L ? "LEFT" : "either side";
+  const pct = k => Math.round(100 * cnt[k] / tot);
+  $("reco").textContent = cnt.L === cnt.R
+    ? `Either side – sun is split evenly (${pct("L")}% left / ${pct("R")}% right).`
+    : `Sit on the ${sitSide} side of the bus (sun on the ${sitSide === "RIGHT" ? "left" : "right"} for ${pct(sitSide === "RIGHT" ? "L" : "R")}% of stops).`;
+  $("bar").innerHTML = `<div style="width:${pct("L")}%;background:var(--orange)"></div>
+    <div style="width:${pct("R")}%;background:var(--blue)"></div>
+    <div style="width:${pct("N")}%;background:var(--grey)"></div>`;
+  $("route").textContent = `Bus ${svcNo}: ${lastRows[0].name} → ${lastRows[tot-1].name} · "Left/Right" is as seen facing the direction the bus travels.`;
+  $("resultCard").hidden = $("tableCard").hidden = false;
+
+  const label = { L: "Sit RIGHT", R: "Sit LEFT", N: "Either" };
+  $("rows").innerHTML = lastRows.map(r => `<tr>
+    <td>${r.seq}</td><td>${r.code}</td><td>${r.name}</td><td>${r.road}</td>
+    <td>${r.lat.toFixed(5)}</td><td>${r.lng.toFixed(5)}</td><td>${r.clock}</td><td>${r.heading}°</td>
+    <td><span class="tag ${r.side}">${label[r.side]}</span></td></tr>`).join("");
+
+  if (window.L) {
+    $("map").hidden = false;
+    if (!map) { map = L.map("map"); L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map); }
+    if (layer) layer.remove();
+    layer = L.layerGroup().addTo(map);
+    const col = { L: "#f59e0b", R: "#2563eb", N: "#9ca3af" };
+    lastRows.forEach(r => L.circleMarker([r.lat, r.lng], { radius: 6, color: "#fff", weight: 1, fillColor: col[r.side], fillOpacity: .95 })
+      .bindTooltip(`${r.seq}. ${r.name}<br>${r.lat.toFixed(5)}, ${r.lng.toFixed(5)}<br>${label[r.side]}`).addTo(layer));
+    L.polyline(lastRows.map(r => [r.lat, r.lng]), { color: "#6b7280", weight: 2, opacity: .5 }).addTo(layer);
+    map.fitBounds(lastRows.map(r => [r.lat, r.lng]));
+    setTimeout(() => map.invalidateSize(), 100);
+  }
+}
+
+$("csv").onclick = () => {
+  const head = "seq,stop_code,name,road,lat,lng,est_time,heading_deg,sit_on";
+  const lab = { L: "RIGHT", R: "LEFT", N: "EITHER" };
+  const body = lastRows.map(r => [r.seq, r.code, `"${r.name}"`, `"${r.road}"`, r.lat, r.lng, r.clock, r.heading, lab[r.side]].join(","));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff" + [head, ...body].join("\n")], { type: "text/csv" }));
+  a.download = `bus_${$("svc").value}_sun_side.csv`; a.click();
+};
+</script>
+</body>
+</html>
