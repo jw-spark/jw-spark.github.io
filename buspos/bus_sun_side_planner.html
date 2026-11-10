@@ -159,16 +159,16 @@ function setStatus(msg, err) { $("status").textContent = msg; $("status").classN
 $("go").onclick = async () => {
   try {
     setStatus("Loading data from data.busrouter.sg …");
-    const [stops, services] = await Promise.all([getJSON("data/stops.min.json"), getJSON("data/services.min.json")]);
+    const [stops, services] = await Promise.all([getJSON("stops.min.json"), getJSON("services.min.json")]);
     const svcNo = $("svc").value.trim().toUpperCase();
     const svc = services[svcNo];
     if (!svc) throw new Error("Service " + svcNo + " not found.");
     const dirSel = $("dir");
-    // label directions
-    svc.routes.forEach((r, i) => {
-      dirSel.options[i] && (dirSel.options[i].text = `Dir ${i+1}: ${stops[r[0]][2]} → ${stops[r[r.length-1]][2]}`);
-    });
-    const dir = Math.min(+dirSel.value, svc.routes.length - 1);
+    const prev = +dirSel.value || 0;
+    dirSel.innerHTML = svc.routes.map((r, i) =>
+      `<option value="${i}">Dir ${i+1}: ${stops[r[0]][2]} → ${stops[r[r.length-1]][2]}</option>`).join("");
+    dirSel.value = Math.min(prev, svc.routes.length - 1);
+    const dir = +dirSel.value;
     const [y, mo, d] = $("date").value.split("-").map(Number);
     const [hh, mm] = $("time").value.split(":").map(Number);
     lastRows = analyse(svc.routes[dir], stops, y, mo, d, hh, mm, +$("dur").value || 60);
