@@ -32,26 +32,32 @@
   details#adv summary::after { content:"▾"; font-size:14px; }
   details#adv[open] summary::after { content:"▴"; }
 
-  /* top row: bus service + refresh panel */
-  .toprow { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
-  .toprow > label { flex:0 0 auto; }
-  .refresh { flex:1 1 300px; min-width:0; display:grid; grid-template-columns:auto minmax(40px,1fr) auto auto; align-items:center; gap:8px 10px; background:#0a1324; border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
-  .refresh .lbl2 { font-size:12px; color:var(--mute); white-space:nowrap; }
-  .track { min-width:0; height:8px; background:#1b2a47; border-radius:4px; overflow:hidden; }
+  /* ---- top row: [bus service] [next refresh in ▬▬▬ 18s] [↻] - always ONE line, phone and desktop ---- */
+  .toprow { display:flex; flex-wrap:nowrap; align-items:flex-end; gap:8px; }
+  .toprow > label { flex:0 0 68px; width:68px; white-space:nowrap; overflow:visible; }   /* caption may overhang; keeps the bar right next to the box */
+  #svc { width:68px; height:46px; text-align:center; font-size:18px; padding:0 6px; }
+  .refresh { flex:1 1 auto; min-width:0; height:46px; display:flex; align-items:center; gap:10px; background:#0a1324; border:1px solid var(--line); border-radius:10px; padding:0 12px; }
+  .refresh .lbl2 { font-size:12px; color:var(--mute); white-space:nowrap; flex:0 0 auto; }
+  .refresh .short { display:none; }
+  .track { flex:1 1 auto; min-width:24px; height:8px; background:#1b2a47; border-radius:4px; overflow:hidden; }
   .track div { height:100%; width:100%; background:linear-gradient(90deg,#00b4d8,#48cae4); border-radius:4px; transition:width 1s linear; }
-  #cd { font-size:14px; font-weight:700; color:#00b4d8; min-width:34px; text-align:right; white-space:nowrap; }
-  #refreshBtn { background:#00b4d8; color:#07202b; font-weight:700; padding:8px 14px; white-space:nowrap; min-width:0; }
+  #cd { flex:0 0 auto; font-size:15px; font-weight:700; color:#00b4d8; min-width:32px; text-align:right; white-space:nowrap; }
+  #refreshBtn { flex:0 0 auto; height:46px; min-width:46px; padding:0 14px; border-radius:10px; background:#00b4d8; color:#07202b; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; }
+  #refreshBtn #rIcon { font-size:22px; line-height:1; }
   #refreshBtn:disabled { background:#1b2a47; color:#8da2c6; cursor:default; }
-  .spin { display:inline-block; width:12px; height:12px; border:2px solid #8da2c6; border-top-color:transparent; border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:5px; }
+  .spin { display:inline-block; width:16px; height:16px; border:2px solid #8da2c6; border-top-color:transparent; border-radius:50%; animation:sp .7s linear infinite; }
   @keyframes sp { to { transform:rotate(360deg); } }
   @media (max-width:560px) {
     main { padding:8px 10px 24px; } .card { padding:12px; }
     input[type=number] { width:100px; }
-    .toprow { flex-direction:column; align-items:stretch; gap:10px; }
-    .toprow > label input#svc { width:100% !important; }
-    .refresh { flex:none; width:100%; grid-template-columns:auto minmax(30px,1fr) auto; }
-    #refreshBtn { grid-column:1 / -1; width:100%; padding:10px 14px; }
+    #refreshBtn { width:46px; padding:0; }
+    #refreshBtn .rtxt { display:none; }          /* phone: icon-only button */
+    .refresh { padding:0 10px; gap:8px; }
     #verdict h2 { font-size:26px; }
+  }
+  @media (max-width:390px) {
+    .refresh .full { display:none; } .refresh .short { display:inline; }   /* "Refresh in" on very narrow phones */
+    .toprow > label { flex-basis:58px; width:58px; } #svc { width:58px; }
   }
 
   /* verdict + bus picture */
@@ -110,13 +116,13 @@
 <main>
   <div class="card">
     <div class="toprow">
-      <label>Bus service <input id="svc" value="2" size="5" style="width:80px"></label>
+      <label>Bus service <input id="svc" value="2" inputmode="text" autocomplete="off"></label>
       <div class="refresh">
-        <span class="lbl2">Next refresh in</span>
+        <span class="lbl2"><span class="full">Next refresh in</span><span class="short">Refresh in</span></span>
         <div class="track"><div id="cdBar"></div></div>
         <span id="cd">60s</span>
-        <button id="refreshBtn" type="button"><span id="rIcon">↻</span> Refresh Now</button>
       </div>
+      <button id="refreshBtn" type="button" aria-label="Refresh now" title="Refresh now"><span id="rIcon">↻</span><span class="rtxt">Refresh Now</span></button>
     </div>
     <div id="status"></div>
     <details id="adv">
@@ -515,7 +521,7 @@ function loadArrivals(code, name, pos) {
   renderArrivals(); fetchArrivals();
 }
 
-// refresh countdown (60 s) + Refresh Now button
+// refresh countdown (60 s) + refresh button
 const REFRESH_SEC = 60;
 let nextAt = Date.now() + REFRESH_SEC * 1000, fetching = false;
 function resetCountdown() { nextAt = Date.now() + REFRESH_SEC * 1000; drawCountdown(); }
