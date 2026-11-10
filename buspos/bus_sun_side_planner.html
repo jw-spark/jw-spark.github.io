@@ -105,14 +105,10 @@
   </div>
 
   <div class="card" id="routeCard" hidden>
-    <h3>Sun along your ride</h3>
+    <h3>Where the sun hits during your ride</h3>
     <div class="bar" id="bar"></div>
     <div class="barlbl"><span id="t0"></span><span id="t1"></span></div>
-    <div class="legend">
-      <span><span class="dot" style="background:var(--green)"></span>Sit LEFT</span>
-      <span><span class="dot" style="background:var(--purple)"></span>Sit RIGHT</span>
-      <span><span class="dot" style="background:#566684"></span>Either side</span>
-    </div>
+    <div class="legend" id="legend"></div>
   </div>
 
 </main>
@@ -190,62 +186,62 @@ function analyseRide(list, y, mo, d, startMin) {
 function summarise(segs) {
   const w = { L: 0, R: 0, N: 0 }, tot = segs.reduce((s, g) => s + g.dur, 0) || 1;
   segs.forEach(g => w[g.side] += g.dur);
-  const sunny = w.L + w.R;
-  let sit = "E", reason = "";
-  const allLow = segs.length && segs.every(g => g.elev < 8);
-  if (allLow) reason = "night";
-  else if (sunny < 0.4 * tot) reason = "frontback";
-  else if (Math.abs(w.L - w.R) < 0.15 * sunny) reason = "split";
-  else sit = w.L > w.R ? "R" : "L";            // sun on LEFT -> sit RIGHT, and vice versa
-  // average relative sun direction per group (circular mean)
+  const pct = { L: Math.round(100 * w.L / tot), R: Math.round(100 * w.R / tot) };
+  pct.N = Math.max(0, 100 - pct.L - pct.R);
+  const allLow = segs.length > 0 && segs.every(g => g.elev < 8);
+  // The side that gets MORE sun is the "sunny" side; sit on the other one.
+  const sunnySide = w.L >= w.R ? "L" : "R";
+  const sunnyPct = pct[sunnySide], otherPct = pct[sunnySide === "L" ? "R" : "L"];
+  let sit = sunnySide === "L" ? "R" : "L", reason = "";
+  if (allLow) { sit = "E"; reason = "night"; }
+  else if (sunnyPct < 10) { sit = "E"; reason = "frontback"; }        // hardly any sun on the windows
+  else if (sunnyPct - otherPct < 5) { sit = "E"; reason = "equal"; }  // truly equal
+  // average direction of the sun (relative to the bus nose) on one side
   const mean = side => {
     let sx = 0, sy = 0, ww = 0;
     segs.filter(g => g.side === side && g.elev >= 8).forEach(g => { sx += g.dur*Math.sin(rad(g.rel)); sy += g.dur*Math.cos(rad(g.rel)); ww += g.dur; });
-    if (!ww || Math.hypot(sx, sy) / ww < 0.3) return null;
+    if (!ww || Math.hypot(sx, sy) / ww < 0.2) return side === "L" ? -90 : 90;
     return deg(Math.atan2(sx, sy));
   };
-  const hi = segs.filter(g => g.side !== "N");
+  const hi = segs.filter(g => g.side === sunnySide);
   const elev = hi.length ? hi.reduce((s, g) => s + g.elev, 0) / hi.length : 0;
-  return { w, tot, sit, reason, allLow, elev, share: k => w[k] / tot,
-           rel: { L: mean("L"), R: mean("R"), N: mean("N") } };
+  const frontBack = segs.filter(g => g.side === "N" && g.elev >= 8);
+  const fbRel = frontBack.length ? deg(Math.atan2(
+      frontBack.reduce((s, g) => s + g.dur*Math.sin(rad(g.rel)), 0), frontBack.reduce((s, g) => s + g.dur*Math.cos(rad(g.rel)), 0))) : null;
+  return { w, tot, pct, sit, reason, allLow, elev, sunnySide, sunnyPct, otherPct,
+           sunRel: sit === "E" ? fbRel : mean(sunnySide) };
 }
 /* ================= END CORE ================= */
 
 /* ================= BUS PICTURE ================= */
 function busSVG(sum) {
   const C = 320, R = 285;
-  const showL = sum.share("L") >= .15 && sum.rel.L !== null, showR = sum.share("R") >= .15 && sum.rel.R !== null;
-  let showN = !showL && !showR && sum.rel.N !== null && !sum.allLow;
-  const sunnyL = sum.sit === "R" || (sum.sit === "E" && showL);   // sun hits LEFT windows
-  const sunnyR = sum.sit === "L" || (sum.sit === "E" && showR);
-  const seat = (x, y, sunny, ok) => `<rect x="${x}" y="${y}" width="36" height="36" rx="9" fill="${sunny ? '#8a5f1a' : '#22c55e'}" ${ok ? '' : ''}/>`;
+  const either = sum.sit === "E";
+  const sunnyL = !either && sum.sunnySide === "L", sunnyR = !either && sum.sunnySide === "R";
+  const seat = (x, y, sunny) => `<rect x="${x}" y="${y}" width="36" height="36" rx="9" fill="${sunny ? '#8a5f1a' : '#22c55e'}"/>`;
   let seats = "";
-  for (let k = 0; k < 5; k++) {
-    const y = 215 + k * 53;
-    seats += seat(247, y, sum.sit !== "E" && sunnyL);
-    if (k > 0 || true) seats += seat(357, y, sum.sit !== "E" && sunnyR);
+  for (let k = 0; k < 5; k++) { const y = 215 + k * 53; seats += seat(247, y, sunnyL) + seat(357, y, sunnyR); }
+  // ONE sun only: the direction that shines most on the bus
+  let sun = "";
+  if (sum.sunRel !== null && !sum.allLow) {
+    const th = rad(sum.sunRel), x = C + R * Math.sin(th), y = C - R * Math.cos(th);
+    sun = `<line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".22" stroke-width="16" stroke-linecap="round"/>
+           <line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".8" stroke-width="3" stroke-dasharray="9 7"/>
+           <circle cx="${x}" cy="${y}" r="30" fill="#f5b324" fill-opacity=".25"/><circle cx="${x}" cy="${y}" r="17" fill="#f5b324"/>`;
   }
-  const sunIcon = rel => {
-    const th = rad(rel), x = C + R * Math.sin(th), y = C - R * Math.cos(th);
-    return `<line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".22" stroke-width="16" stroke-linecap="round"/>
-            <line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".8" stroke-width="3" stroke-dasharray="9 7"/>`;
-  };
-  const sunBall = rel => {
-    const th = rad(rel), x = C + R * Math.sin(th), y = C - R * Math.cos(th);
-    return `<circle cx="${x}" cy="${y}" r="30" fill="#f5b324" fill-opacity=".25"/><circle cx="${x}" cy="${y}" r="17" fill="#f5b324"/>`;
-  };
-  const suns = [];
-  if (showL) suns.push(sum.rel.L); if (showR) suns.push(sum.rel.R); if (showN) suns.push(sum.rel.N);
-  const sub = (isSit, sunny) => sum.sit === "E"
-      ? `<tspan fill="#38a1e0">EITHER ✓</tspan>`
-      : isSit ? `<tspan fill="#22c55e">SIT HERE ✓</tspan>` : `<tspan fill="#f5b324">SUNNY ☀</tspan>`;
-  const sitL = sum.sit === "L", sitR = sum.sit === "R";
+  const label = (cx, name, isSunny, isSit, pct) => `
+    <rect x="${cx-92}" y="${C-42}" width="184" height="102" rx="14" fill="#0a1224" fill-opacity=".92"/>
+    <text x="${cx}" y="${C-8}" text-anchor="middle" class="lbl" font-size="30">${name}</text>
+    <text x="${cx}" y="${C+24}" text-anchor="middle" font-size="19" font-weight="700">${
+      either ? '<tspan fill="#38a1e0">EITHER ✓</tspan>'
+      : isSit ? '<tspan fill="#22c55e">SIT HERE ✓</tspan>' : '<tspan fill="#f5b324">SUNNY ☀</tspan>'}</text>
+    <text x="${cx}" y="${C+50}" text-anchor="middle" font-size="16" fill="${isSunny ? '#f5b324' : '#8da2c6'}">sun ${pct}% of ride</text>`;
   return `<svg viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Top-down bus diagram showing the sunny and shady sides">
     <rect x="4" y="4" width="632" height="632" rx="22" fill="#0a1224" stroke="#1f2f4d"/>
     <line x1="${C}" y1="20" x2="${C}" y2="620" stroke="#1b2a47"/><line x1="20" y1="${C}" x2="620" y2="${C}" stroke="#1b2a47"/>
-    ${suns.map(sunIcon).join("")}
     <text x="${C}" y="120" text-anchor="middle" class="tiny">FRONT ▲</text>
     <text x="${C}" y="535" text-anchor="middle" class="tiny">BACK</text>
+    ${sun}
     <rect x="225" y="135" width="190" height="370" rx="52" fill="#1c293f" stroke="#475569" stroke-width="6"/>
     <path d="M252 160 Q${C} 148 388 160" stroke="#38a1e0" stroke-width="7" fill="none" stroke-linecap="round"/>
     <line x1="260" y1="485" x2="380" y2="485" stroke="#38a1e0" stroke-width="7" stroke-linecap="round"/>
@@ -255,11 +251,8 @@ function busSVG(sum) {
     <circle cx="378" cy="178" r="12" fill="#e2e8f0"/><text x="378" y="203" text-anchor="middle" font-size="10" fill="#6f84a8">DRIVER</text>
     ${seats}
     <polygon points="${C},282 ${C+26},338 ${C},325 ${C-26},338" fill="#22c55e"/>
-    ${suns.map(sunBall).join("")}
-    <text x="130" y="${C-4}" text-anchor="middle" class="lbl" font-size="30">LEFT</text>
-    <text x="130" y="${C+30}" text-anchor="middle" font-size="20" font-weight="700">${sub(sitL, sunnyL)}</text>
-    <text x="510" y="${C-4}" text-anchor="middle" class="lbl" font-size="30">RIGHT</text>
-    <text x="510" y="${C+30}" text-anchor="middle" font-size="20" font-weight="700">${sub(sitR, sunnyR)}</text>
+    ${label(120, "LEFT", sunnyL, sum.sit === "L", sum.pct.L)}
+    ${label(520, "RIGHT", sunnyR, sum.sit === "R", sum.pct.R)}
   </svg>`;
 }
 /* ================= END BUS PICTURE ================= */
@@ -387,42 +380,38 @@ function renderVerdict(sum, segs, boardStop, distM, startMin, toName) {
   const V = $("verdict"); V.hidden = false; $("busCard").hidden = false;
   const rideMin = Math.round(sum.tot);
   const side = sum.sit === "L" ? "LEFT" : sum.sit === "R" ? "RIGHT" : null;
+  const sunny = sum.sunnySide === "L" ? "LEFT" : "RIGHT";
   V.className = "card" + (side ? "" : " either");
   if (side) {
     $("vTitle").textContent = `Sit on the ${side} side`;
-    const sunSideName = side === "LEFT" ? "RIGHT" : "LEFT";
-    const g = sum.rel[sunSideName[0]];
-    const where = g === null ? "" : sum.elev > 60 ? "high up" : (Math.abs(g) < 90 ? "in front" : "behind");
-    $("vSub").innerHTML = `The sun is ${where ? where + " on the " + sunSideName.toLowerCase() : "on the " + sunSideName.toLowerCase()}, so the <b>${sunSideName}</b> windows get the sun.`;
+    $("vSub").innerHTML = `The <b>${sunny}</b> windows get sun for about <b>${sum.sunnyPct}%</b> of your ride. The ${side} side only gets about <b>${sum.otherPct}%</b>.`;
   } else {
     $("vTitle").textContent = "Either side is fine";
     $("vSub").textContent = sum.reason === "night" ? "The sun is down or very low during your ride."
-      : sum.reason === "frontback" ? "The sun is mostly in front of or behind the bus, not on the windows."
-      : "The sun shines on both sides about equally – see the bar below.";
+      : sum.reason === "frontback" ? `Very little sun reaches the windows (left ${sum.pct.L}%, right ${sum.pct.R}%). It is mostly in front of or behind the bus.`
+      : `Both sides get about the same sun (left ${sum.pct.L}%, right ${sum.pct.R}%).`;
   }
   $("vInfo").textContent = `Board at ${boardStop.name} (${Math.round(distM)} m away), towards ${toName} · about ${rideMin} min ride · left/right as seen facing the front of the bus`;
   $("busWrap").innerHTML = busSVG(sum);
 }
 function renderBar(segs, sum, startMin) {
   $("routeCard").hidden = false;
-  const col = { L: "#22c55e", R: "#a78bfa", N: "#566684" };   // by seat to SIT on: sun L -> sit right
-  $("bar").innerHTML = segs.map(g => {
-    const sit = g.side === "L" ? "R" : g.side === "R" ? "L" : "N";
-    const c = sit === "R" ? col.R : sit === "L" ? col.L : col.N;
-    return `<div title="${fmt(g.t0)}" style="width:${100 * g.dur / sum.tot}%;background:${c}"></div>`;
-  }).join("");
+  const col = { L: "#f5b324", R: "#a78bfa", N: "#566684" };   // where the sun hits
+  $("bar").innerHTML = segs.map(g =>
+    `<div title="${fmt(g.t0)}" style="width:${100 * g.dur / sum.tot}%;background:${col[g.side]}"></div>`).join("");
   $("t0").textContent = fmt(startMin);
   $("t1").textContent = fmt(startMin + sum.tot);
+  $("legend").innerHTML =
+    `<span><span class="dot" style="background:${col.L}"></span>Sun on LEFT side · ${sum.pct.L}%</span>
+     <span><span class="dot" style="background:${col.R}"></span>Sun on RIGHT side · ${sum.pct.R}%</span>
+     <span><span class="dot" style="background:${col.N}"></span>No sun on windows · ${sum.pct.N}%</span>`;
 }
 function renderMap(list, board, endIdx, segs) {
   if (!window.L || !map) return;
   layer.clearLayers();
   L.polyline(list.map(s => [s.lat, s.lng]), { color: "#64748b", weight: 3, opacity: .45, dashArray: "4 6" }).addTo(layer);
-  const col = { L: "#22c55e", R: "#a78bfa", N: "#94a3b8" };
-  segs.forEach(g => {
-    const sit = g.side === "L" ? "R" : g.side === "R" ? "L" : "N";
-    L.polyline([g.a, g.b], { color: sit === "R" ? col.R : sit === "L" ? col.L : col.N, weight: 6, opacity: .95, interactive: false }).addTo(layer);
-  });
+  const col = { L: "#f5b324", R: "#a78bfa", N: "#94a3b8" };
+  segs.forEach(g => L.polyline([g.a, g.b], { color: col[g.side], weight: 6, opacity: .95, interactive: false }).addTo(layer));
   const e = list[endIdx];
   L.circleMarker([e.lat, e.lng], { radius: 8, color: "#fff", weight: 2, fillColor: "#ef4444", fillOpacity: 1, bubblingMouseEvents: false })
     .bindTooltip("Get off: " + e.name).addTo(layer);
