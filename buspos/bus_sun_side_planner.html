@@ -44,6 +44,7 @@
   .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle; }
   #map { height:340px; border-radius:12px; }
   .me { width:18px; height:18px; border-radius:50%; background:#2563eb; border:3px solid #fff; box-shadow:0 0 0 4px rgba(37,99,235,.35); }
+
   .stoplist { display:flex; flex-direction:column; gap:8px; }
   .stopbtn { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:#0a1324; border:1.5px solid var(--line); border-radius:12px; padding:10px 12px; color:var(--txt); cursor:pointer; }
   .stopbtn.sel { border-color:var(--green); background:#0b2133; }
@@ -54,9 +55,25 @@
   .stopbtn .t span { font-size:12px; color:var(--mute); }
   .stopbtn .d { font-size:12px; color:var(--mute); text-align:right; white-space:nowrap; }
   .stopbtn.sel .d { color:var(--green); }
-  .badge { display:inline-block; font-size:10px; padding:1px 6px; border-radius:8px; background:#1b2a47; color:var(--mute); margin-left:6px; vertical-align:middle; }
   .num { width:22px; height:22px; border-radius:50%; background:#1b2a47; color:#fff; border:2px solid #fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
   .num.sel { background:#22c55e; color:#04210f; }
+
+  .arr { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .arr:last-of-type { border-bottom:0; }
+  .arr .lab { width:34px; font-size:12px; color:var(--mute); }
+  .arr .mins { width:74px; font-size:22px; font-weight:800; }
+  .arr .mid { flex:1; min-width:0; font-size:13px; line-height:1.7; }
+  .arr .mid b { font-size:15px; margin-right:6px; }
+  .chip { display:inline-block; font-size:11px; padding:1px 8px; border-radius:9px; margin-right:4px; color:#04110a; font-weight:700; }
+  .chip.g { background:#1b2a47; color:var(--mute); font-weight:600; }
+  .use { background:#1b2a47; color:var(--txt); padding:6px 10px; font-size:12px; border-radius:8px; }
+  .others { margin-top:10px; font-size:12px; color:var(--mute); display:flex; flex-wrap:wrap; gap:6px; }
+  .others span { background:#0a1324; border:1px solid var(--line); border-radius:8px; padding:3px 8px; }
+  .others b { color:var(--txt); }
+  .upd { font-size:11px; color:#6f84a8; margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
+  .upd label { flex-direction:row; align-items:center; text-transform:none; letter-spacing:0; font-size:12px; }
+  .upd input { padding:0; }
+  .busdot { width:24px; height:24px; border-radius:50%; background:#f5b324; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-size:13px; }
   h3 { margin:0 0 8px; font-size:14px; color:var(--mute); font-weight:600; }
 </style>
 </head>
@@ -94,6 +111,16 @@
     <div class="stoplist" id="stopList"><span style="font-size:13px;color:var(--mute)">Waiting for your location…</span></div>
   </div>
 
+  <div class="card" id="arrCard" hidden>
+    <h3 id="arrTitle"></h3>
+    <div id="arrBody"></div>
+    <div class="upd">
+      <span id="arrUpd"></span>
+      <label><input type="checkbox" id="arrAll"> Show all services at this stop</label>
+      <button class="ghost" id="arrRefresh" type="button">↻ Refresh</button>
+    </div>
+  </div>
+
   <div class="card" id="verdict" hidden>
     <h2 id="vTitle"></h2>
     <p id="vSub"></p>
@@ -110,7 +137,6 @@
     <div class="barlbl"><span id="t0"></span><span id="t1"></span></div>
     <div class="legend" id="legend"></div>
   </div>
-
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -158,16 +184,6 @@ function normStop(code, s) {
   if (!s) return null;
   if (Array.isArray(s)) return { code, lng: +s[0], lat: +s[1], name: s[2], road: s[3] };
   return { code, lng: +(s.lng ?? s.lon ?? s.x), lat: +(s.lat ?? s.y), name: s.name, road: s.road };
-}
-// nearest stop index in a list of stops
-function nearestIndex(list, pos, skipLast) {
-  let best = -1, bd = Infinity;
-  const end = skipLast && list.length > 1 ? list.length - 1 : list.length;
-  for (let i = 0; i < end; i++) {
-    const d = haversine(pos, [list[i].lat, list[i].lng]);
-    if (d < bd) { bd = d; best = i; }
-  }
-  return { index: best, dist: bd };
 }
 // split the ride between boarding and alighting stops into segments with sun info
 function analyseRide(list, y, mo, d, startMin) {
@@ -260,7 +276,7 @@ function busSVG(sum) {
 /* ================= PAGE ================= */
 const $ = id => document.getElementById(id);
 const cache = {}; let stopsDB = null, servicesDB = null;
-let map, layer, meMarker, userPos = null, timer = null, firstGeo = true;
+let map, layer, busLayer, meMarker, userPos = null, timer = null;
 
 function sgNow() {
   const p = {};
@@ -285,6 +301,9 @@ async function ensureData() {
 }
 const routeStops = codes => codes.map(c => normStop(c, stopsDB[c])).filter(s => s && isFinite(s.lat) && isFinite(s.lng));
 
+let chosenKey = null, lastSvc = null, fitNear = true, nearList = [];
+const MAX_STOPS = 6, WALK_M_PER_MIN = 80;
+
 function setPos(lat, lng, fromUser) {
   userPos = [lat, lng];
   if (fromUser !== "silent") { chosenKey = null; fitNear = true; }
@@ -308,9 +327,6 @@ function getGPS() {
 function fallbackPos() { setPos(1.3521, 103.8198); }
 function schedule() { clearTimeout(timer); timer = setTimeout(run, 250); }
 
-let chosenKey = null, lastSvc = null, fitNear = true, nearList = [];
-const MAX_STOPS = 6, WALK_M_PER_MIN = 80;
-
 async function run() {
   try {
     if (!userPos) return;
@@ -328,11 +344,13 @@ async function run() {
     }));
     cands.sort((x, y) => x.dist - y.dist);
     nearList = cands.slice(0, MAX_STOPS);
+    if (!nearList.length) throw new Error("No stops found for this service.");
     if (!nearList.some(c => c.key === chosenKey)) chosenKey = nearList[0].key;
     const pick = nearList.find(c => c.key === chosenKey);
     renderStopList(pick);
 
     const list = lists[pick.di], board = pick.i;
+    loadArrivals(pick.s.code, pick.s.name);
 
     // alight menu
     const prevAl = $("alight").value;
@@ -432,12 +450,112 @@ function renderMap(list, board, endIdx, segs) {
   fitNear = false;
 }
 
+/* ================= BUS ARRIVALS ================= */
+const ARR_URL = "https://arrivelah2.busrouter.sg/?id=";
+const LOAD = { SEA: ["Seats", "#22c55e"], SDA: ["Standing", "#f5b324"], LSD: ["Full", "#ef4444"] };
+const TYPE = { SD: "Single deck", DD: "Double deck", BD: "Bendy" };
+const hhmm = d => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Singapore", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d);
+const ymd = d => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Singapore", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+let arrStop = null, arrName = "", arrData = null, arrErr = null, arrAt = null;
+
+const minsTo = t => Math.round((new Date(t) - Date.now()) / 60000);
+const minsTxt = m => m <= 0 ? "Arr" : m + " min";
+const minsCol = m => m <= 3 ? "#ef4444" : m <= 10 ? "#f5b324" : "#22c55e";
+// up to 3 distinct upcoming buses (the feed repeats "subsequent" as "next2")
+function slots(svc) {
+  const seen = new Set(), out = [];
+  ["next", "subsequent", "next2", "next3"].forEach(k => {
+    const b = svc[k]; if (!b || !b.time || seen.has(b.time)) return;
+    seen.add(b.time); out.push(b);
+  });
+  return out.slice(0, 3);
+}
+function loadArrivals(code, name) {
+  if (code === arrStop && arrData) { renderArrivals(); return; }
+  arrStop = code; arrName = name; arrData = null; arrErr = null; arrAt = null;
+  renderArrivals(); fetchArrivals();
+}
+async function fetchArrivals() {
+  if (!arrStop) return;
+  const code = arrStop;
+  try {
+    const r = await fetch(ARR_URL + encodeURIComponent(code));
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    if (code !== arrStop) return;
+    arrData = j.services || []; arrErr = null; arrAt = new Date();
+  } catch (e) { if (code !== arrStop) return; arrErr = e.message; }
+  renderArrivals();
+}
+function renderArrivals() {
+  if (!arrStop) return;
+  $("arrCard").hidden = false;
+  const svcNo = $("svc").value.trim().toUpperCase();
+  $("arrTitle").textContent = `③ Bus ${svcNo} arrivals · ${arrName} (${arrStop})`;
+  const body = $("arrBody");
+  if (!arrData) {
+    body.innerHTML = `<span style="font-size:13px;color:${arrErr ? "#fca5a5" : "var(--mute)"}">${arrErr
+      ? "Could not load arrival info (" + arrErr + "). If you opened this file from your PC and it is blocked, host the page or run: python -m http.server"
+      : "Loading arrival info …"}</span>`;
+    $("arrUpd").textContent = ""; showBuses(null); return;
+  }
+  const svc = arrData.find(s => String(s.no).toUpperCase() === svcNo);
+  const labels = ["Next", "2nd", "3rd"];
+  if (!svc || !slots(svc).length) {
+    body.innerHTML = `<span style="font-size:13px;color:var(--mute)">No arrival info for bus ${svcNo} at this stop right now (not in operation, or no bus is shown yet).</span>`;
+    showBuses(null);
+  } else {
+    const list = slots(svc);
+    body.innerHTML = list.map((b, i) => {
+      const m = minsTo(b.time), live = +b.monitored === 1;
+      const ld = LOAD[b.load] || [b.load || "", "#8da2c6"];
+      return `<div class="arr"><div class="lab">${labels[i]}</div>
+        <div class="mins" style="color:${minsCol(m)}">${minsTxt(m)}</div>
+        <div class="mid"><b>${hhmm(new Date(b.time))}</b>
+          <span class="chip" style="background:${live ? "#22c55e" : "#566684"}">${live ? "Live" : "Est."}</span><br>
+          <span class="chip" style="background:${ld[1]}">${ld[0]}</span>
+          <span class="chip g">${TYPE[b.type] || b.type || ""}</span>${b.feature === "WAB" ? '<span class="chip g">♿</span>' : ""}</div>
+        <button class="use" type="button" data-t="${b.time}" title="Use this bus's arrival time for the sun check">Use time</button></div>`;
+    }).join("") + `<div style="font-size:11px;color:#6f84a8;padding-top:6px">“Use time” sets the sun check to when that bus arrives.</div>`;
+    showBuses(svc);
+  }
+  if ($("arrAll").checked) {
+    const others = arrData.filter(s => String(s.no).toUpperCase() !== svcNo).map(s => {
+      const l = slots(s).map(b => minsTxt(minsTo(b.time))).join(", ");
+      return `<span><b>${s.no}</b> ${l || "–"}</span>`;
+    });
+    body.innerHTML += `<div class="others">${others.join("") || "No other services."}</div>`;
+  }
+  $("arrUpd").textContent = arrAt ? `Updated ${hhmm(arrAt)} · refreshes every 20 s` : "";
+}
+function showBuses(svc) {
+  if (!busLayer) return;
+  busLayer.clearLayers();
+  if (!svc) return;
+  const labels = ["Next", "2nd", "3rd"];
+  slots(svc).forEach((b, i) => {
+    if (!b.lat || !b.lng) return;
+    L.marker([b.lat, b.lng], { zIndexOffset: 2000, icon: L.divIcon({ className: "", html: '<div class="busdot">🚌</div>', iconSize: [24, 24], iconAnchor: [12, 12] }) })
+      .bindTooltip(`Bus ${svc.no} · ${labels[i]} · ${minsTxt(minsTo(b.time))}`).addTo(busLayer);
+  });
+}
+$("arrBody").addEventListener("click", e => {
+  const btn = e.target.closest ? e.target.closest(".use") : null;
+  if (!btn) return;
+  const d = new Date(btn.dataset.t);
+  $("date").value = ymd(d); $("time").value = hhmm(d); schedule();
+});
+$("arrAll").addEventListener("change", renderArrivals);
+$("arrRefresh").addEventListener("click", fetchArrivals);
+/* ================= END BUS ARRIVALS ================= */
+
 /* ---- init ---- */
 function initMap() {
   if (!window.L) { $("map").textContent = "Map could not load (no internet to unpkg.com)."; return; }
   map = L.map("map").setView([1.3521, 103.8198], 12);
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
   layer = L.layerGroup().addTo(map);
+  busLayer = L.layerGroup().addTo(map);
   map.on("click", e => setPos(e.latlng.lat, e.latlng.lng, true));
 }
 ["svc", "alight", "date", "time"].forEach(id => $(id).addEventListener("change", schedule));
@@ -449,6 +567,8 @@ $("svc").addEventListener("input", schedule);
 $("now").onclick = () => { setNow(); schedule(); };
 $("gps").onclick = getGPS;
 
+setInterval(fetchArrivals, 20000);
+setInterval(() => { if (arrData) renderArrivals(); }, 5000);
 setNow();
 initMap();
 getGPS();
