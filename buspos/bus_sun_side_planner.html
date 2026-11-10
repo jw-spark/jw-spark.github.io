@@ -22,8 +22,23 @@
   input[type=number] { width:118px; }
   button { padding:9px 14px; border:0; border-radius:8px; background:#2563eb; color:#fff; font-size:13px; cursor:pointer; }
   button.ghost { background:#1b2a47; color:var(--txt); }
-  #status { font-size:12px; color:var(--mute); margin-top:10px; min-height:16px; }
-  #status.err { color:#fca5a5; }
+  #status { display:none; font-size:12px; margin-top:10px; }
+  #status.err { display:block; color:#fca5a5; }
+  #info { font-size:12px; color:var(--mute); margin-top:10px; }
+  details#adv { margin-top:10px; border-top:1px solid var(--line); padding-top:8px; }
+  details#adv summary { cursor:pointer; font-size:13px; color:var(--mute); padding:6px 0; list-style:none; display:flex; justify-content:space-between; gap:8px; align-items:center; }
+  details#adv summary::-webkit-details-marker { display:none; }
+  details#adv summary::after { content:"▾"; font-size:14px; }
+  details#adv[open] summary::after { content:"▴"; }
+  .busbtn .d b { display:block; font-size:20px; line-height:1.1; }
+  .busbtn .d small { font-size:11px; }
+  .busbtn.sel .n { background:var(--green); color:#04210f; }
+  .bn { width:36px; height:36px; border-radius:50%; background:#4fc3f7; color:#fff; border:3px solid #fff; font-size:15px; font-weight:800; font-family:"Segoe UI",sans-serif; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px #4fc3f7bb, 0 2px 6px rgba(0,0,0,.45); text-shadow:0 1px 2px rgba(0,0,0,.35); }
+  .bn.sel { transform:scale(1.2); box-shadow:0 0 0 4px #22c55e, 0 2px 8px rgba(0,0,0,.5); }
+  .leaflet-popup-content { font-family:"Segoe UI",sans-serif; font-size:14px; line-height:1.45; color:#222; margin:12px 16px; }
+  .buspill { position:absolute; transform:translate(-50%,-50%); white-space:nowrap; background:#f5b324; color:#1a1205; font-weight:800; font-size:12px; padding:3px 8px; border-radius:12px; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.5); }
+  .buspill.n1 { background:#22c55e; }
+  @media (max-width:520px) { main { padding:8px 10px 24px; } .card { padding:12px; } input[type=number] { width:100px; } #verdict h2 { font-size:26px; } }
 
   #verdict { text-align:center; border:2px solid var(--green); border-radius:18px; padding:14px 12px; background:#0b1a2a; }
   #verdict.either { border-color:var(--blue); }
@@ -66,14 +81,12 @@
   .arr .mid b { font-size:15px; margin-right:6px; }
   .chip { display:inline-block; font-size:11px; padding:1px 8px; border-radius:9px; margin-right:4px; color:#04110a; font-weight:700; }
   .chip.g { background:#1b2a47; color:var(--mute); font-weight:600; }
-  .use { background:#1b2a47; color:var(--txt); padding:6px 10px; font-size:12px; border-radius:8px; }
   .others { margin-top:10px; font-size:12px; color:var(--mute); display:flex; flex-wrap:wrap; gap:6px; }
   .others span { background:#0a1324; border:1px solid var(--line); border-radius:8px; padding:3px 8px; }
   .others b { color:var(--txt); }
   .upd { font-size:11px; color:#6f84a8; margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
   .upd label { flex-direction:row; align-items:center; text-transform:none; letter-spacing:0; font-size:12px; }
   .upd input { padding:0; }
-  .busdot { width:24px; height:24px; border-radius:50%; background:#f5b324; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-size:13px; }
   h3 { margin:0 0 8px; font-size:14px; color:var(--mute); font-weight:600; }
 </style>
 </head>
@@ -88,27 +101,26 @@
       <label>Bus service <input id="svc" value="2" size="5" style="width:80px"></label>
       <label>Get off at <select id="alight"></select></label>
     </div>
-    <div class="row">
-      <label>Date (SG) <input id="date" type="date"></label>
-      <label>Time (SG) <input id="time" type="time"></label>
-      <button class="ghost" id="now">Now</button>
-    </div>
-    <div class="row">
-      <label>Latitude <input id="lat" type="number" step="0.00001"></label>
-      <label>Longitude <input id="lng" type="number" step="0.00001"></label>
-      <button class="ghost" id="gps">📍 Auto-detect GPS</button>
-    </div>
-    <div id="status">Starting…</div>
+    <div id="status"></div>
+    <details id="adv">
+      <summary id="advSum">⚙ Date, time &amp; GPS</summary>
+      <div class="row">
+        <label>Date (SG) <input id="date" type="date"></label>
+        <label>Time (SG) <input id="time" type="time"></label>
+        <button class="ghost" id="now" type="button">Now</button>
+      </div>
+      <div class="row">
+        <label>Latitude <input id="lat" type="number" step="0.00001"></label>
+        <label>Longitude <input id="lng" type="number" step="0.00001"></label>
+        <button class="ghost" id="gps" type="button">📍 Auto-detect GPS</button>
+      </div>
+      <div id="info">Starting…</div>
+    </details>
   </div>
 
   <div class="card">
-    <h3>① Your location <span style="font-weight:400">· auto-detect, or tap the map / drag the blue dot</span></h3>
+    <h3>Your location &amp; nearby stops <span style="font-weight:400">· tap a lettered stop (A, B, C…) to board there · drag the blue dot to move</span></h3>
     <div id="map"></div>
-  </div>
-
-  <div class="card">
-    <h3>② Choose your boarding stop <span style="font-weight:400">· nearest stops on this bus service</span></h3>
-    <div class="stoplist" id="stopList"><span style="font-size:13px;color:var(--mute)">Waiting for your location…</span></div>
   </div>
 
   <div class="card" id="arrCard" hidden>
@@ -231,33 +243,35 @@ function summarise(segs) {
 
 /* ================= BUS PICTURE ================= */
 function busSVG(sum) {
-  const C = 320, R = 285;
+  const C = 320, R = 262;
   const either = sum.sit === "E";
   const sunnyL = !either && sum.sunnySide === "L", sunnyR = !either && sum.sunnySide === "R";
   const seat = (x, y, sunny) => `<rect x="${x}" y="${y}" width="36" height="36" rx="9" fill="${sunny ? '#8a5f1a' : '#22c55e'}"/>`;
   let seats = "";
   for (let k = 0; k < 5; k++) { const y = 215 + k * 53; seats += seat(247, y, sunnyL) + seat(357, y, sunnyR); }
-  // ONE sun only: the direction that shines most on the bus
-  let sun = "";
+  // ONE sun only (the direction that shines most). Ray goes UNDER the labels, the sun itself is drawn LAST so nothing hides it.
+  let ray = "", ball = "";
   if (sum.sunRel !== null && !sum.allLow) {
     const th = rad(sum.sunRel), x = C + R * Math.sin(th), y = C - R * Math.cos(th);
-    sun = `<line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".22" stroke-width="16" stroke-linecap="round"/>
-           <line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".8" stroke-width="3" stroke-dasharray="9 7"/>
-           <circle cx="${x}" cy="${y}" r="30" fill="#f5b324" fill-opacity=".25"/><circle cx="${x}" cy="${y}" r="17" fill="#f5b324"/>`;
+    ray = `<line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".2" stroke-width="16" stroke-linecap="round"/>
+           <line x1="${x}" y1="${y}" x2="${C}" y2="${C}" stroke="#f5b324" stroke-opacity=".75" stroke-width="3" stroke-dasharray="9 7"/>`;
+    ball = `<circle cx="${x}" cy="${y}" r="28" fill="#f5b324" fill-opacity=".28"/><circle cx="${x}" cy="${y}" r="16" fill="#f5b324" stroke="#fff3c4" stroke-width="2"/>`;
   }
-  const label = (cx, name, isSunny, isSit, pct) => `
-    <rect x="${cx-92}" y="${C-42}" width="184" height="102" rx="14" fill="#0a1224" fill-opacity=".92"/>
-    <text x="${cx}" y="${C-8}" text-anchor="middle" class="lbl" font-size="30">${name}</text>
-    <text x="${cx}" y="${C+24}" text-anchor="middle" font-size="19" font-weight="700">${
-      either ? '<tspan fill="#38a1e0">EITHER ✓</tspan>'
-      : isSit ? '<tspan fill="#22c55e">SIT HERE ✓</tspan>' : '<tspan fill="#f5b324">SUNNY ☀</tspan>'}</text>
-    <text x="${cx}" y="${C+50}" text-anchor="middle" font-size="16" fill="${isSunny ? '#f5b324' : '#8da2c6'}">sun ${pct}% of ride</text>`;
+  // each label is drawn twice: a thick dark copy underneath (outline) and the coloured text on top - works in every browser
+  const txt = (x, y, size, weight, fill, content, cls) =>
+    `<text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="${weight}" fill="#0a1224" stroke="#0a1224" stroke-width="6" stroke-linejoin="round">${content.replace(/ fill="[^"]*"/g, "")}</text>
+     <text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="${weight}" ${cls ? 'class="' + cls + '"' : 'fill="' + fill + '"'}>${content}</text>`;
+  const label = (cx, name, isSunny, isSit, pct) =>
+    txt(cx, C - 8, 30, 700, "#9fb3d9", name, "lbl") +
+    txt(cx, C + 24, 19, 700, "#fff", either ? '<tspan fill="#38a1e0">EITHER ✓</tspan>'
+      : isSit ? '<tspan fill="#22c55e">SIT HERE ✓</tspan>' : '<tspan fill="#f5b324">SUNNY ☀</tspan>') +
+    txt(cx, C + 50, 16, 400, isSunny ? "#f5b324" : "#8da2c6", `sun ${pct}% of ride`);
   return `<svg viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Top-down bus diagram showing the sunny and shady sides">
     <rect x="4" y="4" width="632" height="632" rx="22" fill="#0a1224" stroke="#1f2f4d"/>
     <line x1="${C}" y1="20" x2="${C}" y2="620" stroke="#1b2a47"/><line x1="20" y1="${C}" x2="620" y2="${C}" stroke="#1b2a47"/>
     <text x="${C}" y="120" text-anchor="middle" class="tiny">FRONT ▲</text>
     <text x="${C}" y="535" text-anchor="middle" class="tiny">BACK</text>
-    ${sun}
+    ${ray}
     <rect x="225" y="135" width="190" height="370" rx="52" fill="#1c293f" stroke="#475569" stroke-width="6"/>
     <path d="M252 160 Q${C} 148 388 160" stroke="#38a1e0" stroke-width="7" fill="none" stroke-linecap="round"/>
     <line x1="260" y1="485" x2="380" y2="485" stroke="#38a1e0" stroke-width="7" stroke-linecap="round"/>
@@ -267,8 +281,9 @@ function busSVG(sum) {
     <circle cx="378" cy="178" r="12" fill="#e2e8f0"/><text x="378" y="203" text-anchor="middle" font-size="10" fill="#6f84a8">DRIVER</text>
     ${seats}
     <polygon points="${C},282 ${C+26},338 ${C},325 ${C-26},338" fill="#22c55e"/>
-    ${label(120, "LEFT", sunnyL, sum.sit === "L", sum.pct.L)}
-    ${label(520, "RIGHT", sunnyR, sum.sit === "R", sum.pct.R)}
+    ${label(140, "LEFT", sunnyL, sum.sit === "L", sum.pct.L)}
+    ${label(500, "RIGHT", sunnyR, sum.sit === "R", sum.pct.R)}
+    ${ball}
   </svg>`;
 }
 /* ================= END BUS PICTURE ================= */
@@ -284,8 +299,17 @@ function sgNow() {
     hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()).forEach(x => p[x.type] = x.value);
   return { date: `${p.year}-${p.month}-${p.day}`, time: `${p.hour}:${p.minute}` };
 }
-function setNow() { const n = sgNow(); $("date").value = n.date; $("time").value = n.time; }
-function status(msg, err) { $("status").textContent = msg; $("status").className = err ? "err" : ""; }
+function updateSum() {
+  const d = $("date").value, t = $("time").value;
+  $("advSum").textContent = "⚙ " + (d ? +d.slice(8, 10) + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+d.slice(5, 7) - 1] + " " : "") + t + " · " +
+    (userPos ? userPos[0].toFixed(4) + ", " + userPos[1].toFixed(4) : "locating…");
+}
+function setNow() { const n = sgNow(); $("date").value = n.date; $("time").value = n.time; updateSum(); }
+// errors stay visible on the main card; everything else goes into the collapsed settings panel
+function status(msg, err) {
+  if (err) { $("status").textContent = msg; $("status").className = "err"; }
+  else { $("status").textContent = ""; $("status").className = ""; $("info").textContent = msg; }
+}
 const fmt = m => { m = Math.round(m) % 1440; return String(Math.floor(m/60)).padStart(2,"0") + ":" + String(m%60).padStart(2,"0"); };
 
 async function getJSON(name) {
@@ -303,11 +327,12 @@ const routeStops = codes => codes.map(c => normStop(c, stopsDB[c])).filter(s => 
 
 let chosenKey = null, lastSvc = null, fitNear = true, nearList = [];
 const MAX_STOPS = 6, WALK_M_PER_MIN = 80;
+const HOME_STOP = "97039", HOME_RADIUS_M = 130;   // Bef Jln Bena: auto-selected when you are within ~130 m
 
 function setPos(lat, lng, fromUser) {
   userPos = [lat, lng];
   if (fromUser !== "silent") { chosenKey = null; fitNear = true; }
-  $("lat").value = lat.toFixed(5); $("lng").value = lng.toFixed(5);
+  $("lat").value = lat.toFixed(5); $("lng").value = lng.toFixed(5); updateSum();
   if (map) {
     if (!meMarker) {
       meMarker = L.marker(userPos, { draggable: true, icon: L.divIcon({ className: "", html: '<div class="me"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map);
@@ -321,7 +346,7 @@ function getGPS() {
   status("Getting your GPS location …");
   navigator.geolocation.getCurrentPosition(
     p => { setPos(p.coords.latitude, p.coords.longitude); if (map) map.setView(userPos, 15); },
-    () => { status("GPS blocked or unavailable – using Singapore centre. Click the map or type your location.", true); if (!userPos) fallbackPos(); },
+    () => { status("GPS blocked or unavailable – using Singapore centre. Tap the map to set your location.", true); if (!userPos) fallbackPos(); },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
 }
 function fallbackPos() { setPos(1.3521, 103.8198); }
@@ -345,12 +370,14 @@ async function run() {
     cands.sort((x, y) => x.dist - y.dist);
     nearList = cands.slice(0, MAX_STOPS);
     if (!nearList.length) throw new Error("No stops found for this service.");
-    if (!nearList.some(c => c.key === chosenKey)) chosenKey = nearList[0].key;
+    // default choice: Bef Jln Bena if you are within ~130 m of it, otherwise the nearest stop by GPS
+    const home = cands.find(c => c.s.code === HOME_STOP && c.dist <= HOME_RADIUS_M);
+    if (home && !nearList.some(c => c.key === home.key)) nearList.push(home);
+    if (!nearList.some(c => c.key === chosenKey)) chosenKey = (home || nearList[0]).key;
     const pick = nearList.find(c => c.key === chosenKey);
-    renderStopList(pick);
 
     const list = lists[pick.di], board = pick.i;
-    loadArrivals(pick.s.code, pick.s.name);
+    loadArrivals(pick.s.code, pick.s.name, [pick.s.lat, pick.s.lng]);
 
     // alight menu
     const prevAl = $("alight").value;
@@ -379,20 +406,6 @@ async function run() {
   }
 }
 
-function renderStopList(pick) {
-  $("stopList").innerHTML = nearList.map((c, k) => {
-    const walk = Math.max(1, Math.round(c.dist / WALK_M_PER_MIN));
-    return `<button type="button" class="stopbtn${c.key === pick.key ? " sel" : ""}" data-key="${c.key}">
-      <div class="n">${k + 1}</div>
-      <div class="t"><b>${c.s.name}</b><span>${c.s.road || ""} · ${c.s.code} · towards ${c.to}</span></div>
-      <div class="d">${Math.round(c.dist)} m<br>~${walk} min walk</div></button>`;
-  }).join("");
-}
-$("stopList").addEventListener("click", e => {
-  const btn = e.target.closest ? e.target.closest(".stopbtn") : null;
-  if (!btn) return;
-  chosenKey = btn.dataset.key; fitNear = false; run();
-});
 
 function renderVerdict(sum, segs, boardStop, distM, startMin, toName) {
   const V = $("verdict"); V.hidden = false; $("busCard").hidden = false;
@@ -438,8 +451,8 @@ function renderMap(list, board, endIdx, segs) {
     const sel = c.key === chosenKey;
     L.marker([c.s.lat, c.s.lng], {
       zIndexOffset: sel ? 1000 : 0,
-      icon: L.divIcon({ className: "", html: `<div class="num${sel ? " sel" : ""}">${k + 1}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] })
-    }).bindTooltip(`${k + 1}. ${c.s.name} (towards ${c.to})`)
+      icon: L.divIcon({ className: "", html: `<div class="num${sel ? " sel" : ""}">${String.fromCharCode(65 + k)}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] })
+    }).bindTooltip(sel ? c.s.name : `Stop ${String.fromCharCode(65 + k)}: ${c.s.name} (towards ${c.to})`, sel ? { permanent: true, direction: "top", offset: [0, -12] } : {})
       .on("click", () => { chosenKey = c.key; fitNear = false; run(); }).addTo(layer);
   });
   const b = nearList.find(c => c.key === chosenKey).s;
@@ -456,11 +469,13 @@ const LOAD = { SEA: ["Seats", "#22c55e"], SDA: ["Standing", "#f5b324"], LSD: ["F
 const TYPE = { SD: "Single deck", DD: "Double deck", BD: "Bendy" };
 const hhmm = d => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Singapore", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d);
 const ymd = d => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Singapore", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
-let arrStop = null, arrName = "", arrData = null, arrErr = null, arrAt = null;
+let arrStop = null, arrName = "", arrPos = null, arrData = null, arrErr = null, arrAt = null, busFit = false, busKey = "", arrSel = null, busMarkers = {};
 
 const minsTo = t => Math.round((new Date(t) - Date.now()) / 60000);
 const minsTxt = m => m <= 0 ? "Arr" : m + " min";
 const minsCol = m => m <= 3 ? "#ef4444" : m <= 10 ? "#f5b324" : "#22c55e";
+// only buses the API reports with a real live position (monitored = 1 and a non-zero lat/lng)
+const hasLive = b => +b.monitored === 1 && isFinite(+b.lat) && isFinite(+b.lng) && +b.lat !== 0 && +b.lng !== 0;
 // up to 3 distinct upcoming buses (the feed repeats "subsequent" as "next2")
 function slots(svc) {
   const seen = new Set(), out = [];
@@ -470,16 +485,16 @@ function slots(svc) {
   });
   return out.slice(0, 3);
 }
-function loadArrivals(code, name) {
+function loadArrivals(code, name, pos) {
   if (code === arrStop && arrData) { renderArrivals(); return; }
-  arrStop = code; arrName = name; arrData = null; arrErr = null; arrAt = null;
+  arrStop = code; arrName = name; arrPos = pos || null; arrData = null; arrErr = null; arrAt = null; busFit = true; busKey = ""; arrSel = null;
   renderArrivals(); fetchArrivals();
 }
 async function fetchArrivals() {
   if (!arrStop) return;
   const code = arrStop;
   try {
-    const r = await fetch(ARR_URL + encodeURIComponent(code));
+    const r = await fetch(ARR_URL + encodeURIComponent(code), { cache: "no-store" });
     if (!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
     if (code !== arrStop) return;
@@ -491,7 +506,7 @@ function renderArrivals() {
   if (!arrStop) return;
   $("arrCard").hidden = false;
   const svcNo = $("svc").value.trim().toUpperCase();
-  $("arrTitle").textContent = `③ Bus ${svcNo} arrivals · ${arrName} (${arrStop})`;
+  $("arrTitle").textContent = `Bus ${svcNo} arrivals · ${arrName} (${arrStop})`;
   const body = $("arrBody");
   if (!arrData) {
     body.innerHTML = `<span style="font-size:13px;color:${arrErr ? "#fca5a5" : "var(--mute)"}">${arrErr
@@ -509,14 +524,12 @@ function renderArrivals() {
     body.innerHTML = list.map((b, i) => {
       const m = minsTo(b.time), live = +b.monitored === 1;
       const ld = LOAD[b.load] || [b.load || "", "#8da2c6"];
-      return `<div class="arr"><div class="lab">${labels[i]}</div>
-        <div class="mins" style="color:${minsCol(m)}">${minsTxt(m)}</div>
-        <div class="mid"><b>${hhmm(new Date(b.time))}</b>
-          <span class="chip" style="background:${live ? "#22c55e" : "#566684"}">${live ? "Live" : "Est."}</span><br>
-          <span class="chip" style="background:${ld[1]}">${ld[0]}</span>
-          <span class="chip g">${TYPE[b.type] || b.type || ""}</span>${b.feature === "WAB" ? '<span class="chip g">♿</span>' : ""}</div>
-        <button class="use" type="button" data-t="${b.time}" title="Use this bus's arrival time for the sun check">Use time</button></div>`;
-    }).join("") + `<div style="font-size:11px;color:#6f84a8;padding-top:6px">“Use time” sets the sun check to when that bus arrives.</div>`;
+      return `<button type="button" class="stopbtn busbtn${b.time === arrSel ? " sel" : ""}" data-t="${b.time}" data-i="${i}">
+        <div class="n">${i + 1}</div>
+        <div class="t"><b>${labels[i]} bus · ${hhmm(new Date(b.time))}</b>
+          <span>${live ? "Live" : "Scheduled"} · ${ld[0]}${TYPE[b.type] ? " · " + TYPE[b.type] : ""}${b.feature === "WAB" ? " · ♿" : ""}</span></div>
+        <div class="d"><b style="color:${minsCol(m)}">${minsTxt(m)}</b><small>${b.time === arrSel ? "sun check set" : "tap to use"}</small></div></button>`;
+    }).join("");
     showBuses(svc);
   }
   if ($("arrAll").checked) {
@@ -528,22 +541,46 @@ function renderArrivals() {
   }
   $("arrUpd").textContent = arrAt ? `Updated ${hhmm(arrAt)} · refreshes every 20 s` : "";
 }
+// draw the selected service's live buses on the map (redrawn only when the data or minutes change)
 function showBuses(svc) {
   if (!busLayer) return;
-  busLayer.clearLayers();
-  if (!svc) return;
-  const labels = ["Next", "2nd", "3rd"];
-  slots(svc).forEach((b, i) => {
-    if (!b.lat || !b.lng) return;
-    L.marker([b.lat, b.lng], { zIndexOffset: 2000, icon: L.divIcon({ className: "", html: '<div class="busdot">🚌</div>', iconSize: [24, 24], iconAnchor: [12, 12] }) })
-      .bindTooltip(`Bus ${svc.no} · ${labels[i]} · ${minsTxt(minsTo(b.time))}`).addTo(busLayer);
+  const buses = svc ? slots(svc).map((b, i) => ({ b, i })).filter(x => hasLive(x.b)) : [];
+  const key = arrStop + "|" + (svc ? svc.no : "") + "|" + arrSel + "|" + buses.map(x => x.b.lat + "," + x.b.lng + "," + minsTo(x.b.time)).join(";");
+  if (key === busKey) return;
+  busKey = key;
+  busLayer.clearLayers(); busMarkers = {};
+  const pts = [];
+  const canHover = window.matchMedia && matchMedia("(hover: hover)").matches;
+  buses.forEach(({ b, i }) => {
+    const pos = [+b.lat, +b.lng]; pts.push(pos);
+    const sel = b.time === arrSel, m = minsTo(b.time);
+    const ld = (LOAD[b.load] || [b.load || ""])[0];
+    const loadTxt = { SEA: "Seats Available", SDA: "Standing Available", LSD: "Limited Standing" }[b.load] || ld;
+    const popup = `<div style="min-width:170px"><b>Bus ${svc.no}</b>${svc.operator ? " (" + svc.operator + ")" : ""}<br>`
+      + `Arrival: <b>${hhmm(new Date(b.time))}</b> (~${m} min)<br>`
+      + `Type: ${{ SD: "Single Deck", DD: "Double Deck", BD: "Bendy" }[b.type] || b.type || "-"}${loadTxt ? " &nbsp;|&nbsp; " + loadTxt : ""}`
+      + (b.feature === "WAB" ? "<br>Wheelchair Accessible" : "") + `</div>`;
+    const mk = L.marker(pos, { zIndexOffset: sel ? 4000 : 3000 - i,
+        icon: L.divIcon({ className: "", iconSize: [36, 36], iconAnchor: [18, 18], html: `<div class="bn${sel ? " sel" : ""}">${svc.no}</div>` }) })
+      .bindPopup(popup, { offset: [0, -10], autoPan: false }).addTo(busLayer);
+    if (canHover) { mk.on("mouseover", () => mk.openPopup()); mk.on("mouseout", () => mk.closePopup()); }
+    busMarkers[b.time] = mk;
   });
+  if (busFit && pts.length && map) {
+    const all = [...pts]; if (arrPos) all.push(arrPos); if (userPos) all.push(userPos);
+    map.fitBounds(L.latLngBounds(all).pad(.2), { maxZoom: 17 });
+    busFit = false;
+  }
 }
 $("arrBody").addEventListener("click", e => {
-  const btn = e.target.closest ? e.target.closest(".use") : null;
+  const btn = e.target.closest ? e.target.closest(".busbtn") : null;
   if (!btn) return;
-  const d = new Date(btn.dataset.t);
-  $("date").value = ymd(d); $("time").value = hhmm(d); schedule();
+  arrSel = btn.dataset.t;
+  const d = new Date(arrSel);
+  $("date").value = ymd(d); $("time").value = hhmm(d); updateSum();
+  renderArrivals(); schedule();
+  const mk = busMarkers[arrSel];
+  if (mk && map) map.panTo(mk.getLatLng ? mk.getLatLng() : mk.pos);
 });
 $("arrAll").addEventListener("change", renderArrivals);
 $("arrRefresh").addEventListener("click", fetchArrivals);
@@ -558,7 +595,7 @@ function initMap() {
   busLayer = L.layerGroup().addTo(map);
   map.on("click", e => setPos(e.latlng.lat, e.latlng.lng, true));
 }
-["svc", "alight", "date", "time"].forEach(id => $(id).addEventListener("change", schedule));
+["svc", "alight", "date", "time"].forEach(id => $(id).addEventListener("change", () => { updateSum(); schedule(); }));
 $("svc").addEventListener("input", schedule);
 ["lat", "lng"].forEach(id => $(id).addEventListener("change", () => {
   const la = parseFloat($("lat").value), ln = parseFloat($("lng").value);
