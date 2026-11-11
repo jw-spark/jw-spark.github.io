@@ -131,13 +131,13 @@
         <label>Get off at <select id="alight" style="max-width:100%"></select></label>
       </div>
       <div class="row">
-        <label>Date (SG) <input id="date" type="date"></label>
-        <label>Time (SG) <input id="time" type="time"></label>
+        <label>Date (SG) <input id="date" type="date" autocomplete="off"></label>
+        <label>Time (SG) <input id="time" type="time" autocomplete="off"></label>
         <button class="ghost" id="now" type="button">Now</button>
       </div>
       <div class="row">
-        <label>Latitude <input id="lat" type="number" step="0.00001"></label>
-        <label>Longitude <input id="lng" type="number" step="0.00001"></label>
+        <label>Latitude <input id="lat" type="number" step="0.00001" autocomplete="off"></label>
+        <label>Longitude <input id="lng" type="number" step="0.00001" autocomplete="off"></label>
         <button class="ghost" id="gps" type="button">📍 Auto-detect GPS</button>
       </div>
       <div id="info">Starting…</div>
@@ -370,11 +370,14 @@ function setPos(lat, lng, fromUser) {
   }
   if (fromUser !== "silent") schedule();
 }
+// Getting the GPS location ALSO resets date + time to the current Singapore time (and drops any bus-time you tapped earlier)
+function syncToNow() { setNow(); arrSel = null; }
 function getGPS() {
+  syncToNow();
   if (!navigator.geolocation) { status("GPS not available – using Singapore centre. Tap the map to set your location.", true); fallbackPos(); return; }
   status("Getting your GPS location …");
   navigator.geolocation.getCurrentPosition(
-    p => { busFit = true; setPos(p.coords.latitude, p.coords.longitude); if (map) map.setView(userPos, 15); },
+    p => { syncToNow(); busFit = true; setPos(p.coords.latitude, p.coords.longitude); if (map) map.setView(userPos, 15); },
     () => { status("GPS blocked or unavailable – using Singapore centre. Tap the map to set your location.", true); if (!userPos) fallbackPos(); },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
 }
@@ -652,11 +655,19 @@ $("svc").addEventListener("input", schedule);
   const la = parseFloat($("lat").value), ln = parseFloat($("lng").value);
   if (isFinite(la) && isFinite(ln)) setPos(la, ln, "typed");
 }));
-$("now").onclick = () => { setNow(); arrSel = null; schedule(); };
+$("now").onclick = () => { syncToNow(); schedule(); };
 $("gps").onclick = getGPS;
 $("refreshBtn").addEventListener("click", fetchArrivals);
 setInterval(() => { if (drawCountdown() === 0 && !fetching) fetchArrivals(); }, 1000);
 setInterval(() => { if (arrData && !arrLoading) renderArrivals(); }, 30000);
+
+// Coming back to a page that was left open / restored by the phone browser: re-detect GPS, which also resets the time to now
+let hiddenAt = 0;
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { hiddenAt = Date.now(); return; }
+  if (hiddenAt && Date.now() - hiddenAt > 60000) getGPS();
+});
+window.addEventListener("pageshow", e => { if (e.persisted) getGPS(); });
 
 setNow();
 initMap();
