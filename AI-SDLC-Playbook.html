@@ -17,10 +17,9 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth;scroll-padding-top:64px;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-size:18px;line-height:1.6;padding-bottom:env(safe-area-inset-bottom)}
-.sans{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-header.top{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header.top{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
 header.top .title{flex:1;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-header.top button{background:var(--card);border:1px solid var(--line);color:var(--fg);border-radius:8px;font-size:14px;padding:6px 12px;font-family:inherit}
+header.top button{background:var(--card);border:1px solid var(--line);color:var(--fg);border-radius:8px;font-size:15px;padding:6px 12px;font-family:inherit}
 #prog{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:var(--accent)}
 main{max-width:720px;margin:0 auto;padding:76px 18px 80px}
 .cover{background:var(--dark);color:var(--darkfg);margin:-76px -18px 28px;padding:calc(110px + env(safe-area-inset-top)) 22px 48px}
@@ -31,7 +30,6 @@ main{max-width:720px;margin:0 auto;padding:76px 18px 80px}
 .cover .by{margin-top:26px;font-family:-apple-system,sans-serif;font-size:13px;color:#999}
 h2{font-size:1.75rem;line-height:1.15;font-weight:500;margin:0 0 14px;letter-spacing:-.01em}
 h3{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:1rem;font-weight:700;margin:26px 0 8px}
-h4{font-family:-apple-system,sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:22px 0 6px}
 .eyebrow{font-family:-apple-system,sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
 .lead{font-size:1.15rem}
 p{margin:0 0 14px}
@@ -88,7 +86,6 @@ th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
 td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 td:first-child{font-weight:700}
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.shifts{display:block}
 .shift{border-bottom:1px solid var(--line);padding:12px 0;font-size:.95rem}
 .shift b{font-family:-apple-system,sans-serif;font-size:1rem}
 .shift .t{color:var(--muted);margin:6px 0 4px}
@@ -111,6 +108,20 @@ td:first-child{font-weight:700}
 #drawer nav button{background:none;border:0;font-size:26px;color:var(--fg);line-height:1}
 #drawer nav a{display:block;padding:10px 0;border-top:1px solid var(--line);color:var(--fg);text-decoration:none}
 #drawer nav a.sub{padding-left:16px;font-size:14px;color:var(--muted)}
+.dh{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:14px 0 4px;font-weight:700}
+#bmlist .bm{display:flex;align-items:center;gap:6px}
+#bmlist .bm a{flex:1;padding:9px 0}
+#bmlist .bm a small{display:block;color:var(--muted);font-size:12px}
+#bmlist .bm button{font-size:22px;color:var(--muted);padding:6px 8px}
+#bmlist .empty{color:var(--muted);font-size:13px;padding:6px 0 10px}
+#resume{position:fixed;left:12px;right:12px;top:calc(62px + env(safe-area-inset-top));z-index:45;background:var(--dark);color:var(--darkfg);border-radius:12px;padding:12px 14px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.3);display:none;max-width:696px;margin:0 auto}
+#resume.show{display:block}
+#resume small{display:block;color:#aaa;font-size:12px;margin-bottom:2px}
+#resume b{display:block;font-size:14px;line-height:1.3;margin-bottom:10px}
+#resume .btns{display:flex;gap:8px}
+#resume button{flex:1;border:0;border-radius:8px;padding:9px;font-size:14px;font-family:inherit;background:#3a3a37;color:#fff}
+#resume button.go{background:var(--accent)}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--dark);color:#fff;padding:9px 16px;border-radius:20px;font-family:-apple-system,sans-serif;font-size:13px;z-index:70;display:none;white-space:nowrap}
 #up{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom));width:42px;height:42px;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:20px;display:none;z-index:40;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .refs a{color:var(--accent);word-break:break-all}
 .refs li{font-size:.92rem;font-family:-apple-system,sans-serif}
@@ -123,17 +134,22 @@ td:first-child{font-weight:700}
   .kv{display:grid;grid-template-columns:140px 1fr;gap:12px}
   .kv b{margin:3px 0 0}
 }
-@media print{header.top,#up,#drawer{display:none!important}main{padding-top:0}.cover{margin-top:0;padding-top:40px}}
+@media print{header.top,#up,#drawer,#resume,#toast{display:none!important}main{padding-top:0}.cover{margin-top:0;padding-top:40px}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="title" id="ttl">The AI-Native SDLC Playbook</div>
-  <button id="menu" aria-label="Contents">☰ Contents</button>
+  <button id="bmadd" aria-label="Bookmark this spot"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-2px"><path d="M6 2h12a1 1 0 0 1 1 1v19l-7-4-7 4V3a1 1 0 0 1 1-1z"/></svg></button>
+  <button id="menu" aria-label="Contents and bookmarks">☰</button>
   <div id="prog"></div>
 </header>
+<div id="resume"><small>Pick up where you left off</small><b id="rlabel"></b><div class="btns"><button class="go" id="rgo">Resume</button><button id="rno">Start over</button></div></div>
+<div id="toast"></div>
 <div id="drawer"><nav>
-  <div class="h"><span>Contents</span><button id="close" aria-label="Close">×</button></div>
+  <div class="h"><span>Bookmarks &amp; contents</span><button id="close" aria-label="Close">×</button></div>
+  <div class="dh">Bookmarks</div><div id="bmlist"></div>
+  <div class="dh">Sections</div>
   <a href="#top">Cover</a>
   <a href="#ch1">01 Code is no longer the bottleneck</a>
   <a href="#ch2">02 Plays</a>
@@ -994,19 +1010,100 @@ tiers:
 <script>
 (function(){
   var d=document.getElementById('drawer'),p=document.getElementById('prog'),u=document.getElementById('up');
-  document.getElementById('menu').onclick=function(){d.classList.add('open')};
+  var main=document.querySelector('main');
+  history.scrollRestoration='manual';
+
+  // ---- drawer / header ----
+  document.getElementById('menu').onclick=function(){renderBms();d.classList.add('open')};
   document.getElementById('close').onclick=function(){d.classList.remove('open')};
-  d.onclick=function(e){if(e.target===d||e.target.tagName==='A')d.classList.remove('open')};
+  d.onclick=function(e){if(e.target===d||(e.target.tagName==='A'&&e.target.getAttribute('href')!=='#'))d.classList.remove('open')};
   u.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
   function f(){var h=document.documentElement,s=h.scrollTop||document.body.scrollTop,m=h.scrollHeight-h.clientHeight;
     p.style.width=(m>0?s/m*100:0)+'%';u.style.display=s>600?'block':'none';}
   window.addEventListener('scroll',f,{passive:true});f();
-  // current section title in header
   var secs=[].slice.call(document.querySelectorAll('.stagehead,.chapter')),t=document.getElementById('ttl');
   function cur(){var y=window.scrollY+120,n='The AI-Native SDLC Playbook';
     secs.forEach(function(s){if(s.offsetTop<=y){var h=s.querySelector('h2');if(h)n=h.textContent;}});
     t.textContent=n;}
   window.addEventListener('scroll',cur,{passive:true});cur();
+
+  // ---- bookmarks & resume ----
+  var KEY='sdlc-playbook-v1';
+  var blocks=[].slice.call(main.querySelectorAll('h2,h3,p,li,pre,.shift,.callout,.stagehead,.kv,.cap,.toc a'));
+  var st={last:null,bms:[]};
+  try{var raw=localStorage.getItem(KEY);if(raw)st=JSON.parse(raw)||st;}catch(e){}
+  if(!st.bms)st.bms=[];
+  function persist(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function toast(m){var el=document.getElementById('toast');el.textContent=m;el.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(function(){el.style.display='none'},1800)}
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+  function where(){
+    for(var i=0;i<blocks.length;i++){
+      var r=blocks[i].getBoundingClientRect();
+      if(r.bottom>80&&r.height>0){
+        var frac=Math.max(0,Math.min(1,(80-r.top)/r.height));
+        return {i:i,f:+frac.toFixed(3)};
+      }
+    }
+    return null;
+  }
+  function label(i){
+    for(var k=i;k>=0;k--){var n=blocks[k];
+      if(n.tagName==='H2'||n.tagName==='H3')return n.textContent.trim().slice(0,70);
+      if(n.classList.contains('stagehead')){var h=n.querySelector('h2');if(h)return 'Stage — '+h.textContent}
+    }
+    return 'Start';
+  }
+  function jump(pos,smooth){
+    var b=blocks[pos.i];if(!b)return;
+    var r=b.getBoundingClientRect();
+    var y=window.scrollY+r.top+r.height*(pos.f||0)-80;
+    window.scrollTo({top:Math.max(0,y),behavior:'instant'});
+  }
+  function pct(){var h=document.documentElement,m=h.scrollHeight-h.clientHeight;return m>0?Math.round(h.scrollTop/m*100):0}
+
+  var rb=document.getElementById('resume'),pending=false,saveT;
+  function saveLast(){
+    if(pending)return; // don't overwrite saved spot while resume banner is showing
+    var w=where();if(!w)return;
+    if(w.i<6&&window.scrollY<200){return}
+    st.last={i:w.i,f:w.f,l:label(w.i),p:pct(),t:Date.now()};persist();
+  }
+  window.addEventListener('scroll',function(){clearTimeout(saveT);saveT=setTimeout(saveLast,400)},{passive:true});
+  document.addEventListener('visibilitychange',function(){if(document.hidden)saveLast()});
+  window.addEventListener('pagehide',saveLast);
+
+  function renderBms(){
+    var el=document.getElementById('bmlist');
+    if(!st.bms.length){el.innerHTML='<div class="empty">Tap the bookmark icon at the top to save your spot.</div>';return}
+    el.innerHTML='';
+    st.bms.forEach(function(b,idx){
+      var row=document.createElement('div');row.className='bm';
+      var a=document.createElement('a');a.href='#';
+      a.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-2px"><path d="M6 2h12a1 1 0 0 1 1 1v19l-7-4-7 4V3a1 1 0 0 1 1-1z"/></svg> '+esc(b.l)+'<small>'+b.p+'% through</small>';
+      a.onclick=function(e){e.preventDefault();d.classList.remove('open');setTimeout(function(){jump(b,false)},30)};
+      var x=document.createElement('button');x.innerHTML='×';x.setAttribute('aria-label','Remove bookmark');
+      x.onclick=function(e){e.stopPropagation();st.bms.splice(idx,1);persist();renderBms()};
+      row.appendChild(a);row.appendChild(x);el.appendChild(row);
+    });
+  }
+  document.getElementById('bmadd').onclick=function(){
+    var w=where();if(!w)return;
+    var l=label(w.i);
+    st.bms=st.bms.filter(function(b){return Math.abs(b.i-w.i)>=4});
+    st.bms.unshift({i:w.i,f:w.f,l:l,p:pct(),t:Date.now()});
+    if(st.bms.length>12)st.bms.length=12;
+    persist();renderBms();toast('Bookmarked: '+l.slice(0,30));
+  };
+  renderBms();
+
+  if(st.last&&st.last.i>5&&window.scrollY<200&&!location.hash){
+    pending=true;
+    document.getElementById('rlabel').textContent=st.last.l+' · '+st.last.p+'%';
+    rb.classList.add('show');
+    document.getElementById('rgo').onclick=function(){rb.classList.remove('show');pending=false;jump(st.last,false)};
+    document.getElementById('rno').onclick=function(){rb.classList.remove('show');pending=false;st.last=null;persist()};
+    window.addEventListener('scroll',function(){if(pending&&window.scrollY>400){rb.classList.remove('show');pending=false}},{passive:true});
+  }
 })();
 </script>
 </body>
